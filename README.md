@@ -1,6 +1,6 @@
 # RoleRadar
 
-**Canada-first software engineering job search, built from official company career pages.**
+
 
 RoleRadar brings postings from different hiring platforms into one searchable interface. It prioritizes Canadian co-op, internship and early-career opportunities while retaining US roles, and lets applicants compare jobs without opening a new page for every posting.
 
