@@ -1,0 +1,9 @@
+job_id,company,title,location,country,skills
+JOB-001,Acme Cloudworks,Senior Backend Engineer,"Remote (San Francisco, CA)",United States,Python;  python ; Docker; PostgreSQL;AWS
+JOB-002,Nimbus Galactic Solutions,Data Platform Engineer,"Toronto, ON",Canada,Python; SQL; Docker; Kubernetes
+JOB-003,Starlight Data Labs,Machine Learning Scientist,Berlin,Germany,python; PyTorch; SQL; Docker
+JOB-004,Quantum Quokka Corp,Cloud Infrastructure Architect,London,United Kingdom,AWS; Terraform; Kubernetes; Docker; docker
+JOB-005,CyberDwarf Systems,Full Stack Developer,"Remote (Austin, TX)",United States,TypeScript; React; Python; PostgreSQL
+JOB-006,Biolink Horizons,Site Reliability Engineer,"Vancouver, BC",Canada,Linux; Kubernetes; Docker; Python; AWS
+JOB-007,RetroRocket Robotics,Embedded Systems & Cloud Engineer,Munich,Germany,C++; Linux; Docker; Python
+JOB-008,PixelPioneer Studios,Frontend UI/UX Engineer,"Remote (New York, NY)",United States,TypeScript; React; GraphQL; CSS

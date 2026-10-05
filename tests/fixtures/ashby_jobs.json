@@ -1,0 +1,38 @@
+{
+  "jobs": [
+    {
+      "id": "ash-001",
+      "title": "Site Reliability Engineer",
+      "locationName": "Remote - US",
+      "isRemote": true,
+      "workplaceType": "Remote",
+      "jobUrl": "https://jobs.ashbyhq.com/linear/ash-001",
+      "descriptionHtml": "<p>Maintain Kubernetes and Terraform infrastructure.</p>",
+      "publishedAt": "2023-05-15T12:00:00.000Z"
+    },
+    {
+      "id": "ash-002",
+      "title": "Mobile Engineer (iOS)",
+      "locationName": null,
+      "isRemote": false,
+      "workplaceType": null,
+      "jobUrl": "https://jobs.ashbyhq.com/linear/ash-002",
+      "descriptionHtml": "",
+      "publishedAt": null
+    },
+    {
+      "id": null,
+      "title": "Malformed Ashby Posting"
+    },
+    {
+      "id": "ash-003",
+      "title": "Product Designer",
+      "locationName": "San Francisco, CA",
+      "isRemote": false,
+      "workplaceType": "Onsite",
+      "jobUrl": "https://jobs.ashbyhq.com/linear/ash-003",
+      "descriptionHtml": "<p>Design interfaces</p>",
+      "publishedAt": "2023-06-01T08:30:00+00:00"
+    }
+  ]
+}

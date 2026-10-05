@@ -1,0 +1,562 @@
+{
+  "figma.com": {
+    "tagline": "Collaborative design software",
+    "description": "Figma develops collaborative tools for interface design and product development. Its products support design systems, prototyping, and collaboration between designers and developers.",
+    "sourceUrl": "https://figma.com/"
+  },
+  "cloudflare.com": {
+    "tagline": "Internet security and connectivity",
+    "description": "Cloudflare provides cloud services that help organizations secure and deliver websites, applications, and networks. Its platform includes content delivery, traffic protection, and developer services.",
+    "sourceUrl": "https://cloudflare.com/"
+  },
+  "datadoghq.com": {
+    "tagline": "Cloud monitoring and observability",
+    "description": "Datadog provides monitoring and observability software for applications and infrastructure. Its platform brings together metrics, logs, traces, and security signals to help teams understand their systems.",
+    "sourceUrl": "https://datadoghq.com/"
+  },
+  "gitlab.com": {
+    "tagline": "Software development and DevSecOps",
+    "description": "GitLab provides a platform for building, securing, and delivering software. Teams use its tools for source control, continuous integration, security testing, and deployment.",
+    "sourceUrl": "https://gitlab.com/"
+  },
+  "spotify.com": {
+    "tagline": "Music, podcasts, and audiobooks",
+    "description": "Spotify operates a digital audio platform for music, podcasts, and audiobooks. Listeners access content through advertising-supported and subscription offerings, with discovery and personalization tools that connect audiences with creators.",
+    "sourceUrl": "https://spotify.com/"
+  },
+  "palantir.com": {
+    "tagline": "Data analytics and operational software",
+    "description": "Palantir builds software for integrating data, analyzing information, and supporting operational decisions. Its platforms serve commercial organizations and government institutions.",
+    "sourceUrl": "https://palantir.com/"
+  },
+  "neon.tech": {
+    "tagline": "Serverless PostgreSQL databases",
+    "description": "Neon provides a serverless PostgreSQL database platform for developers. Its service supports database branching and separates storage from compute to support application development.",
+    "sourceUrl": "https://neon.tech/"
+  },
+  "metabase.com": {
+    "tagline": "Business intelligence and analytics",
+    "description": "Metabase develops business intelligence software that helps teams explore data and build reports. Its tools support dashboards, visual queries, and embedded analytics.",
+    "sourceUrl": "https://metabase.com/"
+  },
+  "linear.app": {
+    "tagline": "Product planning and issue tracking",
+    "description": "Linear builds software for product planning and issue tracking. Product and engineering teams use it to organize projects, prioritize work, and manage software development.",
+    "sourceUrl": "https://linear.app/"
+  },
+  "ramp.com": {
+    "tagline": "Corporate spending and finance tools",
+    "description": "Ramp provides financial software and corporate spending tools for businesses. Its platform supports expense management, corporate cards, payments, and finance operations.",
+    "sourceUrl": "https://ramp.com/"
+  },
+  "supabase.com": {
+    "tagline": "Open-source application infrastructure",
+    "description": "Supabase provides an open-source platform for building applications around PostgreSQL. Its services include databases, authentication, storage, and application APIs.",
+    "sourceUrl": "https://supabase.com/"
+  },
+  "anthropic.com": {
+    "tagline": "AI research and Claude",
+    "description": "Anthropic researches and develops AI systems, including the Claude family of models. Its work focuses on making AI systems useful, reliable, and safe for people and organizations.",
+    "sourceUrl": "https://anthropic.com/"
+  },
+  "openai.com": {
+    "tagline": "AI research and products",
+    "description": "OpenAI researches and develops artificial intelligence models and products. Its offerings include ChatGPT and APIs that help developers and organizations build applications using AI.",
+    "sourceUrl": "https://openai.com/"
+  },
+  "stripe.com": {
+    "tagline": "Online payments and financial infrastructure",
+    "description": "Stripe provides payments and financial infrastructure for businesses. Its products help organizations accept payments, manage billing, and operate online commerce.",
+    "sourceUrl": "https://stripe.com/"
+  },
+  "databricks.com": {
+    "tagline": "Data intelligence and AI platforms",
+    "description": "Databricks provides a platform for data engineering, analytics, and AI. Organizations use its tools to manage data, develop machine learning applications, and support business intelligence.",
+    "sourceUrl": "https://databricks.com/"
+  },
+  "robinhood.com": {
+    "tagline": "Consumer investing and financial services",
+    "description": "Robinhood provides financial services through applications for individual investors. Its products include investment trading and other consumer financial tools.",
+    "sourceUrl": "https://robinhood.com/"
+  },
+  "scale.com": {
+    "tagline": "AI data and evaluation infrastructure",
+    "description": "Scale AI provides data and evaluation services for developing AI systems. Its offerings support data preparation, model testing, and the deployment of AI applications.",
+    "sourceUrl": "https://scale.com/"
+  },
+  "reddit.com": {
+    "tagline": "Online communities and discussion",
+    "description": "Reddit operates a network of online communities where people share content and discuss interests. Its platform connects users, community moderators, creators, and advertisers.",
+    "sourceUrl": "https://reddit.com/"
+  },
+  "coinbase.com": {
+    "tagline": "Cryptocurrency products and infrastructure",
+    "description": "Coinbase provides products for accessing cryptocurrency markets and blockchain infrastructure. Its services serve individuals, businesses, institutions, and developers.",
+    "sourceUrl": "https://coinbase.com/"
+  },
+  "pinterest.com": {
+    "tagline": "Visual discovery and inspiration",
+    "description": "Pinterest operates a visual discovery platform where people find and organize ideas. Its service supports inspiration, shopping discovery, and advertising for businesses.",
+    "sourceUrl": "https://pinterest.com/"
+  },
+  "brex.com": {
+    "tagline": "Business spending and financial tools",
+    "description": "Brex provides financial products and spending management software for businesses. Its offerings include corporate cards, expense management, and finance workflow tools.",
+    "sourceUrl": "https://brex.com/"
+  },
+  "chime.com": {
+    "tagline": "Consumer financial technology",
+    "description": "Chime develops financial technology products for consumers. Its services include spending and savings tools offered through its banking partners.",
+    "sourceUrl": "https://chime.com/"
+  },
+  "duolingo.com": {
+    "tagline": "Language learning and education",
+    "description": "Duolingo develops digital learning products, including its language learning application. Its services use interactive lessons and practice exercises to support education.",
+    "sourceUrl": "https://duolingo.com/"
+  },
+  "faire.com": {
+    "tagline": "Wholesale marketplace for retailers",
+    "description": "Faire operates a wholesale marketplace connecting independent retailers with brands. Its platform helps businesses discover products and manage wholesale orders.",
+    "sourceUrl": "https://faire.com/"
+  },
+  "rubrik.com": {
+    "tagline": "Data security and recovery",
+    "description": "Rubrik provides data security and recovery software for organizations. Its platform supports backup, cyber recovery, and protection of enterprise data.",
+    "sourceUrl": "https://rubrik.com/"
+  },
+  "flexport.com": {
+    "tagline": "Global logistics and freight technology",
+    "description": "Flexport provides logistics services and technology for international trade. Its offerings help businesses manage freight, customs, and supply chain operations.",
+    "sourceUrl": "https://flexport.com/"
+  },
+  "samsara.com": {
+    "tagline": "Connected operations and IoT",
+    "description": "Samsara provides technology for connected operations using data from vehicles, equipment, and other physical assets. Its platform helps organizations manage fleets, safety, and operational workflows.",
+    "sourceUrl": "https://samsara.com/"
+  },
+  "toasttab.com": {
+    "tagline": "Restaurant technology and payments",
+    "description": "Toast provides a technology platform for restaurants. Its products support point-of-sale operations, payments, digital ordering, and restaurant management.",
+    "sourceUrl": "https://toasttab.com/"
+  },
+  "stackadapt.com": {
+    "tagline": "Advertising technology",
+    "description": "StackAdapt provides an advertising platform for planning and running digital campaigns. Its tools support audience targeting, campaign management, and measurement across advertising channels.",
+    "sourceUrl": "https://stackadapt.com/"
+  },
+  "vercel.com": {
+    "tagline": "Web application development and hosting",
+    "description": "Vercel provides a platform for developing and deploying web applications. Its tools support frontend development, hosting, and application delivery.",
+    "sourceUrl": "https://vercel.com/"
+  },
+  "notion.so": {
+    "tagline": "Collaborative workspaces and knowledge tools",
+    "description": "Notion provides a workspace for notes, documents, knowledge, and projects. Teams use its tools to organize information and collaborate on their work.",
+    "sourceUrl": "https://notion.so/"
+  },
+  "plaid.com": {
+    "tagline": "Financial data connectivity",
+    "description": "Plaid provides technology that connects applications with financial accounts. Its products help developers build services using financial data and payment capabilities.",
+    "sourceUrl": "https://plaid.com/"
+  },
+  "cohere.com": {
+    "tagline": "Enterprise AI and language models",
+    "description": "Cohere develops AI models and products for enterprise use. Its offerings help organizations work with language, search information, and build AI applications.",
+    "sourceUrl": "https://cohere.com/"
+  },
+  "wealthsimple.com": {
+    "tagline": "Digital investing and financial services",
+    "description": "Wealthsimple provides digital financial services in Canada. Its products help people invest, trade, save, and manage their financial lives through online and mobile tools.",
+    "sourceUrl": "https://wealthsimple.com/"
+  },
+  "1password.com": {
+    "tagline": "Password and credential management",
+    "description": "1Password develops tools for managing passwords, credentials, and access. Its products support individuals, developers, and businesses in protecting their accounts and sensitive information.",
+    "sourceUrl": "https://1password.com/"
+  },
+  "waabi.ai": {
+    "tagline": "Autonomous trucking and AI",
+    "description": "Waabi develops autonomous driving technology focused on trucking. Its approach uses AI and simulation to build and test driving systems.",
+    "sourceUrl": "https://waabi.ai/"
+  },
+  "pointclickcare.com": {
+    "tagline": "Healthcare software and coordination",
+    "description": "PointClickCare provides cloud software for healthcare organizations. Its products support care coordination, clinical workflows, and operations across healthcare settings.",
+    "sourceUrl": "https://pointclickcare.com/"
+  },
+  "sentry.io": {
+    "tagline": "Application monitoring and debugging",
+    "description": "Sentry provides tools for monitoring application errors and performance. Developers use its platform to diagnose problems and improve software reliability.",
+    "sourceUrl": "https://sentry.io/"
+  },
+  "sourcegraph.com": {
+    "tagline": "Code search and developer tools",
+    "description": "Sourcegraph develops tools that help software teams search and understand code. Its products support navigation and development across large codebases.",
+    "sourceUrl": "https://sourcegraph.com/"
+  },
+  "replit.com": {
+    "tagline": "Application creation and development tools",
+    "description": "Replit provides a platform for building and running software applications. Its tools support coding, AI-assisted development, collaboration, and deployment.",
+    "sourceUrl": "https://replit.com/"
+  },
+  "render.com": {
+    "tagline": "Cloud application hosting",
+    "description": "Render provides cloud infrastructure for deploying applications and services. Its platform supports web services, databases, and other application workloads.",
+    "sourceUrl": "https://render.com/"
+  },
+  "planetscale.com": {
+    "tagline": "Managed database infrastructure",
+    "description": "PlanetScale provides managed database services for applications. Its tools help teams operate databases and manage database changes.",
+    "sourceUrl": "https://planetscale.com/"
+  },
+  "webflow.com": {
+    "tagline": "Website design and development",
+    "description": "Webflow provides a platform for designing and publishing websites. Its tools support visual development, content management, and website operations.",
+    "sourceUrl": "https://webflow.com/"
+  },
+  "grafana.com": {
+    "tagline": "Observability and monitoring",
+    "description": "Grafana Labs develops observability tools for understanding applications and infrastructure. Its products support dashboards, metrics, logs, and tracing.",
+    "sourceUrl": "https://grafana.com/"
+  },
+  "mistral.ai": {
+    "tagline": "AI models and applications",
+    "description": "Mistral AI develops AI models and products for organizations and developers. Its offerings include language models and tools for building AI applications.",
+    "sourceUrl": "https://mistral.ai/"
+  },
+  "runwayml.com": {
+    "tagline": "Generative AI for creative work",
+    "description": "Runway develops generative AI tools for creative work. Its products support video generation, editing, and other media creation workflows.",
+    "sourceUrl": "https://runwayml.com/"
+  },
+  "anyscale.com": {
+    "tagline": "Scalable AI compute and Ray",
+    "description": "Anyscale provides infrastructure for developing and running AI workloads. Its platform is built around Ray and helps teams scale distributed computing applications.",
+    "sourceUrl": "https://anyscale.com/"
+  },
+  "stability.ai": {
+    "tagline": "Generative AI models and tools",
+    "description": "Stability AI develops generative AI models and tools for creating media. Its technology supports image generation and other creative applications.",
+    "sourceUrl": "https://stability.ai/"
+  },
+  "monzo.com": {
+    "tagline": "Digital banking",
+    "description": "Monzo provides banking services through digital and mobile products. Its tools help customers manage spending, saving, and other banking activities.",
+    "sourceUrl": "https://monzo.com/"
+  },
+  "carta.com": {
+    "tagline": "Equity and private-market software",
+    "description": "Carta provides software and services for equity management and private markets. Its products support ownership records, valuations, and investment administration.",
+    "sourceUrl": "https://carta.com/"
+  },
+  "mercury.com": {
+    "tagline": "Business financial technology",
+    "description": "Mercury provides financial technology products for businesses. Its offerings include banking interfaces and financial workflow tools delivered with banking partners.",
+    "sourceUrl": "https://mercury.com/"
+  },
+  "microsoft.com": {
+    "tagline": "Software, cloud services, and devices",
+    "description": "Microsoft develops software, cloud platforms, and computing products. Its offerings include business productivity tools, Azure cloud services, operating systems, and developer tools.",
+    "sourceUrl": "https://microsoft.com/"
+  },
+  "google.com": {
+    "tagline": "Search, cloud, and digital services",
+    "description": "Google develops internet services, software, and computing technology. Its offerings include search, advertising, Android, productivity tools, and Google Cloud.",
+    "sourceUrl": "https://google.com/"
+  },
+  "amazon.com": {
+    "tagline": "Online commerce and cloud services",
+    "description": "Amazon operates businesses in online commerce, cloud computing, and digital services. Its offerings include retail marketplaces and Amazon Web Services for organizations and developers.",
+    "sourceUrl": "https://amazon.com/"
+  },
+  "spacex.com": {
+    "tagline": "Space launch and satellite technology",
+    "description": "SpaceX develops spacecraft, launch systems, and satellite technology. Its businesses include space transportation and the Starlink satellite connectivity service.",
+    "sourceUrl": "https://spacex.com/"
+  },
+  "meta.com": {
+    "tagline": "Social platforms and computing technology",
+    "description": "Meta develops social platforms and computing technology. Its products include Facebook, Instagram, WhatsApp, and virtual and augmented reality offerings.",
+    "sourceUrl": "https://meta.com/"
+  },
+  "shopify.com": {
+    "tagline": "Commerce software for businesses",
+    "description": "Shopify provides software and services that help businesses sell products. Its platform supports online stores, retail operations, payments, and commerce workflows.",
+    "sourceUrl": "https://shopify.com/"
+  },
+  "apple.com": {
+    "tagline": "Consumer devices, software, and services",
+    "description": "Apple designs consumer computing devices and related software and services. Its products include iPhone, Mac, iPad, and digital services.",
+    "sourceUrl": "https://apple.com/"
+  },
+  "netflix.com": {
+    "tagline": "Streaming entertainment",
+    "description": "Netflix provides a subscription entertainment service for films, series, and other programming. Its business includes creating, licensing, and distributing entertainment content.",
+    "sourceUrl": "https://netflix.com/"
+  },
+  "airbnb.com": {
+    "tagline": "Travel and accommodation marketplace",
+    "description": "Airbnb operates a marketplace connecting guests with hosts offering accommodation and experiences. Its platform supports discovery, booking, and travel-related services.",
+    "sourceUrl": "https://airbnb.com/"
+  },
+  "uber.com": {
+    "tagline": "Mobility and delivery platforms",
+    "description": "Uber provides platforms for mobility, delivery, and logistics. Its services connect riders, drivers, consumers, merchants, and delivery providers.",
+    "sourceUrl": "https://uber.com/"
+  },
+  "github.com": {
+    "tagline": "Software collaboration and developer tools",
+    "description": "GitHub provides a platform for hosting code and collaborating on software. Its products support version control, development workflows, automation, and AI-assisted coding.",
+    "sourceUrl": "https://github.com/"
+  },
+  "slack.com": {
+    "tagline": "Workplace communication software",
+    "description": "Slack provides communication software for organizations. Its products help teams collaborate through channels, messages, and integrations with other work tools.",
+    "sourceUrl": "https://slack.com/"
+  },
+  "atlassian.com": {
+    "tagline": "Team collaboration and software tools",
+    "description": "Atlassian develops software for collaboration and work management. Its products include Jira and Confluence for planning projects and organizing team knowledge.",
+    "sourceUrl": "https://atlassian.com/"
+  },
+  "discord.com": {
+    "tagline": "Online communication and communities",
+    "description": "Discord provides communication tools for communities and groups. Its platform supports text, voice, and video conversations.",
+    "sourceUrl": "https://discord.com/"
+  },
+  "asana.com": {
+    "tagline": "Work and project management",
+    "description": "Asana provides software for organizing and coordinating work. Teams use its platform to manage projects, tasks, and shared goals.",
+    "sourceUrl": "https://asana.com/"
+  },
+  "hashicorp.com": {
+    "tagline": "Cloud infrastructure automation",
+    "description": "HashiCorp develops tools for automating cloud infrastructure and security workflows. Its products support infrastructure provisioning, secrets management, and other platform operations.",
+    "sourceUrl": "https://hashicorp.com/"
+  },
+  "snowflake.com": {
+    "tagline": "Cloud data platforms",
+    "description": "Snowflake provides a cloud platform for storing, processing, and analyzing data. Its services support data engineering, analytics, sharing, and AI workloads.",
+    "sourceUrl": "https://snowflake.com/"
+  },
+  "mongodb.com": {
+    "tagline": "Database platforms and developer tools",
+    "description": "MongoDB develops a document database and related application data tools. Its offerings support database development and managed cloud database operations.",
+    "sourceUrl": "https://mongodb.com/"
+  },
+  "elastic.co": {
+    "tagline": "Search, security, and observability",
+    "description": "Elastic provides software for search, observability, and security. Its products help organizations find information and analyze operational and security data.",
+    "sourceUrl": "https://elastic.co/"
+  },
+  "zoom.us": {
+    "tagline": "Communication and collaboration software",
+    "description": "Zoom provides software for communication and collaboration. Its offerings include video meetings, messaging, phone services, and customer engagement tools.",
+    "sourceUrl": "https://zoom.us/"
+  },
+  "x.com": {
+    "tagline": "Social conversation and content platform",
+    "description": "X operates a social platform for publishing content and participating in public conversations. Its service supports messages, media, and creator and advertising features.",
+    "sourceUrl": "https://x.com/"
+  },
+  "doordash.com": {
+    "tagline": "Local commerce and delivery",
+    "description": "DoorDash operates a platform for local commerce and delivery. Its services connect consumers with restaurants, retailers, and delivery providers.",
+    "sourceUrl": "https://doordash.com/"
+  },
+  "salesforce.com": {
+    "tagline": "Customer relationship management software",
+    "description": "Salesforce provides cloud software for customer relationships and business operations. Its products support sales, service, marketing, data, and application development.",
+    "sourceUrl": "https://salesforce.com/"
+  },
+  "adobe.com": {
+    "tagline": "Creative and document software",
+    "description": "Adobe develops software for creative work, digital documents, and customer experiences. Its products support design, media production, document workflows, and marketing.",
+    "sourceUrl": "https://adobe.com/"
+  },
+  "intel.com": {
+    "tagline": "Semiconductors and computing technology",
+    "description": "Intel develops semiconductor products and computing technology. Its offerings include processors and related technologies for personal computing and data infrastructure.",
+    "sourceUrl": "https://intel.com/"
+  },
+  "cisco.com": {
+    "tagline": "Networking and security technology",
+    "description": "Cisco provides networking, security, and collaboration technology. Its products help organizations connect users, devices, applications, and infrastructure.",
+    "sourceUrl": "https://cisco.com/"
+  },
+  "oracle.com": {
+    "tagline": "Enterprise software and cloud infrastructure",
+    "description": "Oracle provides enterprise software, databases, and cloud infrastructure. Its products support business operations, application development, and data management.",
+    "sourceUrl": "https://oracle.com/"
+  },
+  "paypal.com": {
+    "tagline": "Digital payments",
+    "description": "PayPal provides digital payment services for consumers and businesses. Its products support online transactions, merchant payments, and other financial activities.",
+    "sourceUrl": "https://paypal.com/"
+  },
+  "snap.com": {
+    "tagline": "Social communication and augmented reality",
+    "description": "Snap develops social communication and augmented reality products. Its offerings include Snapchat and tools for creating and sharing visual experiences.",
+    "sourceUrl": "https://snap.com/"
+  },
+  "lyft.com": {
+    "tagline": "Ride-hailing and transportation",
+    "description": "Lyft provides transportation services through a digital platform. Its offerings connect riders with drivers and support other mobility services.",
+    "sourceUrl": "https://lyft.com/"
+  },
+  "squareup.com": {
+    "tagline": "Commerce and payment tools",
+    "description": "Square provides commerce technology for businesses. Its products include payment processing, point-of-sale systems, and business management tools.",
+    "sourceUrl": "https://squareup.com/"
+  },
+  "block.xyz": {
+    "tagline": "Financial and commerce technology",
+    "description": "Block develops financial and commerce technology through businesses including Square and Cash App. Its products serve businesses and consumers.",
+    "sourceUrl": "https://block.xyz/"
+  },
+  "box.com": {
+    "tagline": "Cloud content management",
+    "description": "Box provides cloud software for managing and collaborating on content. Its products support document workflows, security, and business collaboration.",
+    "sourceUrl": "https://box.com/"
+  },
+  "dropbox.com": {
+    "tagline": "File storage and collaboration",
+    "description": "Dropbox provides tools for storing, sharing, and working with digital files. Its products support collaboration and document workflows.",
+    "sourceUrl": "https://dropbox.com/"
+  },
+  "twilio.com": {
+    "tagline": "Customer communication APIs",
+    "description": "Twilio provides technology for digital customer communications. Its APIs and software support messaging, voice, and customer engagement applications.",
+    "sourceUrl": "https://twilio.com/"
+  },
+  "hubspot.com": {
+    "tagline": "Customer and marketing software",
+    "description": "HubSpot provides software for customer relationships and business growth. Its products support marketing, sales, service, and content management.",
+    "sourceUrl": "https://hubspot.com/"
+  },
+  "okta.com": {
+    "tagline": "Identity and access management",
+    "description": "Okta provides identity and access management technology. Its products help organizations manage authentication and secure access to applications.",
+    "sourceUrl": "https://okta.com/"
+  },
+  "workday.com": {
+    "tagline": "Enterprise finance and HR software",
+    "description": "Workday provides cloud software for enterprise finance and human resources. Its products support workforce management, financial operations, and business planning.",
+    "sourceUrl": "https://workday.com/"
+  },
+  "servicenow.com": {
+    "tagline": "Enterprise workflow software",
+    "description": "ServiceNow provides software for digital business workflows. Its platform supports IT services, employee processes, and customer operations.",
+    "sourceUrl": "https://servicenow.com/"
+  },
+  "braze.com": {
+    "tagline": "Customer engagement software",
+    "description": "Braze provides a platform for communicating with customers across digital channels. Its products support messaging, personalization, and engagement campaigns.",
+    "sourceUrl": "https://braze.com/"
+  },
+  "bell.ca": {
+    "tagline": "Telecommunications and connectivity",
+    "description": "Bell provides telecommunications services in Canada. Its offerings include wireless, internet, business communications, and media services.",
+    "sourceUrl": "https://bell.ca/"
+  },
+  "rogers.com": {
+    "tagline": "Telecommunications and media",
+    "description": "Rogers provides telecommunications and media services in Canada. Its offerings include wireless connectivity, internet services, and business communications.",
+    "sourceUrl": "https://rogers.com/"
+  },
+  "scotiabank.com": {
+    "tagline": "Banking and financial services",
+    "description": "Scotiabank provides banking and financial services for individuals, businesses, and institutions. Its operations include personal and commercial banking, wealth management, and capital markets.",
+    "sourceUrl": "https://scotiabank.com/"
+  },
+  "telus.com": {
+    "tagline": "Connectivity and digital services",
+    "description": "TELUS provides telecommunications and digital services. Its businesses include connectivity, business technology, and health-related digital services.",
+    "sourceUrl": "https://telus.com/"
+  },
+  "clio.com": {
+    "tagline": "Legal practice management software",
+    "description": "Clio provides software for legal professionals and law firms. Its products support practice management, client relationships, billing, and other legal workflows.",
+    "sourceUrl": "https://clio.com/"
+  },
+  "eqbank.ca": {
+    "tagline": "Digital banking",
+    "description": "EQ Bank provides digital banking services in Canada. Its products support saving, payments, and other consumer banking activities.",
+    "sourceUrl": "https://eqbank.ca/"
+  },
+  "rbc.com": {
+    "tagline": "Banking and financial services",
+    "description": "RBC provides financial services for individuals, businesses, and institutions. Its operations include personal and commercial banking, wealth management, insurance, and capital markets.",
+    "sourceUrl": "https://rbc.com/"
+  },
+  "td.com": {
+    "tagline": "Banking and financial services",
+    "description": "TD provides banking and financial services in Canada and the United States. Its businesses include personal and commercial banking, wealth management, and capital markets.",
+    "sourceUrl": "https://td.com/"
+  },
+  "bmo.com": {
+    "tagline": "Banking and financial services",
+    "description": "BMO provides financial services for individuals, businesses, and institutions. Its operations include personal and commercial banking, wealth management, and capital markets.",
+    "sourceUrl": "https://bmo.com/"
+  },
+  "cibc.com": {
+    "tagline": "Banking and financial services",
+    "description": "CIBC provides banking and financial services for consumers, businesses, and institutions. Its operations include personal and business banking, wealth management, and capital markets.",
+    "sourceUrl": "https://cibc.com/"
+  },
+  "manulife.com": {
+    "tagline": "Insurance and wealth management",
+    "description": "Manulife provides insurance, financial advice, and wealth and asset management services. Its businesses serve individuals, organizations, and institutional clients.",
+    "sourceUrl": "https://manulife.com/"
+  },
+  "sunlife.com": {
+    "tagline": "Insurance and asset management",
+    "description": "Sun Life provides insurance and asset management services. Its products support financial protection, health benefits, retirement, and investment needs.",
+    "sourceUrl": "https://sunlife.com/"
+  },
+  "otpp.com": {
+    "tagline": "Pension administration and investment",
+    "description": "Ontario Teachers' Pension Plan administers a pension plan for Ontario teachers and invests its assets. Its investment activities span multiple asset classes and markets.",
+    "sourceUrl": "https://otpp.com/"
+  },
+  "thomsonreuters.com": {
+    "tagline": "Professional information and software",
+    "description": "Thomson Reuters provides information and software for professionals. Its products support legal, tax, accounting, and other business workflows.",
+    "sourceUrl": "https://thomsonreuters.com/"
+  },
+  "autodesk.com": {
+    "tagline": "Design and engineering software",
+    "description": "Autodesk develops software for design, engineering, construction, and media production. Its tools help people create and manage digital models and designs.",
+    "sourceUrl": "https://autodesk.com/"
+  },
+  "nvidia.com": {
+    "tagline": "Accelerated computing and AI",
+    "description": "NVIDIA develops accelerated computing technology, including GPUs and related software. Its products support AI, graphics, data infrastructure, and other computing workloads.",
+    "sourceUrl": "https://nvidia.com/"
+  },
+  "arcticwolf.com": {
+    "tagline": "Security operations and cyber protection",
+    "description": "Arctic Wolf provides cybersecurity services and technology for organizations. Its offerings support security monitoring, threat detection, and incident response.",
+    "sourceUrl": "https://arcticwolf.com/"
+  },
+  "geotab.com": {
+    "tagline": "Connected vehicles and fleet analytics",
+    "description": "Geotab provides connected vehicle technology and fleet management software. Its products help organizations analyze vehicle data and manage fleet operations.",
+    "sourceUrl": "https://geotab.com/"
+  },
+  "d2l.com": {
+    "tagline": "Learning platforms and education software",
+    "description": "D2L develops software for education and workplace learning. Its Brightspace platform supports teaching, learning, and course administration.",
+    "sourceUrl": "https://d2l.com/"
+  },
+  "hootsuite.com": {
+    "tagline": "Social media management",
+    "description": "Hootsuite provides software for managing social media activity. Its tools support content publishing, engagement, analytics, and social media workflows.",
+    "sourceUrl": "https://hootsuite.com/"
+  },
+  "aws.amazon.com": {
+    "tagline": "Cloud computing infrastructure",
+    "description": "Amazon Web Services provides cloud computing services for organizations and developers. Its offerings include computing, storage, databases, analytics, and application infrastructure.",
+    "sourceUrl": "https://aws.amazon.com/"
+  }
+}

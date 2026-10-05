@@ -1,0 +1,229 @@
+{
+ "_comment": "Shared by tests/test_pay_rules.py and frontend/tests/data-audit-pay.test.ts: the pay plausibility rules must agree in Python, TypeScript and SQL.",
+ "cases": [
+  {
+   "min": 1,
+   "max": 2,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "placeholder"
+  },
+  {
+   "min": 1,
+   "max": 2,
+   "currency": "USD",
+   "interval": null,
+   "problem": "placeholder"
+  },
+  {
+   "min": 38,
+   "max": 58,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "below_floor"
+  },
+  {
+   "min": 38,
+   "max": 58,
+   "currency": "USD",
+   "interval": null,
+   "problem": null
+  },
+  {
+   "min": 40,
+   "max": 40,
+   "currency": "CAD",
+   "interval": "hour",
+   "problem": null
+  },
+  {
+   "min": 60,
+   "max": 60,
+   "currency": "USD",
+   "interval": null,
+   "problem": null
+  },
+  {
+   "min": 152405,
+   "max": 179300152,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "above_ceiling"
+  },
+  {
+   "min": 179300152,
+   "max": null,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "above_ceiling"
+  },
+  {
+   "min": 3000001,
+   "max": 3000001,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "above_ceiling"
+  },
+  {
+   "min": 3000000,
+   "max": 3000000,
+   "currency": "USD",
+   "interval": "year",
+   "problem": null
+  },
+  {
+   "min": 1000,
+   "max": 5000,
+   "currency": "USD",
+   "interval": "year",
+   "problem": null
+  },
+  {
+   "min": 100000,
+   "max": 1100000,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "extreme_spread"
+  },
+  {
+   "min": 100000,
+   "max": 1000000,
+   "currency": "USD",
+   "interval": "year",
+   "problem": null
+  },
+  {
+   "min": 5,
+   "max": 10,
+   "currency": "USD",
+   "interval": "hour",
+   "problem": null
+  },
+  {
+   "min": 4,
+   "max": 8,
+   "currency": "USD",
+   "interval": "hour",
+   "problem": "placeholder"
+  },
+  {
+   "min": 12500,
+   "max": 12500,
+   "currency": "USD",
+   "interval": "month",
+   "problem": null
+  },
+  {
+   "min": 99,
+   "max": 99,
+   "currency": "USD",
+   "interval": "month",
+   "problem": "below_floor"
+  },
+  {
+   "min": 200000,
+   "max": 100000,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "inverted"
+  },
+  {
+   "min": null,
+   "max": null,
+   "currency": "USD",
+   "interval": "year",
+   "problem": "no_amount"
+  },
+  {
+   "min": 1,
+   "max": 2,
+   "currency": "JPY",
+   "interval": "year",
+   "problem": null
+  },
+  {
+   "min": 230000,
+   "max": 322000,
+   "currency": "USD",
+   "interval": null,
+   "problem": null
+  },
+  {
+   "min": 1500,
+   "max": 1500,
+   "currency": "USD",
+   "interval": "hour",
+   "problem": null
+  },
+  {
+   "min": 1501,
+   "max": 1501,
+   "currency": "USD",
+   "interval": "hour",
+   "problem": "above_ceiling"
+  },
+  {
+   "min": 60000,
+   "max": 60000,
+   "currency": "USD",
+   "interval": "week",
+   "problem": null
+  },
+  {
+   "min": 60001,
+   "max": 60001,
+   "currency": "USD",
+   "interval": "week",
+   "problem": "above_ceiling"
+  },
+  {
+   "min": 12000,
+   "max": 12000,
+   "currency": "USD",
+   "interval": "day",
+   "problem": null
+  },
+  {
+   "min": 12001,
+   "max": 12001,
+   "currency": "USD",
+   "interval": "day",
+   "problem": "above_ceiling"
+  },
+  {
+   "min": 250000,
+   "max": 250000,
+   "currency": "USD",
+   "interval": "month",
+   "problem": null
+  },
+  {
+   "min": 250001,
+   "max": 250001,
+   "currency": "USD",
+   "interval": "month",
+   "problem": "above_ceiling"
+  },
+  {
+   "min": 24,
+   "max": 24,
+   "currency": "GBP",
+   "interval": "hour",
+   "problem": null
+  },
+  {
+   "min": 50000,
+   "max": 50000,
+   "currency": "EUR",
+   "interval": "year",
+   "problem": null
+  },
+  {
+   "min": 30.74,
+   "max": 30.74,
+   "currency": "USD",
+   "interval": null,
+   "problem": null
+  }
+ ]
+}

@@ -1,0 +1,59 @@
+{
+  "0-legal-notice": "Remotive API is free for personal use and non-commercial projects. Attribution required.",
+  "job-count": 4,
+  "total-job-count": 4,
+  "jobs": [
+    {
+      "id": 2001,
+      "url": "https://remotive.com/remote-jobs/software-development/senior-python-engineer-2001",
+      "title": "Senior Python Engineer",
+      "company_name": "Doist",
+      "company_logo": "https://remotive.com/logo/doist.png",
+      "category": "Software Development",
+      "job_type": "full_time",
+      "publication_date": "2026-09-25T12:00:00",
+      "candidate_required_location": "USA, Canada",
+      "salary": "$130k - $160k",
+      "description": "<p>We are looking for a Senior Python Engineer to work on our backend infrastructure.</p>"
+    },
+    {
+      "id": 2002,
+      "url": "https://remotive.com/remote-jobs/software-development/software-developer-co-op-2002",
+      "title": "Software Developer Co-op",
+      "company_name": "Shopify",
+      "company_logo": "https://remotive.com/logo/shopify.png",
+      "category": "Software Development",
+      "job_type": "internship",
+      "publication_date": "2026-09-24T09:30:00",
+      "candidate_required_location": "Canada Remote",
+      "salary": "",
+      "description": "<p>Join Shopify as a software developer co-op student for Fall 2026.</p>"
+    },
+    {
+      "id": 2003,
+      "url": "https://remotive.com/remote-jobs/software-development/marketing-manager-2003",
+      "title": "Growth Marketing Manager",
+      "company_name": "RemoteFirst",
+      "company_logo": "",
+      "category": "Marketing",
+      "job_type": "full_time",
+      "publication_date": "2026-09-20T11:00:00",
+      "candidate_required_location": "Worldwide",
+      "salary": "",
+      "description": "<p>Lead growth marketing campaigns.</p>"
+    },
+    {
+      "id": 2004,
+      "url": "https://remotive.com/remote-jobs/software-development/mlops-engineer-2004",
+      "title": "MLOps Engineer",
+      "company_name": "Hugging Face",
+      "company_logo": "https://remotive.com/logo/hf.png",
+      "category": "Software Development",
+      "job_type": "full_time",
+      "publication_date": "2026-09-25T16:00:00",
+      "candidate_required_location": "USA, United States",
+      "salary": "",
+      "description": "<p>Build ML deployment infrastructure and CI/CD pipelines.</p>"
+    }
+  ]
+}

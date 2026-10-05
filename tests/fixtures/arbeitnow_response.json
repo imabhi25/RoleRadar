@@ -1,0 +1,52 @@
+{
+  "data": [
+    {
+      "slug": "senior-frontend-engineer-berlin-12345",
+      "company_name": "Delivery Hero",
+      "title": "Senior Frontend Engineer",
+      "description": "<p>We are seeking a Senior Frontend Engineer to join our web team.</p>",
+      "remote": true,
+      "url": "https://www.arbeitnow.com/jobs/companies/delivery-hero/senior-frontend-engineer-berlin-12345",
+      "tags": ["React", "TypeScript", "Frontend"],
+      "job_types": ["Full Time"],
+      "location": "Berlin, Germany",
+      "created_at": 1727280000
+    },
+    {
+      "slug": "analytics-engineer-remote-67890",
+      "company_name": "N26",
+      "title": "Analytics Engineer",
+      "description": "<p>Transform data into insights with SQL and dbt.</p>",
+      "remote": true,
+      "url": "https://www.arbeitnow.com/jobs/companies/n26/analytics-engineer-remote-67890",
+      "tags": ["SQL", "Python", "Data"],
+      "job_types": ["Full Time"],
+      "location": "Berlin",
+      "created_at": 1727193600
+    },
+    {
+      "slug": "office-manager-berlin-99999",
+      "company_name": "Zalando",
+      "title": "Office Manager",
+      "description": "<p>Manage office logistics and supplies.</p>",
+      "remote": false,
+      "url": "https://www.arbeitnow.com/jobs/companies/zalando/office-manager-berlin-99999",
+      "tags": ["Administration"],
+      "job_types": ["Full Time"],
+      "location": "Berlin, Germany",
+      "created_at": 1727107200
+    }
+  ],
+  "links": {
+    "first": "https://www.arbeitnow.com/api/job-board-api?page=1",
+    "last": "https://www.arbeitnow.com/api/job-board-api?page=10",
+    "prev": null,
+    "next": "https://www.arbeitnow.com/api/job-board-api?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "to": 3,
+    "total": 30
+  }
+}

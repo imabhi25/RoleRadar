@@ -1,0 +1,41 @@
+[
+  {
+    "id": "lev-001",
+    "text": "Full Stack Engineer",
+    "categories": {
+      "location": "Toronto, Canada",
+      "workplaceType": "hybrid",
+      "department": "Engineering"
+    },
+    "hostedUrl": "https://jobs.lever.co/spotify/lev-001",
+    "applyUrl": "https://jobs.lever.co/spotify/lev-001/apply",
+    "description": "<p>Develop features using TypeScript and React.</p>",
+    "createdAt": 1672531199000
+  },
+  {
+    "id": "lev-002",
+    "text": "Data Platform Engineer",
+    "categories": {},
+    "hostedUrl": "https://jobs.lever.co/spotify/lev-002",
+    "descriptionPlain": "Build data pipelines with Python and SQL.",
+    "createdAt": null
+  },
+  {
+    "id": "lev-003",
+    "text": null,
+    "categories": {
+      "location": "Remote"
+    }
+  },
+  {
+    "id": "lev-004",
+    "text": "Sales Director",
+    "categories": {
+      "location": "New York, NY",
+      "workplaceType": "on-site"
+    },
+    "hostedUrl": "https://jobs.lever.co/spotify/lev-004",
+    "description": "<p>Enterprise sales</p>",
+    "createdAt": 1680000000000
+  }
+]

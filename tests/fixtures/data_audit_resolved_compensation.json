@@ -1,0 +1,263 @@
+{
+ "greenhouse:8177946": {
+  "max": 179300152.0,
+  "min": 152405.0,
+  "source": "greenhouse",
+  "currency": "USD",
+  "interval": "year",
+  "compensationTierSummary": "$152.4K – $179300.2K",
+  "validation": {
+   "status": "above_ceiling"
+  }
+ },
+ "greenhouse:5428950008": {
+  "max": 2.0,
+  "min": 1.0,
+  "source": "greenhouse",
+  "currency": "USD",
+  "interval": "year",
+  "compensationTierSummary": "$1 – $2",
+  "validation": {
+   "status": "placeholder"
+  }
+ },
+ "greenhouse:8223645": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 113645.0,
+    "max": 191000.0,
+    "symbol": "$",
+    "interval": "year",
+    "qualifier": "for the US",
+    "scope": "all"
+   },
+   {
+    "min": 106675.0,
+    "max": 138050.0,
+    "symbol": "$",
+    "interval": "year",
+    "qualifier": "for Canada",
+    "scope": "none"
+   }
+  ],
+  "evidence": "$113,645 - $191,000 for the US and $106,675 - $138,050 for Canada.",
+  "compensationTierSummary": "$113.6K – $191K · $106.7K – $138.1K · Multiple ranges",
+  "source_structured": {
+   "max": 2.0,
+   "min": 1.0,
+   "source": "greenhouse",
+   "currency": "USD",
+   "interval": "year",
+   "compensationTierSummary": "$1 – $2"
+  }
+ },
+ "greenhouse:8226602": {
+  "max": 58.0,
+  "min": 38.0,
+  "source": "greenhouse",
+  "currency": "USD",
+  "interval": "year",
+  "compensationTierSummary": "$38 – $58",
+  "validation": {
+   "status": "below_floor"
+  }
+ },
+ "greenhouse:8199744": {
+  "max": 40.0,
+  "min": 40.0,
+  "source": "greenhouse",
+  "currency": "CAD",
+  "compensationTierSummary": "CA$40",
+  "interval": "hour",
+  "interval_source": "posting_text"
+ },
+ "greenhouse:8250389": {
+  "max": 322000.0,
+  "min": 230000.0,
+  "source": "greenhouse",
+  "currency": "USD",
+  "compensationTierSummary": "$230K – $322K"
+ },
+ "workday:XMLNAME-2027-Spring-Co-op---Global-Technology---Solutions---Data-Engineer_R_1510111": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 30.74,
+    "max": 30.74,
+    "currency": "USD",
+    "symbol": "$"
+   }
+  ],
+  "evidence": "$30.74 - $30.74 USD",
+  "min": 30.74,
+  "max": 30.74,
+  "currency": "USD",
+  "compensationTierSummary": "$30.74"
+ },
+ "workday:Data-Scientist-II_R_1514106": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 81600.0,
+    "max": 115200.0,
+    "currency": "CAD",
+    "symbol": "$"
+   }
+  ],
+  "evidence": "$81,600 - $115,200 CAD",
+  "min": 81600.0,
+  "max": 115200.0,
+  "currency": "CAD",
+  "compensationTierSummary": "CA$81.6K – CA$115.2K"
+ },
+ "workday:Senior-Compute-Platform-Engineer--LSF-_JR2023960": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 184000.0,
+    "max": 287500.0,
+    "currency": "USD",
+    "label": "for Level 4"
+   },
+   {
+    "min": 224000.0,
+    "max": 356500.0,
+    "currency": "USD",
+    "label": "for Level 5"
+   }
+  ],
+  "evidence": "The base salary range is 184,000 USD - 287,500 USD for Level 4, and 224,000 USD - 356,500 USD for Level 5.",
+  "min": 184000.0,
+  "max": 356500.0,
+  "currency": "USD",
+  "compensationTierSummary": "$184K – $356.5K · Multiple ranges"
+ },
+ "greenhouse:8238548": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 184000.0,
+    "max": 314079.0,
+    "symbol": "$",
+    "interval": "year",
+    "qualifier": "For candidates based in the United States",
+    "scope": "all"
+   }
+  ],
+  "evidence": "For candidates based in the United States, the pay range for this position at the start of employment is expected to be between $184,000 and $314,079 annually with an expected On Target Earnings (OTE) between $204,000 - $348,000/year (including bonus or commission).",
+  "min": 184000.0,
+  "max": 314079.0,
+  "symbol": "$",
+  "interval": "year",
+  "compensationTierSummary": "$184K – $314.1K"
+ },
+ "ashby:d82a0b31-59b8-4699-ae8d-6fb3fe47518c": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 150000.0,
+    "max": 168000.0,
+    "symbol": "$",
+    "interval": "year",
+    "qualifier": "For roles based in San Francisco",
+    "scope": "all"
+   }
+  ],
+  "evidence": "For roles based in San Francisco, the estimated base salary range for this role is $150,000 - $168,000 per year.",
+  "min": 150000.0,
+  "max": 168000.0,
+  "symbol": "$",
+  "interval": "year",
+  "compensationTierSummary": "$150K – $168K",
+  "source_structured": {
+   "compensationTiers": [],
+   "summaryComponents": [],
+   "compensationTierSummary": null,
+   "scrapeableCompensationSalarySummary": null
+  }
+ },
+ "workday:Principal-Engineer_JREQ199519": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 183100.0,
+    "max": 340000.0,
+    "currency": "USD",
+    "symbol": "$"
+   }
+  ],
+  "evidence": "The base compensation range for the role in any of those locations is $183,100 USD - $340,000 USD.",
+  "min": 183100.0,
+  "max": 340000.0,
+  "currency": "USD",
+  "compensationTierSummary": "$183.1K – $340K"
+ },
+ "greenhouse:6184992004": {
+  "source": "posting_text",
+  "ranges": [
+   {
+    "min": 200700.0,
+    "max": 250900.0,
+    "currency": "USD",
+    "symbol": "$",
+    "qualifier": "US employees (any location)",
+    "scope": "some"
+   },
+   {
+    "min": 189700.0,
+    "max": 237100.0,
+    "currency": "CAD",
+    "symbol": "$",
+    "qualifier": "Canadian employees (any location)",
+    "scope": "some"
+   }
+  ],
+  "evidence": "$200,700—$250,900 USD",
+  "compensationTierSummary": "$200.7K – $250.9K · CA$189.7K – CA$237.1K · Multiple ranges"
+ },
+ "greenhouse:8243997": {
+  "max": 267000.0,
+  "min": 174000.0,
+  "ranges": [
+   {
+    "max": 267000.0,
+    "min": 194000.0,
+    "label": "The annual base salary range for this position for candidates located in the San Francisco Bay area is between:"
+   },
+   {
+    "max": 239000.0,
+    "min": 174000.0,
+    "label": "The annual base salary range for this position for candidates located in California (excluding San Francisco Bay Area), Colorado, Illinois, New York, and Washington is between:"
+   }
+  ],
+  "source": "greenhouse",
+  "currency": "USD",
+  "interval": "year",
+  "compensationTierSummary": "$174K – $267K · Multiple ranges"
+ },
+ "greenhouse:8249493": {
+  "max": 299300.0,
+  "min": 137100.0,
+  "ranges": [
+   {
+    "max": 201600.0,
+    "min": 137100.0,
+    "label": "I4"
+   },
+   {
+    "max": 246800.0,
+    "min": 167800.0,
+    "label": "I5"
+   },
+   {
+    "max": 299300.0,
+    "min": 203500.0,
+    "label": "I6"
+   }
+  ],
+  "source": "greenhouse",
+  "currency": "USD",
+  "compensationTierSummary": "$137.1K – $299.3K · Multiple ranges"
+ }
+}

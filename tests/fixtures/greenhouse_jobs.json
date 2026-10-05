@@ -1,0 +1,42 @@
+{
+  "jobs": [
+    {
+      "id": 101,
+      "title": "Senior Backend Engineer",
+      "location": {
+        "name": "San Francisco, CA"
+      },
+      "absolute_url": "https://boards.greenhouse.io/figma/jobs/101",
+      "content": "<p>Build scalable microservices with Python and Docker.</p>",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": 102,
+      "title": "Frontend Developer",
+      "location": null,
+      "absolute_url": "https://boards.greenhouse.io/figma/jobs/102",
+      "content": "",
+      "updated_at": null
+    },
+    {
+      "id": null,
+      "title": "Malformed No ID Job"
+    },
+    {
+      "id": 103,
+      "title": "",
+      "location": {
+        "name": "New York, NY"
+      }
+    },
+    {
+      "id": 104,
+      "title": "Senior Technical Recruiter",
+      "location": {
+        "name": "Austin, TX"
+      },
+      "absolute_url": "https://boards.greenhouse.io/figma/jobs/104",
+      "content": "<p>Recruiting talent</p>"
+    }
+  ]
+}

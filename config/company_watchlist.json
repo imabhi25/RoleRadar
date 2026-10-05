@@ -1,0 +1,974 @@
+[
+  {
+    "company": "Figma",
+    "careers_url": "https://www.figma.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Cloudflare",
+    "careers_url": "https://www.cloudflare.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Datadog",
+    "careers_url": "https://www.datadoghq.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "GitLab",
+    "careers_url": "https://about.gitlab.com/jobs/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Spotify",
+    "careers_url": "https://www.lifeatspotify.com/jobs",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Palantir",
+    "careers_url": "https://www.palantir.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Neon",
+    "careers_url": "https://neon.tech/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Metabase",
+    "careers_url": "https://www.metabase.com/jobs/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Linear",
+    "careers_url": "https://linear.app/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Ramp",
+    "careers_url": "https://ramp.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Supabase",
+    "careers_url": "https://supabase.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Anthropic",
+    "careers_url": "https://www.anthropic.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "OpenAI",
+    "careers_url": "https://openai.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Stripe",
+    "careers_url": "https://stripe.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Databricks",
+    "careers_url": "https://www.databricks.com/company/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Robinhood",
+    "careers_url": "https://robinhood.com/us/en/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Scale AI",
+    "careers_url": "https://scale.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Reddit",
+    "careers_url": "https://www.redditinc.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Coinbase",
+    "careers_url": "https://www.coinbase.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Pinterest",
+    "careers_url": "https://www.pinterestcareers.com/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Brex",
+    "careers_url": "https://www.brex.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Chime",
+    "careers_url": "https://www.chime.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Duolingo",
+    "careers_url": "https://careers.duolingo.com/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Faire",
+    "careers_url": "https://www.faire.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Waabi",
+    "careers_url": "https://waabi.ai/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Rubrik",
+    "careers_url": "https://www.rubrik.com/company/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Flexport",
+    "careers_url": "https://www.flexport.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Samsara",
+    "careers_url": "https://www.samsara.com/company/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Toast",
+    "careers_url": "https://careers.toasttab.com/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Notion",
+    "careers_url": "https://www.notion.so/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Plaid",
+    "careers_url": "https://plaid.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Cohere",
+    "careers_url": "https://cohere.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Wealthsimple",
+    "careers_url": "https://www.wealthsimple.com/en-ca/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "PointClickCare",
+    "careers_url": "https://pointclickcare.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "StackAdapt",
+    "careers_url": "https://www.stackadapt.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Vercel",
+    "careers_url": "https://vercel.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "1Password",
+    "careers_url": "https://1password.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "HashiCorp",
+    "careers_url": "https://www.hashicorp.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Docker",
+    "careers_url": "https://www.docker.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Sentry",
+    "careers_url": "https://sentry.io/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Postman",
+    "careers_url": "https://www.postman.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Cockroach Labs",
+    "careers_url": "https://www.cockroachlabs.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Elastic",
+    "careers_url": "https://www.elastic.co/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "MongoDB",
+    "careers_url": "https://www.mongodb.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Confluent",
+    "careers_url": "https://www.confluent.io/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Snowflake",
+    "careers_url": "https://www.snowflake.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "GitHub",
+    "careers_url": "https://github.com/about/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Sourcegraph",
+    "careers_url": "https://about.sourcegraph.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Pulumi",
+    "careers_url": "https://www.pulumi.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Replit",
+    "careers_url": "https://replit.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Render",
+    "careers_url": "https://render.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "PlanetScale",
+    "careers_url": "https://planetscale.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Railway",
+    "careers_url": "https://railway.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Fly.io",
+    "careers_url": "https://fly.io/jobs/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Tailscale",
+    "careers_url": "https://tailscale.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Retool",
+    "careers_url": "https://retool.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Webflow",
+    "careers_url": "https://webflow.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Zapier",
+    "careers_url": "https://zapier.com/jobs/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Airtable",
+    "careers_url": "https://airtable.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "dbt Labs",
+    "careers_url": "https://www.getdbt.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Fivetran",
+    "careers_url": "https://www.fivetran.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Grafana Labs",
+    "careers_url": "https://grafana.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Hugging Face",
+    "careers_url": "https://huggingface.co/join-us",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Mistral AI",
+    "careers_url": "https://mistral.ai/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Perplexity",
+    "careers_url": "https://www.perplexity.ai/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Runway",
+    "careers_url": "https://runwayml.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Weights & Biases",
+    "careers_url": "https://wandb.ai/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Anyscale",
+    "careers_url": "https://www.anyscale.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Midjourney",
+    "careers_url": "https://www.midjourney.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Stability AI",
+    "careers_url": "https://stability.ai/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Jasper",
+    "careers_url": "https://www.jasper.ai/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Affirm",
+    "careers_url": "https://www.affirm.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Klarna",
+    "careers_url": "https://www.klarna.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Marqeta",
+    "careers_url": "https://www.marqeta.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Adyen",
+    "careers_url": "https://careers.adyen.com/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Monzo",
+    "careers_url": "https://monzo.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Revolut",
+    "careers_url": "https://www.revolut.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Wise",
+    "careers_url": "https://wise.jobs/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Checkout.com",
+    "careers_url": "https://www.checkout.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Carta",
+    "careers_url": "https://carta.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Mercury",
+    "careers_url": "https://mercury.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Shopify",
+    "careers_url": "https://www.shopify.com/careers",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Hootsuite",
+    "careers_url": "https://www.hootsuite.com/careers",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Clio",
+    "careers_url": "https://www.clio.com/careers/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Bench",
+    "careers_url": "https://bench.co/careers/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Lightspeed",
+    "careers_url": "https://www.lightspeedhq.com/careers/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "D2L",
+    "careers_url": "https://www.d2l.com/careers/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Coveo",
+    "careers_url": "https://www.coveo.com/careers",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Ada",
+    "careers_url": "https://www.ada.cx/careers",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Jobber",
+    "careers_url": "https://getjobber.com/careers/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "CrowdStrike",
+    "careers_url": "https://www.crowdstrike.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Okta",
+    "careers_url": "https://www.okta.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Zscaler",
+    "careers_url": "https://www.zscaler.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "SentinelOne",
+    "careers_url": "https://www.sentinelone.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Snyk",
+    "careers_url": "https://snyk.io/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Wiz",
+    "careers_url": "https://www.wiz.io/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Verkada",
+    "careers_url": "https://www.verkada.com/careers/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Discord",
+    "careers_url": "https://discord.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Twitch",
+    "careers_url": "https://www.twitch.tv/jobs/",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Asana",
+    "careers_url": "https://asana.com/jobs",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Dropbox",
+    "careers_url": "https://www.dropbox.com/jobs",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Box",
+    "careers_url": "https://www.box.com/careers",
+    "priority_countries": [
+      "United States",
+      "Canada"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Google",
+    "careers_url": "https://www.google.com/about/careers/applications/jobs/results/?location=Canada",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Bell",
+    "careers_url": "https://jobs.bell.ca/ca/en/search-results",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Rogers",
+    "careers_url": "https://jobs.rogers.com/search/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "Scotiabank",
+    "careers_url": "https://jobs.scotiabank.com/search/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "TELUS",
+    "careers_url": "https://careers.telus.com/search/",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  },
+  {
+    "company": "EQ Bank",
+    "careers_url": "https://jobs.lever.co/eqbank",
+    "priority_countries": [
+      "Canada",
+      "United States"
+    ],
+    "enabled": true
+  }
+]

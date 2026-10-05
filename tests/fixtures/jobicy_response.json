@@ -1,0 +1,71 @@
+{
+  "apiVersion": "2.0",
+  "documentationUrl": "https://jobicy.com/api/v2/remote-jobs",
+  "friendlyNotice": "Jobicy API feed",
+  "jobCount": 6,
+  "lastUpdate": "2026-09-25T20:54:07+00:00",
+  "jobs": [
+    {
+      "id": 1001,
+      "url": "https://jobicy.com/jobs/1001-senior-backend-engineer",
+      "jobSlug": "1001-senior-backend-engineer",
+      "jobTitle": "Senior Backend Engineer",
+      "companyName": "Supabase",
+      "jobIndustry": ["Software Engineering"],
+      "jobType": ["Full-Time"],
+      "jobGeo": "USA, Canada, Europe",
+      "jobLevel": "Senior",
+      "jobExcerpt": "We are seeking a Senior Backend Engineer to join our core database platform team.",
+      "jobDescription": "<p>We are seeking a <strong>Senior Backend Engineer</strong> to build Postgres platform tools.</p><ul><li>Design APIs in Go and Python</li><li>Optimize PostgreSQL queries</li></ul>",
+      "pubDate": "2026-09-25T14:30:00+00:00"
+    },
+    {
+      "id": 1002,
+      "url": "https://jobicy.com/jobs/1002-swe-intern",
+      "jobSlug": "1002-swe-intern",
+      "jobTitle": "Software Engineer Intern",
+      "companyName": "Vercel",
+      "jobIndustry": ["Software Engineering"],
+      "jobType": ["Internship"],
+      "jobGeo": "USA",
+      "jobLevel": "Entry",
+      "jobExcerpt": "Summer 2026 Software Engineer Internship at Vercel.",
+      "jobDescription": "<p>Join our frontend infrastructure team as an engineering intern.</p>",
+      "pubDate": "2026-09-24T10:00:00Z"
+    },
+    {
+      "id": 1003,
+      "url": "https://jobicy.com/jobs/1003-brand-designer",
+      "jobSlug": "1003-brand-designer",
+      "jobTitle": "Senior Brand Designer",
+      "companyName": "Phantom",
+      "jobIndustry": ["Design"],
+      "jobType": ["Full-Time"],
+      "jobGeo": "Worldwide",
+      "jobLevel": "Senior",
+      "jobExcerpt": "Looking for a creative brand designer.",
+      "jobDescription": "<p>Create beautiful visual brands.</p>",
+      "pubDate": "2026-09-23T12:00:00+00:00"
+    },
+    {
+      "id": 1004,
+      "url": "https://jobicy.com/jobs/1004-missing-date",
+      "jobSlug": "1004-missing-date",
+      "jobTitle": "Fullstack Developer",
+      "companyName": "RemoteCo",
+      "jobIndustry": ["Software Engineering"],
+      "jobType": "Full-Time",
+      "jobGeo": "",
+      "jobLevel": "Mid",
+      "jobExcerpt": "Fullstack dev role with missing pub date.",
+      "jobDescription": "<p>Build web apps in React and Node.</p>",
+      "pubDate": "invalid-iso-date-string"
+    },
+    {
+      "id": null,
+      "jobTitle": "Malformed Role Without ID",
+      "companyName": "UnknownCo"
+    },
+    "Invalid non-dict entry in jobs list"
+  ]
+}

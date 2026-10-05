@@ -1,0 +1,437 @@
+[
+  {
+    "name": "Figma",
+    "ats": "greenhouse",
+    "identifier": "figma"
+  },
+  {
+    "name": "Cloudflare",
+    "ats": "greenhouse",
+    "identifier": "cloudflare"
+  },
+  {
+    "name": "Datadog",
+    "ats": "greenhouse",
+    "identifier": "datadog"
+  },
+  {
+    "name": "GitLab",
+    "ats": "greenhouse",
+    "identifier": "gitlab"
+  },
+  {
+    "name": "Spotify",
+    "ats": "lever",
+    "identifier": "spotify"
+  },
+  {
+    "name": "Palantir",
+    "ats": "lever",
+    "identifier": "palantir"
+  },
+  {
+    "name": "Neon",
+    "ats": "lever",
+    "identifier": "neon"
+  },
+  {
+    "name": "Metabase",
+    "ats": "lever",
+    "identifier": "metabase"
+  },
+  {
+    "name": "Linear",
+    "ats": "ashby",
+    "identifier": "linear"
+  },
+  {
+    "name": "Ramp",
+    "ats": "ashby",
+    "identifier": "ramp"
+  },
+  {
+    "name": "Supabase",
+    "ats": "ashby",
+    "identifier": "supabase"
+  },
+  {
+    "name": "Anthropic",
+    "ats": "greenhouse",
+    "identifier": "anthropic"
+  },
+  {
+    "name": "OpenAI",
+    "ats": "ashby",
+    "identifier": "openai"
+  },
+  {
+    "name": "Stripe",
+    "ats": "greenhouse",
+    "identifier": "stripe"
+  },
+  {
+    "name": "Databricks",
+    "ats": "greenhouse",
+    "identifier": "databricks"
+  },
+  {
+    "name": "Robinhood",
+    "ats": "greenhouse",
+    "identifier": "robinhood"
+  },
+  {
+    "name": "Scale AI",
+    "ats": "greenhouse",
+    "identifier": "scaleai"
+  },
+  {
+    "name": "Reddit",
+    "ats": "greenhouse",
+    "identifier": "reddit"
+  },
+  {
+    "name": "Coinbase",
+    "ats": "greenhouse",
+    "identifier": "coinbase"
+  },
+  {
+    "name": "Pinterest",
+    "ats": "greenhouse",
+    "identifier": "pinterest"
+  },
+  {
+    "name": "Brex",
+    "ats": "greenhouse",
+    "identifier": "brex"
+  },
+  {
+    "name": "Chime",
+    "ats": "greenhouse",
+    "identifier": "chime"
+  },
+  {
+    "name": "Duolingo",
+    "ats": "greenhouse",
+    "identifier": "duolingo"
+  },
+  {
+    "name": "Faire",
+    "ats": "greenhouse",
+    "identifier": "faire"
+  },
+  {
+    "name": "Waabi",
+    "ats": "lever",
+    "identifier": "waabi"
+  },
+  {
+    "name": "Rubrik",
+    "ats": "greenhouse",
+    "identifier": "rubrik"
+  },
+  {
+    "name": "Flexport",
+    "ats": "greenhouse",
+    "identifier": "flexport"
+  },
+  {
+    "name": "Samsara",
+    "ats": "greenhouse",
+    "identifier": "samsara"
+  },
+  {
+    "name": "Toast",
+    "ats": "greenhouse",
+    "identifier": "toast"
+  },
+  {
+    "name": "Notion",
+    "ats": "ashby",
+    "identifier": "notion"
+  },
+  {
+    "name": "Plaid",
+    "ats": "ashby",
+    "identifier": "plaid"
+  },
+  {
+    "name": "Cohere",
+    "ats": "ashby",
+    "identifier": "cohere"
+  },
+  {
+    "name": "Wealthsimple",
+    "ats": "ashby",
+    "identifier": "wealthsimple"
+  },
+  {
+    "name": "PointClickCare",
+    "ats": "lever",
+    "identifier": "pointclickcare"
+  },
+  {
+    "name": "StackAdapt",
+    "ats": "greenhouse",
+    "identifier": "stackadapt"
+  },
+  {
+    "name": "Vercel",
+    "ats": "greenhouse",
+    "identifier": "vercel"
+  },
+  {
+    "name": "1Password",
+    "ats": "ashby",
+    "identifier": "1password"
+  },
+  {
+    "name": "Sentry",
+    "ats": "ashby",
+    "identifier": "sentry"
+  },
+  {
+    "name": "Sourcegraph",
+    "ats": "greenhouse",
+    "identifier": "sourcegraph91"
+  },
+  {
+    "name": "Replit",
+    "ats": "ashby",
+    "identifier": "replit"
+  },
+  {
+    "name": "Render",
+    "ats": "ashby",
+    "identifier": "render"
+  },
+  {
+    "name": "PlanetScale",
+    "ats": "greenhouse",
+    "identifier": "planetscale"
+  },
+  {
+    "name": "Webflow",
+    "ats": "greenhouse",
+    "identifier": "webflow"
+  },
+  {
+    "name": "Grafana Labs",
+    "ats": "greenhouse",
+    "identifier": "grafanalabs"
+  },
+  {
+    "name": "Mistral AI",
+    "ats": "ashby",
+    "identifier": "mistral.ai"
+  },
+  {
+    "name": "Runway",
+    "ats": "ashby",
+    "identifier": "runway-ml"
+  },
+  {
+    "name": "Anyscale",
+    "ats": "ashby",
+    "identifier": "anyscale"
+  },
+  {
+    "name": "Stability AI",
+    "ats": "greenhouse",
+    "identifier": "stabilityai"
+  },
+  {
+    "name": "Monzo",
+    "ats": "greenhouse",
+    "identifier": "monzo"
+  },
+  {
+    "name": "Carta",
+    "ats": "greenhouse",
+    "identifier": "carta"
+  },
+  {
+    "name": "Mercury",
+    "ats": "greenhouse",
+    "identifier": "mercury"
+  },
+  {
+    "name": "Hootsuite",
+    "ats": "greenhouse",
+    "identifier": "hootsuite"
+  },
+  {
+    "name": "Geotab",
+    "ats": "greenhouse",
+    "identifier": "geotab"
+  },
+  {
+    "name": "D2L",
+    "ats": "greenhouse",
+    "identifier": "d2l",
+    "aliases": [
+      "Desire2Learn"
+    ]
+  },
+  {
+    "name": "DoorDash",
+    "ats": "greenhouse",
+    "identifier": "doordashusa"
+  },
+  {
+    "name": "Amazon",
+    "ats": "amazon",
+    "identifier": "CAN",
+    "aliases": [
+      "AWS",
+      "Amazon Web Services",
+      "Amazon Web Services (AWS)"
+    ]
+  },
+  {
+    "name": "RBC",
+    "ats": "workday",
+    "identifier": "rbc.wd3/RBCGLOBAL1",
+    "aliases": [
+      "Royal Bank of Canada",
+      "RBC Capital Markets"
+    ]
+  },
+  {
+    "name": "TD",
+    "ats": "workday",
+    "identifier": "td.wd3/TD_Bank_Careers",
+    "aliases": [
+      "TD Bank",
+      "TD Securities",
+      "TD Bank Group",
+      "Toronto-Dominion Bank"
+    ]
+  },
+  {
+    "name": "BMO",
+    "ats": "workday",
+    "identifier": "bmo.wd3/External",
+    "aliases": [
+      "BMO Financial Group",
+      "Bank of Montreal",
+      "BMO Capital Markets"
+    ]
+  },
+  {
+    "name": "CIBC",
+    "ats": "workday",
+    "identifier": "cibc.wd3/search",
+    "aliases": [
+      "Canadian Imperial Bank of Commerce"
+    ]
+  },
+  {
+    "name": "Manulife",
+    "ats": "workday",
+    "identifier": "manulife.wd3/MFCJH_Jobs",
+    "aliases": [
+      "Manulife Financial",
+      "John Hancock"
+    ]
+  },
+  {
+    "name": "Sun Life",
+    "ats": "workday",
+    "identifier": "sunlife.wd3/Experienced-Jobs",
+    "aliases": [
+      "Sun Life Financial"
+    ]
+  },
+  {
+    "name": "Ontario Teachers' Pension Plan",
+    "ats": "workday",
+    "identifier": "otppb.wd3/OntarioTeachers_Careers",
+    "aliases": [
+      "OTPP",
+      "Ontario Teachers Pension Plan"
+    ]
+  },
+  {
+    "name": "Thomson Reuters",
+    "ats": "workday",
+    "identifier": "thomsonreuters.wd5/External_Career_Site"
+  },
+  {
+    "name": "Autodesk",
+    "ats": "workday",
+    "identifier": "autodesk.wd1/Ext"
+  },
+  {
+    "name": "NVIDIA",
+    "ats": "workday",
+    "identifier": "nvidia.wd5/NVIDIAExternalCareerSite"
+  },
+  {
+    "name": "Arctic Wolf",
+    "ats": "workday",
+    "identifier": "arcticwolf.wd1/External"
+  },
+  {
+    "name": "SpaceX",
+    "ats": "greenhouse",
+    "identifier": "spacex"
+  },
+  {
+    "name": "Google",
+    "ats": "google",
+    "identifier": "Canada"
+  },
+  {
+    "name": "Shopify",
+    "ats": "shopify",
+    "identifier": "shopify"
+  },
+  {
+    "name": "Bell",
+    "ats": "phenom",
+    "identifier": "bell"
+  },
+  {
+    "name": "Rogers",
+    "ats": "successfactors",
+    "identifier": "rogers"
+  },
+  {
+    "name": "Scotiabank",
+    "ats": "successfactors",
+    "identifier": "scotiabank"
+  },
+  {
+    "name": "TELUS",
+    "ats": "successfactors",
+    "identifier": "telus"
+  },
+  {
+    "name": "Clio",
+    "ats": "workday",
+    "identifier": "clio.wd3/ClioCareerSite"
+  },
+  {
+    "name": "EQ Bank",
+    "ats": "lever",
+    "identifier": "eqbank",
+    "aliases": [
+      "Equitable Bank"
+    ]
+  },
+  {
+    "name": "Okta",
+    "ats": "greenhouse",
+    "identifier": "okta"
+  },
+  {
+    "name": "Lyft",
+    "ats": "greenhouse",
+    "identifier": "lyft"
+  },
+  {
+    "name": "Braze",
+    "ats": "greenhouse",
+    "identifier": "braze"
+  }
+]
