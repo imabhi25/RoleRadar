@@ -108,6 +108,9 @@ export const COMPANY_DOMAIN_MAP: Record<string, string> = {
   "workday": "workday.com",
   "servicenow": "servicenow.com",
   "braze": "braze.com",
+  "instacart": "instacart.com",
+  "affirm": "affirm.com",
+  "dialpad": "dialpad.com",
 
   // Canadian employers
   "bell": "bell.ca",
