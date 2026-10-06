@@ -6,6 +6,12 @@ RoleRadar brings postings from different hiring platforms into one searchable in
 
 [![CI](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml/badge.svg)](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)
 
+## Screenshots
+
+![RoleRadar job search: filters, a ranked job list and a split-view posting with a Summary / Full Posting toggle](docs/screenshots/jobs.png)
+
+![RoleRadar market dashboard: posting, employer and location counts, jobs by country and the most requested skills](docs/screenshots/stats.png)
+
 ## Quickstart
 
 Prerequisites: Python 3.12+, Node.js 22 and PostgreSQL 16. Run the API and the UI in two terminals.
