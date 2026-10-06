@@ -558,5 +558,20 @@
     "tagline": "Cloud computing infrastructure",
     "description": "Amazon Web Services provides cloud computing services for organizations and developers. Its offerings include computing, storage, databases, analytics, and application infrastructure.",
     "sourceUrl": "https://aws.amazon.com/"
+  },
+  "instacart.com": {
+    "tagline": "Grocery delivery and pickup",
+    "description": "Instacart operates a technology platform for grocery delivery and pickup from local retailers. It also provides software and advertising tools to the stores and brands that sell through it.",
+    "sourceUrl": "https://www.instacart.com/"
+  },
+  "affirm.com": {
+    "tagline": "Buy now, pay later payments",
+    "description": "Affirm provides payment and financing products that let shoppers pay for purchases in instalments at checkout. It works with merchants online and in store.",
+    "sourceUrl": "https://www.affirm.com/"
+  },
+  "dialpad.com": {
+    "tagline": "AI-powered business communications",
+    "description": "Dialpad provides cloud software for business calling, messaging and meetings, with AI features such as call transcription and summaries. Teams and contact centres use it to handle customer and internal conversations.",
+    "sourceUrl": "https://www.dialpad.com/"
   }
 }

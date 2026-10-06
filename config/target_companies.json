@@ -433,5 +433,30 @@
     "name": "Braze",
     "ats": "greenhouse",
     "identifier": "braze"
+  },
+  {
+    "name": "Instacart",
+    "ats": "greenhouse",
+    "identifier": "instacart"
+  },
+  {
+    "name": "Affirm",
+    "ats": "greenhouse",
+    "identifier": "affirm"
+  },
+  {
+    "name": "Dialpad",
+    "ats": "greenhouse",
+    "identifier": "dialpad"
+  },
+  {
+    "name": "Asana",
+    "ats": "greenhouse",
+    "identifier": "asana"
+  },
+  {
+    "name": "Twilio",
+    "ats": "greenhouse",
+    "identifier": "twilio"
   }
 ]

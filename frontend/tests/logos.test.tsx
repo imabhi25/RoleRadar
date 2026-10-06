@@ -59,6 +59,8 @@ describe('company logos', () => {
       .filter((name) => {
         // Braze's retired file was another employer's artwork; no replacement is asserted verified.
         if (normalizeCompanyName(name) === 'braze') return false;
+        // Added before an official logo file was vendored: they use the official-domain favicon, then the generic icon.
+        if (['instacart', 'affirm', 'dialpad', 'asana', 'twilio'].includes(normalizeCompanyName(name))) return false;
         const url = COMPANY_LOGOS[normalizeCompanyName(name)];
         return !url || !fs.existsSync(path.join(root, 'frontend', 'public', url.replace(/^\//, ''))) ;
       });

@@ -23,6 +23,9 @@ TARGETS = json.loads((ROOT / "config" / "target_companies.json").read_text())
 PRIORITY = ["Amazon", "RBC", "TD", "BMO", "CIBC", "Manulife", "Sun Life", "Ontario Teachers' Pension Plan",
             "Thomson Reuters", "Autodesk", "NVIDIA", "Arctic Wolf", "Geotab", "D2L", "Hootsuite"]
 MIME = {".svg", ".png", ".jpg", ".jpeg", ".webp"}
+# Employers added to the registry before an official logo asset was vendored. They must show the honest fallback
+# (no logo URL) rather than an invented or unverified image; move a name out of this set when its asset is added.
+NO_LOGO_YET = {"instacart", "affirm", "dialpad", "asana", "twilio"}
 
 
 @pytest.mark.parametrize("company", [t["name"] for t in TARGETS])
@@ -32,6 +35,10 @@ def test_every_registry_company_has_verified_servable_branding_or_an_honest_fall
     if normalize_company_name(company) == "braze":
         assert branding["logo_status"] == "unresolved" and branding["logo_url"] is None
         assert branding["logo_source_url"] is None and branding["website_url"] == "https://www.braze.com"
+        return
+    if normalize_company_name(company) in NO_LOGO_YET:
+        assert branding["logo_status"] == "unresolved" and branding["logo_url"] is None
+        assert branding["logo_source_url"] is None
         return
     assert branding["logo_status"] == "verified", f"{company} has no verified logo"
     asset = LOGOS_DIR / branding["logo_url"].removeprefix("/logos/")
