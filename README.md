@@ -1,12 +1,32 @@
 # RoleRadar
 
-
-
 RoleRadar brings postings from different hiring platforms into one searchable interface. It prioritizes Canadian co-op, internship and early-career opportunities while retaining US roles, and lets applicants compare jobs without opening a new page for every posting.
 
 **[Live demo](https://roleradar-jobs.vercel.app/jobs)** · **[Market dashboard](https://roleradar-jobs.vercel.app/stats)** · **[CI results](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)**
 
 [![CI](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml/badge.svg)](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)
+
+## Quickstart
+
+Prerequisites: Python 3.12+, Node.js 22 and PostgreSQL 16. Run the API and the UI in two terminals.
+
+```bash
+# 1. Backend and database
+git clone https://github.com/imabhi25/RoleRadar.git && cd RoleRadar
+python3 -m venv .venv && source .venv/bin/activate
+python -m pip install -r requirements.txt
+createdb roleradar && export PGDATABASE=roleradar
+psql -v ON_ERROR_STOP=1 -d roleradar -f db/schema.sql && python -m db.migrate
+
+# 2. Load real postings from one employer, then start the API (http://127.0.0.1:8000/docs)
+python -m ingestion.cli --company Figma
+python -m uvicorn api.main:app --reload
+
+# 3. In a second terminal, start the UI (http://localhost:5173)
+cd frontend && npm ci && npm run dev
+```
+
+Full setup, all employers and the test commands are in [Run locally](#run-locally) below.
 
 ## What the app does
 
