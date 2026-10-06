@@ -13,6 +13,7 @@ import { JobDetailModal } from "./JobDetailModal";
 import { JobDetailContent } from "./JobDetailContent";
 import { useSplitView } from "../hooks/useMediaQuery";
 import { resolveSkillFilter } from "../utils/skills";
+import { SlowLoadHint } from "./SlowLoadHint";
 
 const PAGE_SIZE = 20;
 const SORT_OPTIONS = [
@@ -529,6 +530,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
               <div className="state-container loading-state" style={{ minHeight: '300px' }}>
                 <div className="spinner" />
                 <p>Loading jobs...</p>
+                <SlowLoadHint />
               </div>
             )}
 

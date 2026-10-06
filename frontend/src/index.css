@@ -3823,3 +3823,11 @@ textarea {
   border-radius: var(--radius-xs);
 }
 .filter-notice-dismiss:hover { color: var(--text-main); }
+
+.slow-load-hint {
+  margin: 8px 0 0;
+  max-width: 32ch;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
