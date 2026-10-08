@@ -96,7 +96,9 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
           alt="" /* the wrapper carries the one accessible name */
           width={dimension}
           height={dimension}
-          loading="lazy"
+          decoding="async"
+          // An image that finished before the load handler was attached (cached) would otherwise stay hidden.
+          ref={(element) => { if (element?.complete && element.naturalWidth > 0) setLoadedUrl(resolvedUrl); }}
           referrerPolicy="no-referrer"
           onError={() => setFailures((previous) => ({ key: sourceKey,
             urls: Array.from(new Set([...(previous.key === sourceKey ? previous.urls : []), logoUrl!])) }))}
