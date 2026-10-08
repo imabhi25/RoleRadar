@@ -6,7 +6,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "https://roleradar-api.onrender.com/api/:path*"
+      "destination": "https://jobber-api-980d.onrender.com/api/:path*"
     },
     {
       "source": "/((?!sitemap\\.xml$|robots\\.txt$|assets/|logos/|favicon\\.svg$).*)",

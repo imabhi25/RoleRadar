@@ -2130,7 +2130,7 @@ def test_cors_headers_for_vercel_preview_and_production():
     client = TestClient(app)
 
     # 1. Vercel preview URL preflight OPTIONS
-    preview_origin = "https://roleradar-git-feature-preview-example-projects.vercel.app"
+    preview_origin = "https://jobber-git-feat-job-browsi-709a80-sabhaypartap18-4175s-projects.vercel.app"
     res_opts = client.options(
         "/api/health",
         headers={
@@ -2147,7 +2147,7 @@ def test_cors_headers_for_vercel_preview_and_production():
     assert res_get.headers.get("access-control-allow-origin") == preview_origin
 
     # 3. Production Vercel domain GET
-    prod_origin = "https://roleradar-jobs.vercel.app"
+    prod_origin = "https://jobber-mauve.vercel.app"
     res_prod = client.get("/api/health", headers={"Origin": prod_origin})
     assert res_prod.status_code == 200
     assert res_prod.headers.get("access-control-allow-origin") == prod_origin

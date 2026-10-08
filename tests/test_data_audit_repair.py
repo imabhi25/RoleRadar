@@ -1,6 +1,6 @@
 """Public-data audit: the repair of stored rows and the same rules at ingestion, end to end through PostgreSQL.
 
-* the shared pay rules agree in Python, the ``roleradar_pay_ranges`` SQL function and (via the same fixture) the front end;
+* the shared pay rules agree in Python, the ``jobber_pay_ranges`` SQL function and (via the same fixture) the front end;
 * a posting ingested tomorrow gets exactly what the backfill gives a posting stored today;
 * a company with a verified logo but no website gets its curated official website, and an existing one is never replaced.
 """
@@ -33,7 +33,7 @@ def stored_compensation(conn, job_id):
 def test_sql_pay_ranges_agree_with_the_shared_rules(conn, case):
     pay = {"min": case["min"], "max": case["max"], "currency": case["currency"], "interval": case["interval"]}
     with conn.cursor() as cur:
-        cur.execute("SELECT roleradar_pay_ranges(%s::jsonb)", (json.dumps(pay),))
+        cur.execute("SELECT jobber_pay_ranges(%s::jsonb)", (json.dumps(pay),))
         ranges = cur.fetchone()[0]
     # The SQL function keeps a range exactly when the shared rules call it believable.
     assert bool(ranges) == (case["problem"] is None), (case, ranges)
@@ -46,7 +46,7 @@ def test_sql_skips_validated_and_ote_ranges(conn):
     with conn.cursor() as cur:
         results = []
         for pay in (flagged, ote, stated):
-            cur.execute("SELECT roleradar_pay_ranges(%s::jsonb)", (json.dumps(pay),))
+            cur.execute("SELECT jobber_pay_ranges(%s::jsonb)", (json.dumps(pay),))
             results.append(cur.fetchone()[0])
     assert results[0] == [] and results[1] == []
     assert [(r["min_annual"], r["period"]) for r in results[2]] == [(184000, "year")]       # a range with no currency or period is not filterable

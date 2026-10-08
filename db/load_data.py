@@ -39,7 +39,7 @@ def get_db_connection():
     if database_url:
         return psycopg2.connect(database_url)
 
-    dbname = os.getenv("PGDATABASE", "roleradar")
+    dbname = os.getenv("PGDATABASE", "jobber")
     user = os.getenv("PGUSER")
     password = os.getenv("PGPASSWORD")
     host = os.getenv("PGHOST")
@@ -297,7 +297,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"Database connection error: {err}", file=sys.stderr)
         return 1
 
-    dbname = getattr(conn.info, "dbname", None) or os.getenv("PGDATABASE", "roleradar")
+    dbname = getattr(conn.info, "dbname", None) or os.getenv("PGDATABASE", "jobber")
 
     try:
         # Atomic transaction: commits on clean exit, rolls back on error

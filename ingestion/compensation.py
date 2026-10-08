@@ -96,7 +96,7 @@ def _interval_name(value: Any) -> Optional[str]:
 
 def structured_ranges(compensation: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Every pay range in a source compensation dict (Greenhouse/Lever {min,max,ranges}, Ashby components) in one shape.
-    Mirrors the parts walked by the roleradar_pay_ranges SQL function, without requiring a currency or period."""
+    Mirrors the parts walked by the jobber_pay_ranges SQL function, without requiring a currency or period."""
     if not isinstance(compensation, dict):
         return []
     parts: List[Dict[str, Any]] = []

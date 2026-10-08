@@ -2,7 +2,7 @@
 
 The React and TypeScript client for RoleRadar: searchable job listings, a desktop split view, mobile job details, company profiles and a market dashboard.
 
-**[Live demo](https://roleradar-jobs.vercel.app/jobs)** · **[Project overview and backend setup](../README.md)**
+**[Live demo](https://jobber-mauve.vercel.app/jobs)** · **[Project overview and backend setup](../README.md)**
 
 ## Development
 

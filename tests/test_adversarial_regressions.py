@@ -36,7 +36,7 @@ def test_salary_filter_reads_all_provider_shapes(conn,pay,annual):
 ])
 def test_pay_garbage_is_not_a_salary_or_a_query_error(conn,pay):
     with conn.cursor() as cur:
-        cur.execute('SELECT roleradar_pay_ranges(%s)',(Json(pay),))
+        cur.execute('SELECT jobber_pay_ranges(%s)',(Json(pay),))
         assert cur.fetchone()[0]==[]
 
 
@@ -54,7 +54,7 @@ def test_pay_garbage_is_not_a_salary_or_a_query_error(conn,pay):
 ])
 def test_experience_uses_required_evidence_not_associate_or_company_age(conn,title,description,expected):
     with conn.cursor() as cur:
-        cur.execute("SELECT roleradar_experience_level(%s,'full_time',%s)",(title,description))
+        cur.execute("SELECT jobber_experience_level(%s,'full_time',%s)",(title,description))
         assert cur.fetchone()[0]==expected
     name,cid=_company(conn)
     with conn.cursor() as cur:

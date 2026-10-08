@@ -1,5 +1,5 @@
 -- Canonical, source-aware pay ranges for existing records and every future write.
-CREATE OR REPLACE FUNCTION roleradar_pay_ranges(pay jsonb) RETURNS jsonb
+CREATE OR REPLACE FUNCTION jobber_pay_ranges(pay jsonb) RETURNS jsonb
 LANGUAGE plpgsql IMMUTABLE AS $$
 DECLARE
     parts jsonb := '[]'::jsonb;
@@ -55,7 +55,7 @@ END $$;
 -- Explicit employer titles take precedence. Only experience requirements (not company age,
 -- preferred experience or a degree's duration) contribute to the fallback. Years are a
 -- conservative fallback: 0-2 entry, 3-7 mid, 8+ senior; unspecified remains unknown.
-CREATE OR REPLACE FUNCTION roleradar_experience_level(job_title text, role text, description text) RETURNS text
+CREATE OR REPLACE FUNCTION jobber_experience_level(job_title text, role text, description text) RETURNS text
 LANGUAGE plpgsql IMMUTABLE AS $$
 DECLARE
     content text;
@@ -93,9 +93,9 @@ BEGIN
 END $$;
 
 ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS pay_ranges jsonb
-    GENERATED ALWAYS AS (roleradar_pay_ranges(compensation)) STORED;
+    GENERATED ALWAYS AS (jobber_pay_ranges(compensation)) STORED;
 ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS experience_level text
-    GENERATED ALWAYS AS (roleradar_experience_level(title,role_type,description)) STORED;
+    GENERATED ALWAYS AS (jobber_experience_level(title,role_type,description)) STORED;
 CREATE INDEX IF NOT EXISTS idx_job_postings_experience_level ON job_postings(experience_level);
 ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS search_document tsvector GENERATED ALWAYS AS
     (to_tsvector('simple', translate(lower(COALESCE(title,'') || ' ' || regexp_replace(COALESCE(description,''), '<[^>]*>', ' ', 'g')), 'àáâãäåāăąçćčďđèéêëēėęěğìíîïīįłñńňòóôõöøōőřśšşťùúûüūůűųýÿźżž-–—‑', 'aaaaaaaaacccddeeeeeeeegiiiiiilnnnoooooooorssstuuuuuuuuyyzzz    '))) STORED;

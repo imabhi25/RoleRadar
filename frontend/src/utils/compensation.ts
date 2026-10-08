@@ -18,7 +18,7 @@ export function periodOf(text?: string | null): Period {
   return "";
 }
 
-// Mirrors ingestion/pay_rules.py and the roleradar_pay_ranges SQL function (parity: tests/fixtures/pay_rules.json).
+// Mirrors ingestion/pay_rules.py and the jobber_pay_ranges SQL function (parity: tests/fixtures/pay_rules.json).
 const FLOOR: Record<string, number> = { year: 1000, month: 100, week: 25, day: 5, hour: 5, "": 5 };
 const CEILING: Record<string, number> = { year: 3_000_000, month: 250_000, week: 60_000, day: 12_000, hour: 1_500, "": 3_000_000 };
 const MAX_SPREAD = 10;

@@ -26,7 +26,7 @@ function mockApi(getJobs?: typeof apiClient.getJobs) {
   vi.spyOn(apiClient, 'getJobs').mockImplementation(getJobs ?? (async () => ({ total: 2, limit: 20, offset: 0, jobs: JOBS })));
 }
 
-beforeEach(() => { vi.stubEnv('DEV', false); });
+beforeEach(() => { vi.stubEnv('DEV', false); try { localStorage.setItem('roleradar-theme', 'light'); } catch { /* ignore */ } });
 afterEach(() => vi.restoreAllMocks());
 
 describe('blocked search (HTTP 403 from the edge firewall)', () => {
@@ -131,14 +131,17 @@ describe('accessibility cleanup', () => {
     seq.forEach((level, i) => { if (i) expect(level - seq[i - 1], seq.join(',')).toBeLessThanOrEqual(1); });
   });
 
-  it('uses light mode even if the document starts in dark mode and offers no theme toggle', async () => {
+  it('applies a saved theme and lets the navbar toggle switch and remember it', async () => {
     mockApi();
-    document.documentElement.dataset.theme = 'dark';
+    localStorage.setItem('roleradar-theme', 'dark');
     window.history.replaceState(null, '', '/jobs');
     render(<App />);
     await screen.findAllByRole('button', { name: /View details for/ });
+    expect(document.documentElement.dataset.theme).toBe('dark');
+    await userEvent.click(screen.getByRole('button', { name: 'Switch to light mode' }));
     expect(document.documentElement.dataset.theme).toBe('light');
-    expect(screen.queryByRole('button', { name: /Switch to .* mode/ })).not.toBeInTheDocument();
+    expect(localStorage.getItem('roleradar-theme')).toBe('light');
+    expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeInTheDocument();
   });
 
   it('a logo has exactly one accessible name', () => {

@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 003: Fresh Job Feed Foundation & Role Type Classification
--- Phase 6A Additive Migration for RoleRadar
+-- Phase 6A Additive Migration for Jobber
 -- =============================================================================
 
 -- 1. Extend job_postings with role_type classification

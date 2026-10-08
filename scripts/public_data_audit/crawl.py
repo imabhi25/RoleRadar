@@ -1,6 +1,6 @@
 """Read-only crawl of a RoleRadar API (production or a local replica) into JSON files for analyze.py.
 
-    python scripts/public_data_audit/crawl.py https://roleradar-jobs.vercel.app OUT_DIR
+    python scripts/public_data_audit/crawl.py https://jobber-mauve.vercel.app OUT_DIR
 
 Only GET requests to the public job endpoints are made. Nothing is written except OUT_DIR.
 """

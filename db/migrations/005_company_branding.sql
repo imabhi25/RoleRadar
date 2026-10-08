@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 005: Company-Level Branding and Logo System
--- Phase 6C Additive Migration for RoleRadar
+-- Phase 6C Additive Migration for Jobber
 -- =============================================================================
 
 -- 1. Extend companies table with authentic logo and website metadata
