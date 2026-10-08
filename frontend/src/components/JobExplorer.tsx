@@ -25,7 +25,7 @@ const SORT_OPTIONS = [
 ];
 const PANE_EXIT_MS = 240;
 const PANE_ENTER_MS = 260;
-const PANE_STICKY_TOP = 76;
+const PANE_STICKY_TOP = 60;
 
 export interface JobExplorerProps {
   overview?: OverviewStats | null;
@@ -156,7 +156,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
       const pane = paneRef.current;
       if (!column || !pane) return;
       const top = Math.max(PANE_STICKY_TOP, column.getBoundingClientRect().top);
-      pane.style.setProperty("--pane-height", `${Math.max(320, window.innerHeight - top - 16)}px`);
+      pane.style.setProperty("--pane-height", `${Math.max(320, window.innerHeight - top)}px`);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);

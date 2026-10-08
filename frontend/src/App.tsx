@@ -337,7 +337,7 @@ export function App() {
         </div>
       </header>
 
-      <main id="content" tabIndex={-1} className="roleradar-main">
+      <main id="content" tabIndex={-1} className={`roleradar-main${activeView === "jobs" ? " is-jobs-view" : ""}`}>
         {activeView === "404" ? (
           <div className="state-container">
             <h1>Page not found</h1>

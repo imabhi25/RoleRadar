@@ -3846,3 +3846,30 @@ textarea {
   font-size: 0.875rem;
   color: var(--text-muted);
 }
+
+/* ==========================================================================
+   Jobs page layout (desktop): flat full-width bars and two panes divided by hairlines,
+   instead of cards floating inside a centered container. Wording and content are unchanged.
+   ========================================================================== */
+@media (min-width: 900px) {
+  .roleradar-main.is-jobs-view { max-width: none; padding: 0; gap: 0; }
+  .is-jobs-view .job-explorer-container { gap: 0; }
+  .is-jobs-view .filter-panel {
+    padding: 12px 24px;
+    gap: 10px;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+  }
+  .is-jobs-view .job-explorer-layout { margin-top: 0; gap: 0; }
+  .is-jobs-view .job-explorer-main { padding: 14px 16px 24px 24px; }
+  .is-jobs-view .job-explorer-layout.is-split .job-explorer-main { border-right: 1px solid var(--border-color); }
+  .is-jobs-view .job-explorer-layout:not(.is-split) .job-explorer-sidebar { margin: 14px 24px 0 16px; }
+  .is-jobs-view .job-detail-pane {
+    top: 60px;
+    border: 0;
+    border-radius: 0;
+    background-color: var(--bg-app);
+  }
+  .is-jobs-view .job-detail-pane .job-detail-header,
+  .is-jobs-view .job-detail-pane .job-detail-scroll { background-color: var(--bg-app); }
+}
