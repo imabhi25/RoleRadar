@@ -3958,18 +3958,22 @@ textarea {
 .essential-filters .menu-select .dropdown-btn-truncate { max-width: 160px; }
 .native-select-control.menu-select .filter-popover { top: calc(100% + 6px); }
 
-/* Switching pages (Jobs, Stats, a company) fades the new page in instead of cutting to it. The Jobs page stays mounted
-   while hidden; it fades in again each time it is shown. */
-@keyframes viewEnter {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* Switching pages (Jobs, Stats, a company) fades the new page in. A cover the colour of the page sits over it and fades
+   out, so the page itself is never animated: animating it could leave company logos unpainted in Safari. */
+@keyframes pageCoverOut { from { opacity: 1; } to { opacity: 0; } }
+.page-cover {
+  position: fixed;
+  top: 60px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  background-color: var(--bg-app);
+  pointer-events: none;
+  animation: pageCoverOut 240ms ease-out forwards;
 }
-/* The Jobs page itself is not animated: Safari could leave the company logos unpainted when an ancestor was animating
-   while they loaded. It is the persistent page, so it simply appears; the other pages fade in. */
-.roleradar-main > :not([hidden]):not(.tab-panel-jobs) { animation: viewEnter 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-@media (prefers-reduced-motion: reduce) {
-  .roleradar-main > :not([hidden]):not(.tab-panel-jobs) { animation: none; }
-}
+@media (min-width: 900px) { .page-cover { top: 64px; } }
+@media (prefers-reduced-motion: reduce) { .page-cover { display: none; } }
 
 /* While the list loads on a wide screen the page already shows the split: the list on the left and an empty detail
    pane on the right (the first job opens there). The market panel is not shown, so nothing jumps when jobs arrive. */
