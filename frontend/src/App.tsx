@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState, useCallback, useRef } from "react";
+import { flushSync } from "react-dom";
 import { apiClient, type OverviewStats } from "./api/client";
 import { JobExplorer } from "./components/JobExplorer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -19,6 +20,25 @@ function isPlainClick(event: React.MouseEvent): boolean {
 }
 
 const THEME_STORAGE_KEY = "roleradar-theme";
+
+type ViewTransition = { ready: Promise<void>; finished: Promise<void>; updateCallbackDone: Promise<void> };
+type TransitionDocument = Document & { startViewTransition?: (update: () => void) => ViewTransition };
+const supportsViewTransition = () => typeof (document as TransitionDocument).startViewTransition === "function";
+
+/**
+ * Runs a page switch inside a browser view transition, which cross-fades a snapshot of the old page into the new one
+ * (the page itself is not animated). Browsers without it, or with reduced motion, just switch.
+ */
+function switchPage(update: () => void) {
+  const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  if (!supportsViewTransition() || reduced || document.visibilityState === "hidden") {
+    update();
+    return;
+  }
+  const transition = (document as TransitionDocument).startViewTransition!(() => flushSync(update));
+  // A transition the browser skips (for example when the tab is hidden) still runs the update; its promises just reject.
+  for (const promise of [transition.ready, transition.finished, transition.updateCallbackDone]) promise.catch(() => {});
+}
 
 export function App() {
   // Totals for the selected country (header count, Market overview). Optional: Jobs never waits on this.
@@ -92,16 +112,18 @@ export function App() {
 
     const handlePopState = () => {
       const route = parseAppRoute(window.location.pathname, window.location.search, import.meta.env.DEV);
-      setActiveView(route.view);
-      if (route.view === "company" || route.view === "404") {
-        setSelectedCompany(route.company);
-      } else if (route.view === "jobs") {
-        const parsed = parseUrlSearch(window.location.search);
-        setUrlState(parsed);
-        savedJobsQueryRef.current = window.location.search;
-        isSearchSessionActiveRef.current = false;
-        prevSearchQueryRef.current = parsed.filters.search;
-      }
+      switchPage(() => {
+        setActiveView(route.view);
+        if (route.view === "company" || route.view === "404") {
+          setSelectedCompany(route.company);
+        } else if (route.view === "jobs") {
+          const parsed = parseUrlSearch(window.location.search);
+          setUrlState(parsed);
+          savedJobsQueryRef.current = window.location.search;
+          isSearchSessionActiveRef.current = false;
+          prevSearchQueryRef.current = parsed.filters.search;
+        }
+      });
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -135,7 +157,7 @@ export function App() {
   }, [activeView]);
 
   const navigateTo = (view: "jobs" | "stats" | "logos", search = "", isPush = true) => {
-    setActiveView(view);
+    switchPage(() => setActiveView(view));
     const targetUrl = `/${view}${search}`;
     if (isPush) {
       window.history.pushState(null, "", targetUrl);
@@ -163,7 +185,7 @@ export function App() {
     setUrlState(next);
     const search = serializeUrlSearch(next.filters, 1, jobId);
     savedJobsQueryRef.current = search;
-    setActiveView("jobs");
+    switchPage(() => setActiveView("jobs"));
     window.history.pushState(null, "", `/jobs${search}`);
   };
 
@@ -359,7 +381,7 @@ export function App() {
         </div>
       </header>
 
-      {coverKey > 0 && <div key={coverKey} className="page-cover" aria-hidden="true" />}
+      {coverKey > 0 && !supportsViewTransition() && <div key={coverKey} className="page-cover" aria-hidden="true" />}
 
       <main id="content" tabIndex={-1} className={`roleradar-main${activeView === "jobs" ? " is-jobs-view" : ""}`}>
         {activeView === "404" ? (
