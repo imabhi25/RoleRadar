@@ -28,6 +28,15 @@ export function App() {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(initialRoute.company);
   const [activeView, setActiveView] = useState<AppView>(initialRoute.view);
 
+  // Switching pages fades the new page in. A cover the colour of the page sits over it and fades out; the page itself is
+  // never animated (animating the page can leave company logos unpainted in Safari).
+  const [coverFor, setCoverFor] = useState(activeView);
+  const [coverKey, setCoverKey] = useState(0);
+  if (coverFor !== activeView) {
+    setCoverFor(activeView);
+    setCoverKey((key) => key + 1);
+  }
+
   // Light by default; a saved choice wins, otherwise the system setting. The toggle in the navbar changes and saves it.
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     try {
@@ -349,6 +358,8 @@ export function App() {
           </button>
         </div>
       </header>
+
+      {coverKey > 0 && <div key={coverKey} className="page-cover" aria-hidden="true" />}
 
       <main id="content" tabIndex={-1} className={`roleradar-main${activeView === "jobs" ? " is-jobs-view" : ""}`}>
         {activeView === "404" ? (
