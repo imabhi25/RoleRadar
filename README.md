@@ -86,7 +86,7 @@ flowchart LR
 
 The adapter registry includes Greenhouse, Lever, Ashby, Workday, Amazon, Google, Shopify, Phenom and SuccessFactors, plus additional discovery/source clients. Public listings use eligible, active official-source records. Discovery candidates are tracked and verified separately from public jobs.
 
-The [ingestion workflow](.github/workflows/ingest_jobs.yml) is scheduled every six hours. Companies and source identifiers are configured in [the target registry](config/target_companies.json).
+The [ingestion workflow](.github/workflows/ingest_jobs.yml) is scheduled every three hours. Companies and source identifiers are configured in [the target registry](config/target_companies.json).
 
 ## Testing and reliability
 
