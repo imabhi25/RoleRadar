@@ -45,6 +45,17 @@ export function App() {
     try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch { /* storage may be disabled */ }
   };
 
+  // On wide screens the jobs search box lives in the navbar; narrower screens keep it above the filters.
+  const [navSearchSlot, setNavSearchSlot] = useState<HTMLElement | null>(null);
+  const [isWide, setIsWide] = useState(() => window.matchMedia?.("(min-width: 900px)").matches ?? false);
+  useEffect(() => {
+    const query = window.matchMedia?.("(min-width: 900px)");
+    if (!query) return;
+    const update = () => setIsWide(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
   // Synchronized URL state (canonical filters and page number)
   const [urlState, setUrlState] = useState<ParsedUrlState>(() =>
     parseUrlSearch(window.location.search)
@@ -317,6 +328,8 @@ export function App() {
             </nav>
           </div>
 
+          <div className="navbar-search-slot" ref={setNavSearchSlot} />
+
           <button
             type="button"
             className="theme-toggle"
@@ -337,7 +350,7 @@ export function App() {
         </div>
       </header>
 
-      <main id="content" tabIndex={-1} className="roleradar-main">
+      <main id="content" tabIndex={-1} className={`roleradar-main${activeView === "jobs" ? " is-jobs-view" : ""}`}>
         {activeView === "404" ? (
           <div className="state-container">
             <h1>Page not found</h1>
@@ -351,6 +364,7 @@ export function App() {
               <h1 className="visually-hidden">RoleRadar: software engineering jobs from company career pages</h1>
               <JobExplorer
                 active={activeView === "jobs"}
+                searchSlot={isWide ? navSearchSlot : null}
                 selectedJobId={urlState.jobId}
                 onSelectJob={(jobId, options) => {
                   const next = { ...urlState, jobId };

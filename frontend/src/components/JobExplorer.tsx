@@ -25,7 +25,7 @@ const SORT_OPTIONS = [
 ];
 const PANE_EXIT_MS = 240;
 const PANE_ENTER_MS = 260;
-const PANE_STICKY_TOP = 76;
+const PANE_STICKY_TOP = 60;
 
 export interface JobExplorerProps {
   overview?: OverviewStats | null;
@@ -37,6 +37,8 @@ export interface JobExplorerProps {
   selectedJobId: string | null;
   /** Hidden Jobs stays mounted while other pages are open, without changing their URL. */
   active?: boolean;
+  /** The navbar element the search box moves into on wide screens. */
+  searchSlot?: HTMLElement | null;
   /** `replace` swaps the current history entry (used for keyboard browsing) instead of pushing one. */
   onSelectJob: (jobId: string | null, options?: { replace?: boolean; auto?: boolean }) => void;
   onFiltersChange: (filters: SelectedFilters, page: number, isDiscrete?: boolean) => void;
@@ -52,6 +54,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
   selectedJobId,
   onSelectJob,
   active = true,
+  searchSlot = null,
 }) => {
   const [jobs, setJobs] = useState<JobSummary[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -156,7 +159,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
       const pane = paneRef.current;
       if (!column || !pane) return;
       const top = Math.max(PANE_STICKY_TOP, column.getBoundingClientRect().top);
-      pane.style.setProperty("--pane-height", `${Math.max(320, window.innerHeight - top - 16)}px`);
+      pane.style.setProperty("--pane-height", `${Math.max(320, window.innerHeight - top)}px`);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -459,6 +462,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
         onFilterChange={handleFilterChange}
         onReset={handleResetFilters}
         onSearchInputChange={setDraftSearch}
+        searchSlot={active ? searchSlot : null}
       />
 
       {/* Two-Column Explorer Layout (Left: Jobs Stream, Right: Visual Sidebar) */}
