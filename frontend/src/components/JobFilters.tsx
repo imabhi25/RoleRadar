@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import type { JobFilterOptions } from "../api/client";
 
 export interface SelectedFilters {
@@ -26,6 +27,8 @@ interface JobFiltersProps {
   onReset: () => void;
   disabled?: boolean;
   onSearchInputChange?: (value: string) => void;
+  /** When set, the search box is rendered into this element (the navbar) instead of inside the panel. */
+  searchSlot?: HTMLElement | null;
 }
 const ROLE_OPTIONS = [
   { label: "Full-time", value: "full_time" },
@@ -52,7 +55,7 @@ export function NativeSelect({ label, value, children, onChange, disabled = fals
   </span>;
 }
 
-export const JobFilters: React.FC<JobFiltersProps> = ({ filterOptions, selectedFilters, onFilterChange, onReset, disabled = false, onSearchInputChange }) => {
+export const JobFilters: React.FC<JobFiltersProps> = ({ filterOptions, selectedFilters, onFilterChange, onReset, disabled = false, onSearchInputChange, searchSlot = null }) => {
   const [searchInput, setSearchInput] = useState(selectedFilters.search);
   const searchInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => { setSearchInput(selectedFilters.search); onSearchInputChange?.(selectedFilters.search); }, [selectedFilters.search, onSearchInputChange]);
@@ -251,18 +254,20 @@ export const JobFilters: React.FC<JobFiltersProps> = ({ filterOptions, selectedF
     {values?.filter((value) => !options.some((option) => option.value === value)).map((value) => <option key={value} value={value}>{value.replace(/_/g, " ")}</option>)}
     {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
   </>;
+  const searchRow = <div className="search-bar-row">
+    <div className="search-input-wrapper">
+      <svg className="search-icon-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
+      <input ref={searchInputRef} id="job-search-input" type="search" value={searchInput}
+        onChange={(event) => { setSearchInput(event.target.value); onSearchInputChange?.(event.target.value); }} placeholder="Search jobs, companies, or skills..."
+        disabled={disabled} className="search-input" autoComplete="off" aria-label="Search jobs, companies, or skills" />
+      {searchInput && <button type="button" onClick={handleClearSearch} className="search-clear-btn" aria-label="Clear search text">✕</button>}
+      <div className="search-shortcut-badge" aria-hidden="true">⌘ K</div>
+    </div>
+  </div>;
   return <div className="filter-panel" aria-label="Job filters">
     <div className="job-search-toolbar">
-      <div className="search-bar-row">
-        <div className="search-input-wrapper">
-          <svg className="search-icon-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
-          <input ref={searchInputRef} id="job-search-input" type="search" value={searchInput}
-            onChange={(event) => { setSearchInput(event.target.value); onSearchInputChange?.(event.target.value); }} placeholder="Search jobs, companies, or skills..."
-            disabled={disabled} className="search-input" autoComplete="off" aria-label="Search jobs, companies, or skills" />
-          {searchInput && <button type="button" onClick={handleClearSearch} className="search-clear-btn" aria-label="Clear search text">✕</button>}
-          <div className="search-shortcut-badge" aria-hidden="true">⌘ K</div>
-        </div>
-      </div>
+      {/* On wide screens the search box lives in the navbar (a slot the app provides); elsewhere it stays here. */}
+      {searchSlot ? createPortal(searchRow, searchSlot) : searchRow}
       <div className="essential-filters" role="group" aria-label="Essential job filters">
         <NativeSelect label="Location" value={locationValue} disabled={disabled} onChange={(value) => {
           onFilterChange({ ...selectedFilters, location: value.startsWith("location:") ? [value.slice(9)] : [],

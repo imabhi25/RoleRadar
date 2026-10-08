@@ -3873,3 +3873,13 @@ textarea {
   .is-jobs-view .job-detail-pane .job-detail-header,
   .is-jobs-view .job-detail-pane .job-detail-scroll { background-color: var(--bg-app); }
 }
+
+/* Wide screens: the search box sits in the navbar, between the links and the theme toggle. */
+.navbar-search-slot { display: none; }
+@media (min-width: 900px) {
+  .navbar-search-slot { display: block; flex: 0 1 480px; min-width: 0; margin: 0 auto 0 12px; }
+  .navbar-search-slot:empty { display: none; }
+  .navbar-search-slot .search-input-wrapper { border-radius: var(--radius-full); }
+  .navbar-search-slot .search-input { height: 40px; border-radius: var(--radius-full); }
+  .is-jobs-view .job-search-toolbar { flex-direction: row; }
+}
