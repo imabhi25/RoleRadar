@@ -14,6 +14,7 @@ import { JobDetailContent } from "./JobDetailContent";
 import { useSplitView } from "../hooks/useMediaQuery";
 import { resolveSkillFilter } from "../utils/skills";
 import { SlowLoadHint } from "./SlowLoadHint";
+import { checkJobLiveness, knownGoneJobIds } from "../utils/jobLiveness";
 
 const PAGE_SIZE = 20;
 const SORT_OPTIONS = [
@@ -56,7 +57,11 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
   active = true,
   searchSlot = null,
 }) => {
-  const [jobs, setJobs] = useState<JobSummary[]>([]);
+  const [fetchedJobs, setJobs] = useState<JobSummary[]>([]);
+  // Postings an employer has taken down can stay in the database until its next refresh. They are confirmed against the
+  // employer's own board as they load, and hidden from the list once confirmed gone.
+  const [goneIds, setGoneIds] = useState<Set<string>>(() => knownGoneJobIds());
+  const jobs = useMemo(() => fetchedJobs.filter((job) => !goneIds.has(job.job_id)), [fetchedJobs, goneIds]);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [draftSearch, setDraftSearch] = useState(filters.search);
@@ -345,6 +350,28 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
       onSelectJob(jobs[0].job_id, { replace: true, auto: true });
     }
   }, [active, isSplit, selectedJobId, resultsPending, error, searchBlocked, resultsFor, filters, page, jobs, onSelectJob]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const queue = [...fetchedJobs];
+    const worker = async () => {
+      while (!cancelled) {
+        const job = queue.shift();
+        if (!job) return;
+        if ((await checkJobLiveness(job)) === "gone" && !cancelled) {
+          setGoneIds((previous) => (previous.has(job.job_id) ? previous : new Set(previous).add(job.job_id)));
+        }
+      }
+    };
+    for (let i = 0; i < 6; i += 1) void worker();
+    return () => { cancelled = true; };
+  }, [fetchedJobs]);
+
+  // The open job turned out to be gone: move to the next one (or close it) instead of showing a dead posting.
+  useEffect(() => {
+    if (!active || !selectedJobId || !goneIds.has(selectedJobId)) return;
+    onSelectJob(isSplit ? jobs[0]?.job_id ?? null : null, { replace: true, auto: true });
+  }, [active, isSplit, selectedJobId, goneIds, jobs, onSelectJob]);
 
   // Desktop keyboard browsing: ↑/↓ or J/K move through jobs. The split pane stays open.
   // Never fires while typing or while focus is on another interactive control.
