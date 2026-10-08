@@ -3883,3 +3883,70 @@ textarea {
   .navbar-search-slot .search-input { height: 40px; border-radius: var(--radius-full); }
   .is-jobs-view .job-search-toolbar { flex-direction: row; }
 }
+
+/* ==========================================================================
+   Desktop layout (the "E" design): full-width navbar with underline tabs, a single flat filter bar of pill
+   controls with the active filters inline, a fixed-width job list and a flush detail pane. Wording is unchanged.
+   ========================================================================== */
+@media (min-width: 900px) {
+  .roleradar-navbar { height: 64px; }
+  .navbar-inner { max-width: none; }
+  .navbar-left, .navbar-nav { align-self: stretch; }
+  .navbar-nav { gap: 0; }
+  .roleradar-navbar .nav-item,
+  .roleradar-navbar .navbar-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 14px;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    font-weight: 600;
+  }
+  .roleradar-navbar .nav-item:hover,
+  .roleradar-navbar .navbar-nav .nav-link:hover { background: none; color: var(--text-main); }
+  .roleradar-navbar .nav-item.active { background: none; color: var(--primary); border-bottom-color: var(--primary); }
+  .navbar-search-slot .search-input-wrapper { background-color: transparent; }
+  .navbar-search-slot .search-input { background-color: var(--bg-app); }
+
+  .is-jobs-view .filter-panel { flex-direction: row; flex-wrap: wrap; align-items: center; min-height: 52px; padding: 10px 24px; gap: 8px 8px; }
+  .is-jobs-view .job-search-toolbar { flex: 0 0 auto; }
+  .is-jobs-view .essential-filters .native-select {
+    min-height: 32px;
+    padding: 0 28px 0 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    box-shadow: none;
+  }
+  .is-jobs-view .essential-filters .native-select-chevron { right: 10px; }
+  .is-jobs-view .active-filters-row { flex: 1 1 auto; flex-wrap: wrap; margin-left: 4px; padding-left: 12px; border-left: 1px solid var(--border-color); }
+  .is-jobs-view .active-filter-chip {
+    min-height: 32px;
+    padding: 0 8px 0 12px;
+    gap: 6px;
+    border-radius: var(--radius-full);
+    border-color: var(--primary);
+    background-color: var(--primary-subtle);
+    color: var(--primary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .is-jobs-view .chip-remove-btn { width: 20px; height: 20px; color: inherit; font-size: var(--text-xs); }
+  .is-jobs-view .reset-filters-btn { font-size: var(--text-sm); font-weight: 600; text-decoration: underline; min-height: 32px; }
+  [data-theme="dark"] .is-jobs-view .active-filter-chip { color: #93c5fd; }
+
+  .is-jobs-view .job-explorer-layout.is-split .job-explorer-main { flex: 0 0 420px; }
+  .is-jobs-view .job-explorer-layout.is-split .job-explorer-right { flex: 1 1 0; }
+  .is-jobs-view .job-explorer-main { padding: 12px 16px 16px; gap: 10px; }
+  .is-jobs-view .jobs-grid { gap: 10px; }
+  .is-jobs-view .job-card { border-radius: var(--radius-lg); }
+  .is-jobs-view .results-count-number { font-size: var(--text-lg); font-weight: 700; }
+  .is-jobs-view .results-count-label { font-size: var(--text-sm); }
+
+  .is-jobs-view .job-detail-pane .job-detail-header { padding: 24px 40px 16px; }
+  .is-jobs-view .job-detail-pane .job-detail-scroll { padding-left: 40px; padding-right: 40px; }
+  .is-jobs-view .job-summary-note { display: none; }
+}
+@container (min-width: 540px) {
+  .is-jobs-view .job-fact-compensation { grid-column: span 2; order: 1; }
+}
