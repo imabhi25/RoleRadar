@@ -953,21 +953,20 @@ textarea {
 }
 .company-logo-container.logo-favicon .company-logo-img { padding: 0; }
 
-.logo-img-loading {
-  opacity: 0;
-  pointer-events: none;
-}
-
+/* The picture is never hidden while it loads: a browser that missed or never delivered its load event used to leave
+   the logo invisible behind the generic icon. The icon sits behind the picture instead and goes away once it loads. */
+.logo-img-loading,
 .logo-img-visible {
   opacity: 1;
-  transition: opacity 0.15s ease-in;
 }
+.company-logo-img { position: relative; z-index: 1; }
 
 .company-logo-fallback-icon {
   color: var(--text-muted);
   flex-shrink: 0;
   display: block;
 }
+.company-logo-container .company-logo-fallback-icon { position: absolute; inset: 0; margin: auto; }
 
 /* Neutral backplate for white logos in light mode */
 .company-logo-container.logo-light-mark {
