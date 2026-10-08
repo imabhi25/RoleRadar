@@ -1,5 +1,5 @@
 import { resolveApiAsset } from "../api/client";
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   getCompanyLogoSources,
   isDarkMonochromeLogo,
@@ -49,6 +49,18 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
   const showPlaceholder = isFallback || loadedUrl !== resolvedUrl;
   const isDarkMark = showImage && !isFavicon && isDarkMonochromeLogo(company);
   const isLightMark = showImage && !isFavicon && isLightMonochromeLogo(company);
+  // A picture whose load event was missed (cached, or never delivered) would stay hidden behind the icon, so also
+  // look at the image itself a few times after it starts loading.
+  const imageRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    if (!resolvedUrl) return;
+    const check = () => {
+      const image = imageRef.current;
+      if (image?.complete && image.naturalWidth > 0) setLoadedUrl(resolvedUrl);
+    };
+    const timers = [0, 250, 1000, 3000].map((delay) => window.setTimeout(check, delay));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [resolvedUrl]);
   const dimension = size === "detail" ? 46 : size === "card" ? 42 : size === "lg" ? 44 : size === "sm" ? 28 : 36;
   const iconSize = Math.round(dimension * 0.52);
 
@@ -96,9 +108,8 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
           alt="" /* the wrapper carries the one accessible name */
           width={dimension}
           height={dimension}
-          decoding="async"
-          // An image that finished before the load handler was attached (cached) would otherwise stay hidden.
-          ref={(element) => { if (element?.complete && element.naturalWidth > 0) setLoadedUrl(resolvedUrl); }}
+          loading="lazy"
+          ref={imageRef}
           referrerPolicy="no-referrer"
           onError={() => setFailures((previous) => ({ key: sourceKey,
             urls: Array.from(new Set([...(previous.key === sourceKey ? previous.urls : []), logoUrl!])) }))}
