@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { FilterMenu, type MenuGroup } from "./FilterMenu";
 import type { JobFilterOptions } from "../api/client";
 
 export interface SelectedFilters {
@@ -44,10 +45,58 @@ const DATE_OPTIONS: { label: string; value: SelectedFilters["freshness"] }[] = [
 const EXPERIENCE_OPTIONS = [{ label: "Entry Level / New Grad", value: "entry" }, { label: "Mid Level", value: "mid" }, { label: "Senior / Staff / Lead", value: "senior" }];
 
 /** Real selects let each browser/OS provide its own menu, keyboard behavior, and system colors. */
-export function NativeSelect({ label, value, children, onChange, disabled = false }: {
-  label: string; value: string; children: React.ReactNode; onChange: (value: string) => void; disabled?: boolean;
+// With a mouse on a wide screen, a native <select> opens its list over the control (macOS puts the selected row
+// on top of it). A menu that drops directly beneath the control reads better there. Touch and narrow screens keep
+// the native picker.
+const DROPDOWN_QUERY = "(min-width: 900px) and (hover: hover) and (pointer: fine)";
+function useDropdownMenu(): boolean {
+  const [matches, setMatches] = useState(() => window.matchMedia?.(DROPDOWN_QUERY).matches ?? false);
+  useEffect(() => {
+    const query = window.matchMedia?.(DROPDOWN_QUERY);
+    if (!query) return;
+    const update = () => setMatches(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return matches;
+}
+
+/** Reads the <option>/<optgroup> elements a NativeSelect was given into menu groups (disabled ones are not choices). */
+function menuFromOptions(children: React.ReactNode, onSelect: (value: string) => void, value: string): { groups: MenuGroup[]; current: string } {
+  const groups: MenuGroup[] = [{ id: "main", options: [], selected: [value], onSelect }];
+  let current = "";
+  const visit = (node: React.ReactNode, group: MenuGroup) => {
+    React.Children.forEach(node, (child) => {
+      if (!React.isValidElement(child)) return;
+      const props = child.props as { value?: string; label?: string; disabled?: boolean; children?: React.ReactNode };
+      if (child.type === React.Fragment) visit(props.children, group);
+      else if (child.type === "optgroup") {
+        const next: MenuGroup = { id: `group-${groups.length}`, title: props.label, options: [], selected: [value], onSelect };
+        groups.push(next);
+        visit(props.children, next);
+      } else if (child.type === "option") {
+        const optionValue = String(props.value ?? "");
+        const text = React.Children.toArray(props.children).join("");
+        if (optionValue === value) current = text;
+        if (!props.disabled) group.options.push({ value: optionValue, label: text });
+      }
+    });
+  };
+  visit(children, groups[0]);
+  return { groups: groups.filter((group) => group.options.length > 0), current };
+}
+
+export function NativeSelect({ label, value, children, onChange, disabled = false, align = "left" }: {
+  label: string; value: string; children: React.ReactNode; onChange: (value: string) => void; disabled?: boolean; align?: "left" | "right";
 }) {
   const active = Boolean(value && value !== "recent" && value !== "recommended");
+  const useMenu = useDropdownMenu();
+  if (useMenu) {
+    const { groups, current } = menuFromOptions(children, onChange, value);
+    return <span className={`native-select-control menu-select${active ? " is-active" : ""}`}>
+      <FilterMenu label={label} buttonText={current || label} groups={groups} active={active} disabled={disabled} align={align} />
+    </span>;
+  }
   return <span className={`native-select-control${active ? " is-active" : ""}`}>
     <select aria-label={label} className="native-select" value={value} disabled={disabled}
       onChange={(event) => onChange(event.target.value)}>{children}</select>
