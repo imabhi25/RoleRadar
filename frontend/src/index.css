@@ -3950,3 +3950,22 @@ textarea {
 @container (min-width: 540px) {
   .is-jobs-view .job-fact-compensation { grid-column: span 2; order: 1; }
 }
+
+/* Menu-style filters (mouse on a wide screen): same pill look as the native controls, list drops just beneath. */
+.native-select-control.menu-select { display: inline-flex; }
+.essential-filters .menu-select .filter-dropdown-btn { height: 32px; padding: 0 14px; border-radius: var(--radius-full); box-shadow: none; }
+.results-sort-group .menu-select .filter-dropdown-btn { height: 38px; padding: 0 14px; }
+.essential-filters .menu-select .dropdown-btn-truncate { max-width: 160px; }
+.native-select-control.menu-select .filter-popover { top: calc(100% + 6px); }
+
+/* Switching pages (Jobs, Stats, a company) fades the new page in instead of cutting to it. The Jobs page stays mounted
+   while hidden; it fades in again each time it is shown. */
+@keyframes viewEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.roleradar-main > :not([hidden]) { animation: viewEnter 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.navbar-search-slot .search-bar-row { animation: viewEnter 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .roleradar-main > :not([hidden]), .navbar-search-slot .search-bar-row { animation: none; }
+}

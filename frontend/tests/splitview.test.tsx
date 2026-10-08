@@ -9,7 +9,7 @@ import { splitPolicySections } from '../src/utils/descriptionSections';
 
 function setSplit(enabled: boolean, reducedMotion = false) {
   window.matchMedia = vi.fn((query: string) => ({
-    matches: (enabled && query.includes('min-width: 900px')) || (reducedMotion && query.includes('prefers-reduced-motion')),
+    matches: (enabled && query.includes('min-width: 900px') && !query.includes('pointer: fine')) || (reducedMotion && query.includes('prefers-reduced-motion')),
     media: query,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),

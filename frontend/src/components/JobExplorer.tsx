@@ -500,6 +500,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
             <div className="results-sort-group" title="Recommended lists Canadian roles first, then newest">
               <NativeSelect
                 label="Sort jobs"
+                align="right"
                 value={filters.sort || "recommended"}
                 onChange={(value) => onFiltersChange({ ...filters, sort: value as SelectedFilters["sort"] }, 1, true)}
               >

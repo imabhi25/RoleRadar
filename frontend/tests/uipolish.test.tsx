@@ -17,7 +17,7 @@ const rule = (selector: string) =>
 
 function setSplit(enabled: boolean) {
   window.matchMedia = vi.fn((query: string) => ({
-    matches: enabled && query.includes('min-width: 900px'), media: query, addEventListener: vi.fn(), removeEventListener: vi.fn(),
+    matches: enabled && query.includes('min-width: 900px') && !query.includes('pointer: fine'), media: query, addEventListener: vi.fn(), removeEventListener: vi.fn(),
   })) as unknown as typeof window.matchMedia;
 }
 
