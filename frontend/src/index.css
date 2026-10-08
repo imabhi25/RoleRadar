@@ -3961,11 +3961,33 @@ textarea {
 /* Switching pages (Jobs, Stats, a company) fades the new page in instead of cutting to it. The Jobs page stays mounted
    while hidden; it fades in again each time it is shown. */
 @keyframes viewEnter {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .roleradar-main > :not([hidden]) { animation: viewEnter 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
 .navbar-search-slot .search-bar-row { animation: viewEnter 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
 @media (prefers-reduced-motion: reduce) {
   .roleradar-main > :not([hidden]), .navbar-search-slot .search-bar-row { animation: none; }
+}
+
+/* While the list loads on a wide screen the page already shows the split: the list on the left and an empty detail
+   pane on the right (the first job opens there). The market panel is not shown, so nothing jumps when jobs arrive. */
+.job-explorer-layout.is-loading-split .job-explorer-sidebar { display: none; }
+.job-detail-placeholder { padding: 28px 40px; gap: 14px; }
+.placeholder-line {
+  display: block;
+  height: 12px;
+  width: 92%;
+  border-radius: var(--radius-sm);
+  background-color: var(--border-color);
+  animation: placeholderPulse 1.4s ease-in-out infinite;
+}
+.placeholder-title { height: 24px; width: 55%; }
+.placeholder-subtitle { height: 14px; width: 30%; margin-bottom: 10px; }
+.placeholder-short { width: 60%; }
+@keyframes placeholderPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@media (prefers-reduced-motion: reduce) { .placeholder-line { animation: none; } }
+@media (min-width: 900px) {
+  .split-capable.is-loading-split .job-explorer-right { flex: 1 1 0; }
+  .is-jobs-view .job-explorer-layout.is-loading-split .job-explorer-main { flex: 0 0 420px; border-right: 1px solid var(--border-color); }
 }
