@@ -96,6 +96,9 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
   const resultsHeaderRef = useRef<HTMLDivElement>(null);
   const isSplit = useSplitView();
   const showPane = isSplit && Boolean(selectedJobId);
+  // On a wide screen the first job opens by itself once the list arrives, so the page already shows the split
+  // (list + an empty detail pane) while loading instead of a market panel that disappears a moment later.
+  const paneComing = isSplit && !showPane && !error && !searchBlocked && (resultsPending || jobs.length > 0);
 
   // Was the open job chosen by the app (desktop opens the first result) rather than by the reader? The marker is kept in
   // history.state by the app's selection handler, so reloads and Back/Forward keep the distinction.
@@ -466,7 +469,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
       />
 
       {/* Two-Column Explorer Layout (Left: Jobs Stream, Right: Visual Sidebar) */}
-      <div className={`job-explorer-layout${isSplit ? " split-capable" : ""}${showPane ? " is-split" : ""}`}>
+      <div className={`job-explorer-layout${isSplit ? " split-capable" : ""}${showPane ? " is-split" : ""}${paneComing ? " is-loading-split" : ""}`}>
         {/* Left Column (~72% desktop) */}
         <section className="job-explorer-main" aria-label="Job listings stream">
           {showPane && (
@@ -659,6 +662,16 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
               onClose={handleCloseModal}
             />
           </aside>
+        )}
+
+        {paneComing && (
+          <div className="job-detail-pane job-detail-placeholder" aria-hidden="true">
+            <span className="placeholder-line placeholder-title" />
+            <span className="placeholder-line placeholder-subtitle" />
+            <span className="placeholder-line" />
+            <span className="placeholder-line" />
+            <span className="placeholder-line placeholder-short" />
+          </div>
         )}
 
         <aside className="job-explorer-sidebar" aria-label="Market overview and sources" aria-hidden={showPane ? true : undefined}>
