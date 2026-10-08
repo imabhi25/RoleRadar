@@ -3996,3 +3996,11 @@ textarea {
   .split-capable.is-loading-split .job-explorer-right { flex: 1 1 0; }
   .is-jobs-view .job-explorer-layout.is-loading-split .job-explorer-main { flex: 0 0 420px; border-right: 1px solid var(--border-color); }
 }
+
+/* Page switches use a browser view transition where it exists: the old and new page cross-fade. The navbar is its own
+   group so it stays put. Without it, the page-coloured cover above provides the fade. */
+.roleradar-navbar { view-transition-name: navbar; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; animation-timing-function: ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
