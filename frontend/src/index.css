@@ -45,15 +45,15 @@
    Dark theme — applied when <html data-theme="dark">
    ============================================================ */
 [data-theme="dark"] {
-  --bg-app: #090909;
-  --bg-card: #151515;
-  --bg-raised: #1d1d1d;
-  --text-main: #f5f5f5;
-  --text-muted: #a3a3a3;
-  --border-color: #2e2e2e;
-  --border-subtle: #222222;
-  --control-border: #2e2e2e;
-  --control-border-hover: #444444;
+  --bg-app: #0b1220;
+  --bg-card: #131c2e;
+  --bg-raised: #1a2540;
+  --text-main: #e6edf7;
+  --text-muted: #93a1b8;
+  --border-color: #223049;
+  --border-subtle: #1b2740;
+  --control-border: #223049;
+  --control-border-hover: #33415c;
   --primary: #3b82f6;
   --primary-hover: #2563eb;
   --primary-subtle: rgba(59, 130, 246, 0.15);
@@ -168,6 +168,21 @@ textarea {
   align-items: center;
   gap: 28px;
 }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+}
+.theme-toggle:hover { background: var(--bg-raised); }
+.theme-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 .navbar-brand-btn {
   display: flex;
@@ -2204,44 +2219,44 @@ textarea {
 }
 
 [data-theme="dark"] .search-input-wrapper {
-  background-color: #090909;
-  border-color: #2e2e2e;
+  background-color: #0b1220;
+  border-color: #223049;
 }
 [data-theme="dark"] .search-input-wrapper:focus-within {
   border-color: #3b82f6;
 }
 
 [data-theme="dark"] .search-input {
-  background-color: #090909;
-  color: #f5f5f5;
-  border-color: #2e2e2e;
+  background-color: #0b1220;
+  color: #e6edf7;
+  border-color: #223049;
 }
 [data-theme="dark"] .search-input:focus {
-  background-color: #151515;
+  background-color: #131c2e;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 [data-theme="dark"] .search-input::placeholder {
-  color: #a3a3a3;
+  color: #93a1b8;
 }
 [data-theme="dark"] .search-icon-svg {
-  color: #a3a3a3;
+  color: #93a1b8;
 }
 [data-theme="dark"] .search-clear-btn {
-  color: #a3a3a3;
+  color: #93a1b8;
 }
 [data-theme="dark"] .search-clear-btn:hover {
-  color: #f5f5f5;
+  color: #e6edf7;
 }
 
 [data-theme="dark"] .filter-dropdown-btn {
-  background-color: #151515;
-  border-color: #262626;
-  color: #f5f5f5;
+  background-color: #131c2e;
+  border-color: #223049;
+  color: #e6edf7;
 }
 [data-theme="dark"] .filter-dropdown-btn:hover:not(:disabled) {
-  background-color: #1d1d1d;
-  border-color: #444444;
+  background-color: #1a2540;
+  border-color: #33415c;
 }
 [data-theme="dark"] .filter-dropdown-btn.active {
   background-color: rgba(59, 130, 246, 0.15);
@@ -2250,47 +2265,47 @@ textarea {
 }
 
 [data-theme="dark"] .filter-popover {
-  background-color: #151515;
-  border-color: #2e2e2e;
+  background-color: #131c2e;
+  border-color: #223049;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 [data-theme="dark"] .menu-option {
-  color: #f5f5f5;
+  color: #e6edf7;
 }
 [data-theme="dark"] .menu-option:hover,
 [data-theme="dark"] .menu-option:focus-visible {
-  background-color: #1d1d1d;
+  background-color: #1a2540;
 }
 [data-theme="dark"] .menu-check {
   color: #60a5fa;
 }
 
 [data-theme="dark"] .popover-search-input {
-  background-color: #090909;
-  border-color: #2e2e2e;
-  color: #f5f5f5;
+  background-color: #0b1220;
+  border-color: #223049;
+  color: #e6edf7;
 }
 [data-theme="dark"] .popover-search-input:focus {
   border-color: #3b82f6;
 }
 
 [data-theme="dark"] .active-filter-chip {
-  background-color: #1d1d1d;
-  border-color: #2e2e2e;
-  color: #d4d4d4;
+  background-color: #1a2540;
+  border-color: #223049;
+  color: #c9d3e3;
 }
 
 [data-theme="dark"] .chip-remove-btn {
-  color: #a3a3a3;
+  color: #93a1b8;
 }
 [data-theme="dark"] .chip-remove-btn:hover {
-  color: #f5f5f5;
-  background-color: #2e2e2e;
+  color: #e6edf7;
+  background-color: #223049;
 }
 
 [data-theme="dark"] .reset-filters-btn {
-  color: #a3a3a3;
+  color: #93a1b8;
 }
 [data-theme="dark"] .reset-filters-btn:hover {
   color: #3b82f6;

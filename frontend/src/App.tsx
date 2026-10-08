@@ -18,6 +18,8 @@ function isPlainClick(event: React.MouseEvent): boolean {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
+const THEME_STORAGE_KEY = "roleradar-theme";
+
 export function App() {
   // Totals for the selected country (header count, Market overview). Optional: Jobs never waits on this.
   const [scopedOverview, setScopedOverview] = useState<OverviewStats | null>(null);
@@ -26,9 +28,22 @@ export function App() {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(initialRoute.company);
   const [activeView, setActiveView] = useState<AppView>(initialRoute.view);
 
+  // Light by default; a saved choice wins, otherwise the system setting. The toggle in the navbar changes and saves it.
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved === "light" || saved === "dark") return saved;
+    } catch { /* storage may be disabled */ }
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", "light");
-  }, []);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch { /* storage may be disabled */ }
+  };
 
   // Synchronized URL state (canonical filters and page number)
   const [urlState, setUrlState] = useState<ParsedUrlState>(() =>
@@ -292,7 +307,7 @@ export function App() {
                 Stats
               </a>
               <a
-                href="https://github.com/imabhi25/RoleRadar"
+                href="https://github.com/imabhi25/Jobber"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-link"
@@ -302,7 +317,23 @@ export function App() {
             </nav>
           </div>
 
-
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+              </svg>
+            )}
+          </button>
         </div>
       </header>
 

@@ -1,6 +1,6 @@
 """Load a crawl (crawl.py output) into a scratch PostgreSQL database, so a repair can be rehearsed on real production rows.
 
-    createdb roleradar_replay && psql roleradar_replay -f db/schema.sql
+    createdb jobber_replay && psql jobber_replay -f db/schema.sql
     python -c "from db.migrate import run_migrations; run_migrations(defer_versions={'015_pay_rules_and_audit_repair.sql'})"   # up to 014
     python scripts/public_data_audit/replay_snapshot.py CRAWL_DIR          # load the snapshot
     python -m db.migrate                                                    # apply the migration under test, as production will

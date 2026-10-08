@@ -1,5 +1,5 @@
 """Shared pay plausibility rules (the single Python definition; mirrored in frontend/src/utils/compensation.ts and the
-`roleradar_pay_ranges` SQL function, with parity enforced by tests/fixtures/pay_rules.json).
+`jobber_pay_ranges` SQL function, with parity enforced by tests/fixtures/pay_rules.json).
 
 A published figure is never edited. A range that cannot be real pay is *marked*, not corrected, so the original numbers
 stay in the record and no display or filter treats them as pay:

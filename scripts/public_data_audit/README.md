@@ -3,7 +3,7 @@
 A read-only, repeatable audit of every publicly listed job, built so a fix can be measured with the same checks before and after.
 
 ```bash
-python scripts/public_data_audit/crawl.py https://roleradar-jobs.vercel.app OUT        # GET-only crawl: list, detail, companies, filters
+python scripts/public_data_audit/crawl.py https://jobber-mauve.vercel.app OUT        # GET-only crawl: list, detail, companies, filters
 cd frontend && AUDIT_DIR=OUT npx vitest run --config ../scripts/public_data_audit/vitest.audit.config.ts   # render every job as the UI does
 python scripts/public_data_audit/analyze.py OUT                                        # metrics.json: counts + job ids per check
 python scripts/public_data_audit/compare.py BEFORE AFTER                               # before/after table (RESTRICT_TO=<dir> for the same job set)

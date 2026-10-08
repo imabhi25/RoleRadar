@@ -24,7 +24,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: roleradar
+          POSTGRES_DB: jobber
         ports:
           - 5432:5432
         options: >-
@@ -37,7 +37,7 @@ jobs:
       PGPORT: "5432"
       PGUSER: postgres
       PGPASSWORD: postgres
-      PGDATABASE: roleradar
+      PGDATABASE: jobber
       TESTING: "1"
     steps:
       - name: Check out repository

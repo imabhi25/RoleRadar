@@ -14,7 +14,7 @@ from urllib3.util import Retry
 
 logger = logging.getLogger("ingestion.http_client")
 
-DEFAULT_USER_AGENT = "RoleRadar/1.0 (+https://github.com/imabhi25/RoleRadar)"
+DEFAULT_USER_AGENT = "RoleRadar/1.0 (+https://github.com/imabhi25/Jobber)"
 DEFAULT_TIMEOUT: Tuple[float, float] = (10.0, 30.0)  # (connect_timeout, read_timeout)
 RETRY_STATUSES = [429, 500, 502, 503, 504]
 MAX_RETRIES = 3

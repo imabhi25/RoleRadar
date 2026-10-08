@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 002: Real Job Ingestion, ATS Metadata & Ingestion Audit Schema
--- Phase 5 Additive Migration for RoleRadar
+-- Phase 5 Additive Migration for Jobber
 -- =============================================================================
 
 -- 1. Extend job_postings with ATS metadata and lifecycle tracking

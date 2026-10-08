@@ -14,18 +14,10 @@ const contrast = (a: string, b: string) => {
   const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 };
-const isNeutral = (hex: string) => {
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
-  return Math.max(r, g, b) - Math.min(r, g, b) <= 3;
-};
-
-describe('dark mode is neutral near-black', () => {
-  it('page #090909, cards #151515, a distinct raised surface, neutral borders', () => {
-    expect(v('bg-app')).toBe('#090909');
-    expect(v('bg-card')).toBe('#151515');
-    for (const name of ['bg-app', 'bg-card', 'bg-raised', 'border-color', 'border-subtle', 'control-border', 'control-border-hover', 'text-muted']) {
-      expect(isNeutral(v(name)), name).toBe(true);
-    }
+describe('dark mode is a midnight navy', () => {
+  it('page #0b1220, cards #131c2e, a distinct raised surface, visible borders', () => {
+    expect(v('bg-app')).toBe('#0b1220');
+    expect(v('bg-card')).toBe('#131c2e');
     // surfaces step up: page < card < raised, and the border is visible against the card
     expect(lum(v('bg-app'))).toBeLessThan(lum(v('bg-card')));
     expect(lum(v('bg-card'))).toBeLessThan(lum(v('bg-raised')));
@@ -36,10 +28,10 @@ describe('dark mode is neutral near-black', () => {
     expect(v('primary')).toBe('#3b82f6');
   });
 
-  it('no navy/slate colours remain in any dark-theme rule', () => {
-    const navy = ['#0b1120', '#111827', '#172033', '#1e293b', '#263247', '#151e32', '#334155', '#475569', '#94a3b8', '#0f172a', '#030712'];
+  it('no leftover neutral-grey surfaces remain in any dark-theme rule', () => {
+    const grey = ['#090909', '#151515', '#1d1d1d', '#2e2e2e', '#262626'];
     const offenders = [...css.matchAll(/([^{}]*\[data-theme="dark"\][^{}]*)\{([^{}]*)\}/g)]
-      .filter((m) => navy.some((n) => m[2].toLowerCase().includes(n)))
+      .filter((m) => grey.some((g) => m[2].toLowerCase().includes(g)))
       .map((m) => m[1].trim().slice(0, 80));
     expect(offenders).toEqual([]);
   });

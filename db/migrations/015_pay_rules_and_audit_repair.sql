@@ -3,7 +3,7 @@
 -- an amount no pay period can reach ($179,300,152 a year) and a range whose top is over 10x its bottom are not pay,
 -- ranges ingestion flagged "validation" are not pay, and on-target earnings (commission included) are not a salary.
 -- db/migrate.py then runs the shared backfill (db/repair_public_data.py): locations, then pay stated in the posting text.
-CREATE OR REPLACE FUNCTION roleradar_pay_ranges(pay jsonb) RETURNS jsonb
+CREATE OR REPLACE FUNCTION jobber_pay_ranges(pay jsonb) RETURNS jsonb
 LANGUAGE plpgsql IMMUTABLE AS $$
 DECLARE
     parts jsonb := '[]'::jsonb;
