@@ -4,12 +4,11 @@
 
 RoleRadar (formerly Jobber) brings postings from different hiring platforms into one searchable interface. It prioritizes Canadian co-op, internship and early-career opportunities while retaining US roles, and lets applicants compare jobs without opening a new page for every posting.
 
-**[Live demo](https://jobber-mauve.vercel.app/jobs)** · **[Market dashboard](https://jobber-mauve.vercel.app/stats)** · **[CI results](https://github.com/imabhi25/Jobber/actions/workflows/ci.yml)**
+**[Live demo](https://jobber-mauve.vercel.app/jobs)** · **[Market dashboard](https://jobber-mauve.vercel.app/stats)** · **[CI results](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)**
 
-[![CI](https://github.com/imabhi25/Jobber/actions/workflows/ci.yml/badge.svg)](https://github.com/imabhi25/Jobber/actions/workflows/ci.yml)
+[![CI](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml/badge.svg)](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)
 
-> **Naming.** The project was renamed from Jobber to RoleRadar. Deliberately unchanged so nothing breaks: the GitHub repository and its URLs
-> (`imabhi25/Jobber`), the live address `jobber-mauve.vercel.app` and the API host, the database name `jobber` and the SQL functions
+> **Naming.** The project was renamed from Jobber to RoleRadar. Deliberately unchanged so nothing breaks: the live address `jobber-mauve.vercel.app` and the API host, the database name `jobber` and the SQL functions
 > `jobber_pay_ranges` / `jobber_experience_level`, and the applied migrations (history). The earlier audit reports in this repository
 > (`JOBBER_QA_AUDIT.md`, `REMEDIATION_REVIEW.md`, `COVERAGE_EXPANSION_REPORT.md`, `CANDIDATE_EMPLOYERS_AUDIT.md`) keep the old name as historical records.
 > The employer "Jobber" in `config/company_watchlist.json` is a real company (getjobber.com), not this project.
@@ -96,7 +95,7 @@ The [CI workflow](.github/workflows/ci.yml) checks pull requests and changes to 
 - Frontend tests cover interactions, filtering, request races, dates, compensation, locations, description safety and Summary/Full Posting behavior.
 - ESLint, TypeScript, a production build and a whitespace check run alongside the test suites.
 
-**571 frontend tests passed for the [latest feature release](https://github.com/imabhi25/Jobber/pull/4) on October 4, 2026.** This is a dated test-suite result; live listing counts and source availability change over time.
+**571 frontend tests passed for the latest feature release on October 4, 2026.** This is a dated test-suite result; live listing counts and source availability change over time.
 
 ## Run locally
 
@@ -108,8 +107,8 @@ Prerequisites: **Python 3.12+, Node.js 22 and PostgreSQL 16**. Commands below us
 ### 1. Install backend dependencies
 
 ```bash
-git clone https://github.com/imabhi25/Jobber.git
-cd Jobber
+git clone https://github.com/imabhi25/RoleRadar.git
+cd RoleRadar
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
@@ -118,9 +117,9 @@ python -m pip install -r requirements.txt
 ### 2. Initialize a fresh local database
 
 ```bash
-createdb jobber
-export PGDATABASE=jobber
-psql -v ON_ERROR_STOP=1 -d jobber -f db/schema.sql
+createdb roleradar
+export PGDATABASE=roleradar
+psql -v ON_ERROR_STOP=1 -d roleradar -f db/schema.sql
 python -m db.migrate
 ```
 
@@ -167,9 +166,9 @@ Initialize a separate local database for backend tests:
 
 ```bash
 python -m pip install pytest httpx
-createdb jobber_test
-export PGDATABASE=jobber_test
-psql -v ON_ERROR_STOP=1 -d jobber_test -f db/schema.sql
+createdb roleradar_test
+export PGDATABASE=roleradar_test
+psql -v ON_ERROR_STOP=1 -d roleradar_test -f db/schema.sql
 python -m db.migrate
 TESTING=1 python -m pytest -q -rs
 ```

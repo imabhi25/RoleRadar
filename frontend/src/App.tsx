@@ -349,7 +349,7 @@ export function App() {
                 Stats
               </a>
               <a
-                href="https://github.com/imabhi25/Jobber"
+                href="https://github.com/imabhi25/RoleRadar"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-link"
