@@ -367,12 +367,6 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
     return () => { cancelled = true; };
   }, [fetchedJobs]);
 
-  // The open job turned out to be gone: move to the next one (or close it) instead of showing a dead posting.
-  useEffect(() => {
-    if (!active || !selectedJobId || !goneIds.has(selectedJobId)) return;
-    onSelectJob(isSplit ? jobs[0]?.job_id ?? null : null, { replace: true, auto: true });
-  }, [active, isSplit, selectedJobId, goneIds, jobs, onSelectJob]);
-
   // Desktop keyboard browsing: ↑/↓ or J/K move through jobs. The split pane stays open.
   // Never fires while typing or while focus is on another interactive control.
   useEffect(() => {
@@ -685,7 +679,8 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
             <JobDetailContent
               jobId={paneJobId}
               variant="pane"
-              preview={jobs.find((job) => job.job_id === paneJobId) ?? null}
+              preview={fetchedJobs.find((job) => job.job_id === paneJobId) ?? null}
+              knownGone={goneIds.has(paneJobId)}
               onClose={handleCloseModal}
             />
           </aside>
@@ -807,6 +802,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
       {/* Single-column job detail overlay (narrow screens only) */}
       <JobDetailModal
         jobId={isSplit || autoSelected ? null : selectedJobId}
+        knownGone={Boolean(selectedJobId && goneIds.has(selectedJobId))}
         onClose={handleCloseModal}
       />
     </div>

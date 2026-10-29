@@ -1127,6 +1127,21 @@ class TestApiEndpoints(unittest.TestCase):
         self.assertEqual(data["skills"], ["PostgreSQL", "React", "TypeScript"])
 
     @patch("api.main.get_db_cursor")
+    def test_workday_job_id_with_slashes(self, mock_get_db):
+        job_id = "workday:company/job/Toronto/Engineer_R123"
+        mock_cur = MagicMock()
+        mock_cur.fetchone.return_value = (
+            job_id, "Engineer", "Company", "Toronto", "Canada", "hybrid",
+            "full_time", "workday", "https://example.com/job", None,
+            datetime.now(timezone.utc), "Description", [],
+        )
+        mock_get_db.return_value = self._mock_db(mock_cur)
+        response = self.client.get("/api/jobs/workday%3Acompany%2Fjob%2FToronto%2FEngineer_R123")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["job_id"], job_id)
+        self.assertEqual(mock_cur.execute.call_args.args[1], (job_id,))
+
+    @patch("api.main.get_db_cursor")
     def test_unknown_date_active_jobs_not_mislabeled_as_newly_posted(self, mock_get_db):
         mock_cur = MagicMock()
         mock_cur.fetchone.return_value = (
@@ -1153,6 +1168,18 @@ class TestApiEndpoints(unittest.TestCase):
         self.assertIsNotNone(data["created_at"])
         self.assertEqual(data["freshness_status"], "recently_discovered")
         self.assertNotEqual(data["freshness_status"], "recently_posted")
+
+    @patch("api.main.get_db_cursor")
+    def test_inactive_job_returns_gone(self, mock_get_db):
+        mock_cur = MagicMock()
+        mock_cur.fetchone.side_effect = [None, (1,)]
+        mock_get_db.return_value = self._mock_db(mock_cur)
+
+        response = self.client.get("/api/jobs/workday%3Acompany%2Fjob%2F123")
+        self.assertEqual(response.status_code, 410)
+        self.assertIn("removed or expired", response.json()["detail"])
+        self.assertEqual(mock_cur.execute.call_args.args[1], ("workday:company/job/123",))
+        self.assertIn("is_active = FALSE", mock_cur.execute.call_args.args[0])
 
     @patch("api.main.get_db_cursor")
     def test_single_job_not_found(self, mock_get_db):
@@ -1656,6 +1683,31 @@ class TestApiDeduplicationDatabaseIntegration(unittest.TestCase):
         self.cur.close()
         self.conn.close()
 
+    def test_detail_distinguishes_active_inactive_and_unknown_ids(self):
+        self.cur.execute("INSERT INTO companies (name) VALUES ('Detail lifecycle fixture') RETURNING id")
+        company_id = self.cur.fetchone()[0]
+        self.cur.execute("INSERT INTO locations (location, country) VALUES ('Detail lifecycle fixture', 'Canada') RETURNING id")
+        location_id = self.cur.fetchone()[0]
+        job_id = "workday:fixture/job/123"
+        self.cur.execute("""INSERT INTO job_postings
+            (job_id, company_id, location_id, title, source_name, is_active, is_eligible_role)
+            VALUES (%s, %s, %s, 'Software Engineer', 'workday', TRUE, TRUE)""",
+            (job_id, company_id, location_id))
+
+        @contextmanager
+        def transaction_cursor():
+            yield self.cur
+
+        with patch("api.main.get_db_cursor", transaction_cursor):
+            client = TestClient(app)
+            path = "/api/jobs/workday%3Afixture%2Fjob%2F123"
+            self.assertEqual(client.get(path).status_code, 200)
+            self.cur.execute("UPDATE job_postings SET is_active = FALSE WHERE job_id = %s", (job_id,))
+            self.assertEqual(client.get(path).status_code, 410)
+            self.assertEqual(client.get('/api/jobs/never-seen').status_code, 404)
+            self.cur.execute("DELETE FROM job_postings WHERE job_id = %s", (job_id,))
+            self.assertEqual(client.get(path).status_code, 404)
+
     def test_databricks_and_faire_regression_deduplication(self):
         # 1. Create temporary companies & locations
         self.cur.execute("INSERT INTO companies (name) VALUES ('Regression Databricks') RETURNING id;")
@@ -2123,36 +2175,42 @@ def test_api_responses_carry_security_headers():
     assert docs.headers["X-Content-Type-Options"] == "nosniff"
 
 
-def test_cors_headers_for_vercel_preview_and_production():
+def test_cors_explicit_origins_and_no_credentials():
     from fastapi.testclient import TestClient
     from api.main import app
 
     client = TestClient(app)
+    for origin in ("http://localhost:5173", "http://127.0.0.1:5173", "https://jobber-mauve.vercel.app"):
+        for method in ("get", "options"):
+            headers = {"Origin": origin}
+            if method == "options":
+                headers["Access-Control-Request-Method"] = "GET"
+            response = getattr(client, method)("/api/health", headers=headers)
+            assert response.status_code == 200
+            assert response.headers.get("access-control-allow-origin") == origin
+            assert "access-control-allow-credentials" not in response.headers
 
-    # 1. Vercel preview URL preflight OPTIONS
-    preview_origin = "https://jobber-git-feat-job-browsi-709a80-sabhaypartap18-4175s-projects.vercel.app"
-    res_opts = client.options(
-        "/api/health",
-        headers={
-            "Origin": preview_origin,
-            "Access-Control-Request-Method": "GET",
-        },
-    )
-    assert res_opts.status_code == 200
-    assert res_opts.headers.get("access-control-allow-origin") == preview_origin
+    for origin in ("https://untrusted.vercel.app", "https://malicious.example.com"):
+        response = client.get("/api/health", headers={"Origin": origin})
+        assert "access-control-allow-origin" not in response.headers
+        response = client.options("/api/health", headers={"Origin": origin, "Access-Control-Request-Method": "GET"})
+        assert response.status_code == 400
+        assert "access-control-allow-origin" not in response.headers
 
-    # 2. Vercel preview URL GET
-    res_get = client.get("/api/health", headers={"Origin": preview_origin})
-    assert res_get.status_code == 200
-    assert res_get.headers.get("access-control-allow-origin") == preview_origin
 
-    # 3. Production Vercel domain GET
-    prod_origin = "https://jobber-mauve.vercel.app"
-    res_prod = client.get("/api/health", headers={"Origin": prod_origin})
-    assert res_prod.status_code == 200
-    assert res_prod.headers.get("access-control-allow-origin") == prod_origin
+def test_cors_configured_production_origin():
+    import os
+    import subprocess
+    import sys
 
-    # 4. Insecure / arbitrary origin should NOT receive allow-origin
-    untrusted = "https://malicious.example.com"
-    res_untrusted = client.get("/api/health", headers={"Origin": untrusted})
-    assert res_untrusted.headers.get("access-control-allow-origin") is None
+    script = """
+from fastapi.testclient import TestClient
+from api.main import app
+client = TestClient(app)
+for origin in ('https://roleradar.example', 'https://second.example'):
+    response = client.get('/api/health', headers={'Origin': origin})
+    assert response.headers.get('access-control-allow-origin') == origin
+    assert 'access-control-allow-credentials' not in response.headers
+"""
+    env = {**os.environ, "FRONTEND_ORIGIN": "https://roleradar.example/, https://second.example"}
+    subprocess.run([sys.executable, "-c", script], env=env, check=True)

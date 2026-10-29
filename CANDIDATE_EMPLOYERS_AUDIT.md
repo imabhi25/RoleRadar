@@ -1,15 +1,15 @@
 # Candidate Employers Coverage Investigation Report
 
 **Date:** October 2, 2026
-**Subject:** Technical investigation and connection status of 35 candidate employers for Jobber ingestion coverage expansion.
+**Subject:** Technical investigation and connection status of 35 candidate employers for RoleRadar ingestion coverage expansion.
 
 ---
 
 ## 1. Executive Summary & Verification Rules
 
-Jobber maintains strict ingestion standards:
+RoleRadar maintains strict ingestion standards:
 - **No Synthetic Data:** Every job must originate from an authentic employer career feed or verified ATS endpoint. No placeholder or fake jobs are ever introduced.
-- **Scope Discipline:** Only software engineering, data, and technical roles matching Jobber's eligibility predicates are ingested.
+- **Scope Discipline:** Only software engineering, data, and technical roles matching RoleRadar's eligibility predicates are ingested.
 - **Company Tracking vs. Active Postings:** A company being registered in the system is distinct from having active matching vacancies in a given geographic or temporal window.
 - **Branding & Logo Invariant:** Every connected employer requires an authentic brand mark verified and served via `frontend/public/logos/` and cataloged in `ingestion/company_resolver.py`.
 - **Distinct Statuses:** Connected sources are clearly separated from audited feeds pending batch rollout, enterprise portals requiring custom adapters, and excluded non-SWE sources.

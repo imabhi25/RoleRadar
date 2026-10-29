@@ -1,6 +1,6 @@
-# Jobber adversarial QA audit
+# RoleRadar adversarial QA audit
 
-Audit date: September 30, 2026 (America/Toronto). Production: https://jobber-mauve.vercel.app. Public API: https://jobber-api-980d.onrender.com. Repository: imabhi25/Jobber.
+Audit date: September 30, 2026 (America/Toronto). Production: https://jobber-mauve.vercel.app. Public API: https://jobber-api-980d.onrender.com. Repository: imabhi25/RoleRadar.
 
 ## Assessment
 
@@ -45,7 +45,7 @@ Severity follows the requested P0–P3 scale; tool-level axe impacts do not over
 ### B02 — P1: PointClickCare salary and compensation narrative disappear
 
 - **Route/environment:** /jobs?job=lever%3A150b07cd-04e9-46c4-9015-114498f3798c; Senior Machine Learning Systems Engineer (CAD). Production, 1440×900, light.
-- **Reproduce:** Open the job and compare compensation with the exact Lever listing. The employer shows CAD $154,000–$193,000 per year plus bonus and benefits. Neither the range nor its narrative is in Jobber’s stored description; compensation is null.
+- **Reproduce:** Open the job and compare compensation with the exact Lever listing. The employer shows CAD $154,000–$193,000 per year plus bonus and benefits. Neither the range nor its narrative is in RoleRadar’s stored description; compensation is null.
 - **Expected versus actual:** Employer compensation should appear accurately; it is absent at ingestion, so the frontend cannot recover it.
 - **Frequency/scope:** One independently confirmed salary omission; all 25 public Lever postings use this adapter, but not all are proven affected.
 - **Likely cause:** ingestion/clients/lever.py:84–118 assembles description, lists and additional sections but ignores Lever salaryRange and salaryDescription. The exact public Lever response contains both.

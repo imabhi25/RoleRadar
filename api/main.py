@@ -84,8 +84,7 @@ if frontend_origin_env:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_origin_regex=r"^https://([a-zA-Z0-9-]+\.)*vercel\.app$",
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -1496,11 +1495,11 @@ def get_job_filter_options():
         raise HTTPException(status_code=500, detail="Internal server error.")
 
 
-@app.get("/api/jobs/{job_id}", response_model=JobDetail)
+@app.get("/api/jobs/{job_id:path}", response_model=JobDetail)
 def get_job_detail(job_id: str):
     """
     Returns full details for a single active real job posting.
-    Returns 404 if the job is not found, inactive, or a sample job.
+    Returns 410 for a known inactive job and 404 for unknown or non-public jobs.
     """
     reject_nul(job_id)
     query = f"""
@@ -1542,6 +1541,12 @@ def get_job_detail(job_id: str):
             cur.execute(query, (job_id,))
             row = cur.fetchone()
             if not row:
+                cur.execute(
+                    "SELECT 1 FROM job_postings WHERE job_id = %s AND is_active = FALSE",
+                    (job_id,),
+                )
+                if cur.fetchone():
+                    raise HTTPException(status_code=410, detail="Job posting has been removed or expired.")
                 raise HTTPException(status_code=404, detail=f"Job posting '{job_id}' not found.")
 
             return {

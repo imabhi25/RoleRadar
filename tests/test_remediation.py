@@ -126,7 +126,7 @@ def test_public_api_preserves_old_distinct_jobs_and_all_countries(conn):
         assert oldest['jobs'][0]['job_id'] == name+'older'
         assert client.get('/api/jobs', params={'freshness':'all','company':name,'q':'SWE'}).json()['total'] == 3
         assert client.get('/api/jobs', params={'company':name,'freshness':'week'}).json()['total'] == 0
-        assert client.get('/api/jobs/'+name+'closed').status_code == 404
+        assert client.get('/api/jobs/'+name+'closed').status_code == 410
         assert client.get('/api/jobs/'+name+'broad').status_code == 404
         assert client.get('/api/jobs', params={'sort':'title; DROP TABLE jobs'}).status_code == 422
         detail = client.get('/api/jobs/'+name+'old').json()

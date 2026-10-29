@@ -4,13 +4,14 @@ import { JobDetailContent } from "./JobDetailContent";
 interface JobDetailModalProps {
   jobId: string | null;
   onClose: () => void;
+  knownGone?: boolean;
 }
 
 /**
  * Mobile / narrow-width job detail: a single-column overlay. The content itself is shared
  * with the desktop split-view pane (JobDetailContent).
  */
-export const JobDetailModal: React.FC<JobDetailModalProps> = ({ jobId, onClose }) => {
+export const JobDetailModal: React.FC<JobDetailModalProps> = ({ jobId, onClose, knownGone }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -114,7 +115,7 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({ jobId, onClose }
         aria-labelledby="modal-job-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <JobDetailContent jobId={jobId} variant="modal" onClose={onClose} closeButtonRef={closeButtonRef} />
+        <JobDetailContent jobId={jobId} variant="modal" onClose={onClose} closeButtonRef={closeButtonRef} knownGone={knownGone} />
       </div>
     </div>
   );

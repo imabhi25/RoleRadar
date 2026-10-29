@@ -90,14 +90,14 @@ describe('switching jobs keeps the pane mounted and never mixes jobs', () => {
     const { rerender } = render(<JobDetailContent jobId="a" variant="pane" onClose={() => {}} preview={make('a')} />);
     await act(async () => pending.get('a')!.resolve(make('a')));
     rerender(<JobDetailContent jobId="gone" variant="pane" onClose={() => {}} preview={null} />);
-    await act(async () => pending.get('gone')!.reject(new ApiError(404, '/api/jobs/gone')));
+    await act(async () => pending.get('gone')!.reject(new ApiError(410, '/api/jobs/gone')));
     expect(screen.getByTestId('job-unavailable')).toBeInTheDocument();
     expect(applyLinks()).toEqual([]);
     expect(screen.queryByText('Description of a.')).not.toBeInTheDocument();
     rerender(<JobDetailContent jobId="flaky" variant="pane" onClose={() => {}} preview={make('flaky')} />);
     await act(async () => pending.get('flaky')!.reject(new ApiError(500, '/api/jobs/flaky')));
     expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
-    expect(applyLinks()).toEqual([]);
+    expect(applyLinks().map((link) => link.href)).toEqual(['https://jobs.example.test/flaky/apply']);
   });
 
   it('resets the description scroll when another job is selected', async () => {

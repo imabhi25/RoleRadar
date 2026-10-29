@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { apiClient, ApiError, type JobDetail, type JobSummary } from '../src/api/client';
 import { App } from '../src/App';
 import { parseUrlSearch, MAX_PAGE } from '../src/utils/urlState';
+import * as liveness from '../src/utils/jobLiveness';
 
 const job = (id: string, title = `Role ${id}`): JobSummary => ({
   job_id: id, title, company: 'Fixture', location: 'Toronto, ON', country: 'Canada', workplace_type: 'hybrid',
@@ -25,6 +26,7 @@ describe('a failed query never shows the previous query as current', () => {
     const getJobs = vi.spyOn(apiClient, 'getJobs').mockResolvedValue({ total: 2, limit: 20, offset: 0, jobs: [job('a'), job('b')] });
     window.history.replaceState(null, '', '/jobs');
     render(<App />);
+    expect(screen.getByRole('link', { name: /github/i })).toHaveAttribute('href', 'https://github.com/imabhi25/RoleRadar');
     expect(await screen.findAllByRole('button', { name: /View details for/ })).toHaveLength(2);
 
     getJobs.mockRejectedValueOnce(new ApiError(500, '/api/jobs'));
@@ -42,10 +44,10 @@ describe('a failed query never shows the previous query as current', () => {
 });
 
 describe('missing job ids', () => {
-  it('404 shows a final unavailable state with a way back, and no Retry', async () => {
+  it('410 shows a final unavailable state with a way back, and no Retry', async () => {
     baseMocks();
     vi.spyOn(apiClient, 'getJobs').mockResolvedValue({ total: 2, limit: 20, offset: 0, jobs: [job('a'), job('b')] });
-    vi.spyOn(apiClient, 'getJob').mockRejectedValue(new ApiError(404, '/api/jobs/gone'));
+    vi.spyOn(apiClient, 'getJob').mockRejectedValue(new ApiError(410, '/api/jobs/gone'));
     window.history.replaceState(null, '', '/jobs?job=gone');
     render(<App />);
     const state = await screen.findByTestId('job-unavailable');
@@ -56,6 +58,16 @@ describe('missing job ids', () => {
     expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Back to jobs' }));
     await waitFor(() => expect(new URLSearchParams(window.location.search).get('job')).toBeNull());
+  });
+
+  it.each([404, 500, 'network'])('%s retains the list apply link and offers Retry', async (failure) => {
+    const { JobDetailContent } = await import('../src/components/JobDetailContent');
+    const preview = { ...job('a'), source_url: 'https://jobs.example.com/a' };
+    vi.spyOn(apiClient, 'getJob').mockRejectedValue(failure === 'network' ? new TypeError('network') : new ApiError(failure as number, '/api/jobs/a'));
+    render(<JobDetailContent jobId="a" variant="pane" onClose={() => {}} preview={preview} />);
+    expect(await screen.findByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    expect(screen.queryByTestId('job-unavailable')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Apply for/ })).toHaveAttribute('href', preview.source_url);
   });
 
   it('a transient 500 offers Retry, which loads the job', async () => {
@@ -70,6 +82,25 @@ describe('missing job ids', () => {
     await userEvent.click(retry);
     expect(await screen.findByRole('link', { name: /Apply/ })).toBeInTheDocument();
     expect(getJob).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('employer liveness', () => {
+  it('shows an unavailable state when the selected job is confirmed gone', async () => {
+    baseMocks();
+    const selected = { ...job('a'), source_url: 'https://jobs.example.com/a' };
+    vi.spyOn(apiClient, 'getJobs').mockResolvedValue({ total: 1, limit: 20, offset: 0, jobs: [selected] });
+    vi.spyOn(apiClient, 'getJob').mockResolvedValue(detail('a'));
+    let confirmGone!: (result: liveness.Liveness) => void;
+    vi.spyOn(liveness, 'checkJobLiveness').mockImplementation(() => new Promise((resolve) => { confirmGone = resolve; }));
+    window.history.replaceState(null, '', '/jobs?job=a');
+    render(<App />);
+    await screen.findByRole('link', { name: /Apply for/ });
+    await waitFor(() => expect(confirmGone).toBeDefined());
+    confirmGone('gone');
+    expect(await screen.findByTestId('job-unavailable')).toHaveTextContent('removed or has expired');
+    expect(screen.queryByRole('link', { name: /Apply for/ })).not.toBeInTheDocument();
+    expect(new URLSearchParams(window.location.search).get('job')).toBe('a');
   });
 });
 

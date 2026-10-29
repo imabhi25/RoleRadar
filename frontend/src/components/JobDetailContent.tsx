@@ -26,6 +26,7 @@ export interface JobDetailContentProps {
   /** List summary of this job: lets the header render instantly (and stay put) while the detail loads. */
   preview?: JobSummary | null;
   closeButtonRef?: React.Ref<HTMLButtonElement>;
+  knownGone?: boolean;
 }
 
 const EMPTY_ROUTES: ResolvedApplyRoutes = {
@@ -45,6 +46,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
   onClose,
   preview,
   closeButtonRef,
+  knownGone = false,
 }) => {
   // Everything that describes "the job on screen" is tagged with the id it was fetched for. A render for a newly
   // selected id therefore can never pick up the previous job's facts, description or Apply URL, even for one frame,
@@ -56,11 +58,11 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
     | { id: string; status: "unavailable" };
   const [fetched, setFetched] = useState<FetchState>({ id: jobId, status: "loading" });
   const state: FetchState = fetched.id === jobId ? fetched : { id: jobId, status: "loading" };
-  const job = state.status === "ready" ? state.job : null;
-  const loading = state.status === "loading";
-  const error = state.status === "error" ? "Unable to load job details. Please try again." : null;
-  // The job id does not exist (removed, expired or a bad link): a final answer, so no Retry is offered.
-  const unavailable = state.status === "unavailable";
+  const job = !knownGone && state.status === "ready" ? state.job : null;
+  const loading = !knownGone && state.status === "loading";
+  const error = !knownGone && state.status === "error" ? "Unable to load job details. Please try again." : null;
+  // HTTP 410 explicitly indicates the posting is gone.
+  const unavailable = knownGone || state.status === "unavailable";
   // Per-job UI choices carry the id they were made for, so they reset on their own when another job is selected.
   const [locationsOpenFor, setLocationsOpenFor] = useState<string | null>(null);
   const [viewChoice, setViewChoice] = useState<{ id: string; view: DescriptionView } | null>(null);
@@ -83,7 +85,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
       if (!stale()) setFetched({ id, status: "ready", job: data });
     } catch (err) {
       if (stale()) return;
-      if (err instanceof ApiError && (err.status === 404 || err.status === 410)) {
+      if (err instanceof ApiError && err.status === 410) {
         setFetched({ id, status: "unavailable" });
         return;
       }
@@ -116,7 +118,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
     [head?.company, job?.company_website_url]
   );
   const companyProfile = useCompanyBackground(baseCompanyProfile);
-  const applyRoutes = useMemo(() => (job ? resolveApplyRoutes(job) : EMPTY_ROUTES), [job]);
+  const applyRoutes = useMemo(() => (head ? resolveApplyRoutes(head) : EMPTY_ROUTES), [head]);
 
   const { primary: primaryLocation, all: allLocations } = useMemo(
     () => (head ? summarizeLocations(head) : { primary: "", all: [] as string[] }),
@@ -177,11 +179,11 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
           )}
 
           <div className="jd-apply">
-            {job ? (
+            {(job || (error && head)) ? (
               applyRoutes.primaryUrl ? (
                 <a
                   href={applyRoutes.primaryUrl}
-                  aria-label={`Apply for ${job.title} at ${job.company} (opens in a new tab)`}
+                  aria-label={`Apply for ${head!.title} at ${head!.company} (opens in a new tab)`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="job-detail-apply-link"
@@ -313,7 +315,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
             testId="job-unavailable"
             actions={[{ label: "Back to jobs", onClick: onClose, kind: "secondary" }]}
           >
-            {preview?.title ? `“${preview.title}” has` : "This posting has"} been removed or has expired, or the link is out of date.
+            {preview?.title ? `“${preview.title}” has` : "This posting has"} been removed or has expired.
           </StatePanel>
         )}
 
