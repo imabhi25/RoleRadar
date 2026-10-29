@@ -249,5 +249,5 @@ export function formatRoleType(type?: string): string {
 
 /** Display-only title separators; the employer title and original posting stay intact. */
 export function formatJobTitle(title: string): string {
-  return title.replace(/\s*,\s*/g, " – ");
+  return title.replace(/\s+/g, " ").replace(/\(\s+/g, "(").replace(/\s+\)/g, ")").trim().replace(/\s*,\s*/g, " – ");
 }

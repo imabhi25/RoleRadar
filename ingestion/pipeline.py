@@ -30,6 +30,7 @@ from ingestion.normalizer import (
     STUDENT_ENGINEER_REGEX,
     extract_academic_term,
     normalize_job_locations,
+    normalize_job_title,
     is_user_facing_location_eligible,
     classify_application_urls,
     classify_role_type,
@@ -521,7 +522,7 @@ def sync_company(
 
             def persist_record(raw_job) -> None:
                 source_job_id = normalize_source_job_id(raw_job.source_job_id)
-                title = fit_text(raw_job.title, TITLE_MAX)
+                title = fit_text(normalize_job_title(raw_job.title), TITLE_MAX)
                 job_locations = normalize_job_locations(raw_job.raw_location, raw_job.raw_locations)
                 for loc in job_locations:
                     loc["country"] = fit_text(loc.get("country"), COUNTRY_MAX)
@@ -606,7 +607,7 @@ def sync_company(
                         """UPDATE job_postings SET title = %s, is_eligible_role = FALSE,
                            is_active = TRUE, last_seen_at = NOW(), updated_at = NOW()
                            WHERE source_name = %s AND source_job_id = %s AND company_id = %s""",
-                        (fit_text(raw_job.title, TITLE_MAX), raw_job.source_name, normalize_source_job_id(raw_job.source_job_id), company_id),
+                        (fit_text(normalize_job_title(raw_job.title), TITLE_MAX), raw_job.source_name, normalize_source_job_id(raw_job.source_job_id), company_id),
                     )
 
             # Step F: Tombstoning. Only a trustworthy complete official snapshot may deactivate jobs,
@@ -911,7 +912,7 @@ def sync_broad_source(
                     cur=cur,
                     job_id=job_id,
                     company_id=company_id,
-                    title=raw_job.title,
+                    title=normalize_job_title(raw_job.title),
                     location_id=location_id,
                     description=rich_description,
                     workplace_type=workplace_type,

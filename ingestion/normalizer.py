@@ -1101,13 +1101,21 @@ def resolve_primary_apply_url(
 
 
 
+def normalize_job_title(title: str) -> str:
+    """Remove whitespace artifacts while preserving the employer's title."""
+    title = re.sub(r"\s+", " ", title or "").strip()
+    title = re.sub(r"\(\s+", "(", title)
+    return re.sub(r"\s+\)", ")", title)
+
+
 def tidy_location_label(label: str) -> str:
     """Repair separator debris in a stored or source label: "Remote - , Canada" -> "Remote - Canada".
 
     Older normalizer versions left the comma of "Remote, Canada" behind when rebuilding it as "Remote - Canada". The
     repair job re-normalizes stored labels, so the cleanup has to live here rather than only in the producer.
     """
-    cleaned = re.sub(r"(?i)\b(remote)\s*-\s*,\s*", r"\1 - ", label)
+    cleaned = re.sub(r"\s*\(\s*DNU\s*\)", "", label, flags=re.I)
+    cleaned = re.sub(r"(?i)\b(remote)\s*-\s*,\s*", r"\1 - ", cleaned)
     cleaned = re.sub(r"\s*,\s*,+", ",", cleaned)
     return re.sub(r"\s{2,}", " ", cleaned).strip()
 
@@ -1164,7 +1172,8 @@ def normalize_job_locations(raw_location: str, structured: Optional[list] = None
     result = []
     iso = {"US": "United States", "USA": "United States", "CA": "Canada", "CAN": "Canada", "GB": "United Kingdom", "DE": "Germany", "FR": "France"}
     for entry in entries:
-        label = tidy_location_label(str(entry.get("location") or entry.get("name") or "").strip())
+        published_label = str(entry.get("location") or entry.get("name") or "").strip()
+        label = tidy_location_label(published_label)
         address = entry.get("address") or {}
         if not isinstance(address, dict):
             address = {}
@@ -1172,7 +1181,6 @@ def normalize_job_locations(raw_location: str, structured: Optional[list] = None
         if not isinstance(address, dict):
             address = {}
         explicit = str(address.get("addressCountry") or entry.get("country") or "").strip()
-        published_label = label
         location, country = normalize_location_and_country(label)
         # One canonical shape for a plain well-known city ("Toronto, ON" and "Toronto, Canada" -> "Toronto, Ontario, Canada").
         canonical = canonical_place_label(label, KNOWN_COUNTRIES.get(explicit.lower(), explicit) if explicit else country)
@@ -1191,7 +1199,7 @@ def normalize_job_locations(raw_location: str, structured: Optional[list] = None
             item["source_location"] = label
         # A source-specific normalizer may have rewritten the label; keep what the source published.
         carried = [x for x in (entry.get("also_published") or []) if isinstance(x, str)]
-        raw = str(entry.get("raw_location") or "").strip() or (published_label if canonical and published_label != item["location"] else "")
+        raw = str(entry.get("raw_location") or "").strip() or (published_label if (canonical or re.search(r"\(\s*DNU\s*\)", published_label, re.I)) and published_label != item["location"] else "")
         if raw and raw != item["location"]:
             item["raw_location"] = raw
         if carried:

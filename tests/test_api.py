@@ -1108,6 +1108,18 @@ class TestApiEndpoints(unittest.TestCase):
         self.assertIn("unspecified", params)
         self.assertIn(["unknown"], params)
 
+    @patch("api.main.get_db_cursor")
+    def test_undated_google_jobs_sort_after_other_jobs(self, mock_get_db):
+        mock_cur = MagicMock()
+        mock_cur.fetchone.return_value = (0,)
+        mock_cur.fetchall.return_value = []
+        mock_get_db.side_effect = lambda: self._mock_db(mock_cur)
+        for sort in ("recommended", "newest", "oldest", "company", "title"):
+            response = self.client.get("/api/jobs", params={"sort": sort})
+            self.assertEqual(response.status_code, 200)
+            query = mock_cur.execute.call_args_list[-1].args[0]
+            self.assertIn("CASE WHEN jp.source_name = 'google' AND jp.posted_at IS NULL THEN 1 ELSE 0 END ASC", query)
+
     # --- 4. Single Job Detail (/api/jobs/{job_id}) ---
 
     @patch("api.main.get_db_cursor")

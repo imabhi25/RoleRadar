@@ -1269,6 +1269,8 @@ def get_jobs(
         "company": "LOWER(c.name) ASC, jp.posted_at DESC NULLS LAST, jp.id DESC",
         "title": "LOWER(jp.title) ASC, jp.posted_at DESC NULLS LAST, jp.id DESC",
     }[sort]
+    # Undated Google postings should not outrank jobs with a known posting date.
+    order_sql = "CASE WHEN jp.source_name = 'google' AND jp.posted_at IS NULL THEN 1 ELSE 0 END ASC, " + order_sql
     where_sql = " AND ".join(where_clauses)
 
     count_query = f"""

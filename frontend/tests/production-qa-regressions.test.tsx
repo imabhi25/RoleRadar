@@ -114,3 +114,9 @@ describe('rapid search with deliberately reordered responses', () => {
     expect(screen.queryByText(/Unable to load job postings/)).not.toBeInTheDocument();
   });
 });
+
+
+it('cleans extra title whitespace and parentheses', async () => {
+  const { formatJobTitle } = await import('../src/utils/formatters');
+  expect(formatJobTitle('Performance ( Toronto)  FullStack  Engineer')).toBe('Performance (Toronto) FullStack Engineer');
+});

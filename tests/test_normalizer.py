@@ -795,3 +795,13 @@ class TestConflictingRemoteFlag:
         assert classify_workplace(is_remote=True, description="This role is fully on-site.") == "onsite"
         assert classify_workplace(is_remote=True, description="Employees may visit the office on Monday.") == "remote"
         assert classify_workplace(is_remote=True, description="Build hybrid cloud systems and overlap office hours on Monday.") == "remote"
+
+
+def test_ats_location_codes_and_title_whitespace():
+    from ingestion.normalizer import normalize_job_locations, normalize_job_title
+    loc = normalize_job_locations("Remote - Ontario, Canada (DNU)")[0]
+    assert loc["location"] == "Remote - Ontario, Canada"
+    assert loc["raw_location"] == "Remote - Ontario, Canada (DNU)"
+    assert normalize_job_title(" Performance ( Toronto)  FullStack  Engineer ") == "Performance (Toronto) FullStack Engineer"
+    for value in ("Toronto, ON, CA", "Toronto, Ontario, Canada", "Toronto, ON"):
+        assert normalize_job_locations(value)[0]["location"] == "Toronto, Ontario, Canada"
