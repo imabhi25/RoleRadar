@@ -72,8 +72,6 @@ origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://roleradar-jobs.vercel.app",
-    # Former live address; kept allowed during the switch to roleradar-jobs.
-    "https://jobber-mauve.vercel.app",
 ]
 
 frontend_origin_env = os.getenv("FRONTEND_ORIGIN")

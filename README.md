@@ -8,7 +8,7 @@ RoleRadar brings postings from different hiring platforms into one searchable in
 
 [![CI](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml/badge.svg)](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)
 
-> **Deployment.** The live frontend is at `roleradar-jobs.vercel.app` (the former `jobber-mauve.vercel.app` address stays in the CORS allow-list during the switch). The API runs on Vercel at `roleradar-api.vercel.app`. Configure additional production origins with `FRONTEND_ORIGIN`; the existing database and SQL function names remain unchanged.
+> **Deployment.** The live frontend is at `roleradar-jobs.vercel.app` (the former `jobber-mauve.vercel.app` address permanently redirects there and is no longer in the CORS allow-list). The API runs on Vercel at `roleradar-api.vercel.app`. Configure additional production origins with `FRONTEND_ORIGIN`; the existing database and SQL function names remain unchanged.
 
 ## Screenshots
 

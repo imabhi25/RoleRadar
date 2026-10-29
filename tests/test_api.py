@@ -2184,7 +2184,6 @@ def test_cors_explicit_origins_and_no_credentials():
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "https://roleradar-jobs.vercel.app",
-        "https://jobber-mauve.vercel.app",
     ):
         for method in ("get", "options"):
             headers = {"Origin": origin}
@@ -2195,7 +2194,12 @@ def test_cors_explicit_origins_and_no_credentials():
             assert response.headers.get("access-control-allow-origin") == origin
             assert "access-control-allow-credentials" not in response.headers
 
-    for origin in ("https://untrusted.vercel.app", "https://malicious.example.com"):
+    # The former jobber-mauve address now redirects before the app loads, so it is no longer allowed.
+    for origin in (
+        "https://untrusted.vercel.app",
+        "https://malicious.example.com",
+        "https://jobber-mauve.vercel.app",
+    ):
         response = client.get("/api/health", headers={"Origin": origin})
         assert "access-control-allow-origin" not in response.headers
         response = client.options("/api/health", headers={"Origin": origin, "Access-Control-Request-Method": "GET"})
