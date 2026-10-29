@@ -2180,7 +2180,12 @@ def test_cors_explicit_origins_and_no_credentials():
     from api.main import app
 
     client = TestClient(app)
-    for origin in ("http://localhost:5173", "http://127.0.0.1:5173", "https://jobber-mauve.vercel.app"):
+    for origin in (
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://roleradar-jobs.vercel.app",
+        "https://jobber-mauve.vercel.app",
+    ):
         for method in ("get", "options"):
             headers = {"Origin": origin}
             if method == "options":

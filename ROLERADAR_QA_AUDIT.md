@@ -1,6 +1,6 @@
 # RoleRadar adversarial QA audit
 
-Audit date: September 30, 2026 (America/Toronto). Production: https://jobber-mauve.vercel.app. Public API: https://jobber-api-980d.onrender.com. Repository: imabhi25/RoleRadar.
+Audit date: September 30, 2026 (America/Toronto). Production: https://roleradar-jobs.vercel.app (audited at the former address https://jobber-mauve.vercel.app). Public API: https://roleradar-api.vercel.app (audited at the former Render API https://jobber-api-980d.onrender.com). Repository: imabhi25/RoleRadar.
 
 ## Assessment
 

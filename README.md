@@ -4,11 +4,11 @@
 
 RoleRadar brings postings from different hiring platforms into one searchable interface. It prioritizes Canadian co-op, internship and early-career opportunities while retaining US roles, and lets applicants compare jobs without opening a new page for every posting.
 
-**[Live demo](https://jobber-mauve.vercel.app/jobs)** · **[Market dashboard](https://jobber-mauve.vercel.app/stats)** · **[CI results](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)**
+**[Live demo](https://roleradar-jobs.vercel.app/jobs)** · **[Market dashboard](https://roleradar-jobs.vercel.app/stats)** · **[CI results](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)**
 
 [![CI](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml/badge.svg)](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)
 
-> **Deployment.** The current live frontend remains at `jobber-mauve.vercel.app`. Configure additional production origins with `FRONTEND_ORIGIN`; the existing database and SQL function names remain unchanged.
+> **Deployment.** The live frontend is at `roleradar-jobs.vercel.app` (the former `jobber-mauve.vercel.app` address stays in the CORS allow-list during the switch). The API runs on Vercel at `roleradar-api.vercel.app`. Configure additional production origins with `FRONTEND_ORIGIN`; the existing database and SQL function names remain unchanged.
 
 ## Screenshots
 
