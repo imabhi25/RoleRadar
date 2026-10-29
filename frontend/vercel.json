@@ -1,4 +1,17 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "jobber-mauve.vercel.app"
+        }
+      ],
+      "destination": "https://roleradar-jobs.vercel.app/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/company-background",

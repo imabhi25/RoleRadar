@@ -174,4 +174,15 @@ describe('deployment config', () => {
   it('still serves the app for real routes and deep links', () => {
     for (const route of ['/jobs', '/stats', '/company', '/company/NVIDIA', '/']) expect(matches(route)).toBe(true);
   });
+
+  it('permanently redirects only the former jobber-mauve host to roleradar-jobs', () => {
+    expect(vercel.redirects).toEqual([
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'jobber-mauve.vercel.app' }],
+        destination: 'https://roleradar-jobs.vercel.app/:path*',
+        permanent: true,
+      },
+    ]);
+  });
 });
