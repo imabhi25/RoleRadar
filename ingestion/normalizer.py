@@ -396,7 +396,7 @@ def _explicit_office_schedule(description: Optional[str]) -> Optional[str]:
             continue
         if re.search(r"\b(?:optional|may|can|not required|no requirement)\b", sentence):
             continue
-        days = set(re.findall(r"\b(?:monday|tuesday|wednesday|thursday|friday)s?\b", sentence))
+        days = {day[:3] for day in re.findall(r"\b(?:mon(?:day)?|tue(?:sday)?|wed(?:nesday)?|thu(?:rsday)?|fri(?:day)?)s?\b", sentence)}
         if 1 <= len(days) <= 4:
             return "hybrid"
         if len(days) == 5:

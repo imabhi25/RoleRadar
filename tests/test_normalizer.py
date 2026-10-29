@@ -792,6 +792,7 @@ class TestConflictingRemoteFlag:
     def test_explicit_office_days_override_remote(self):
         assert classify_workplace(is_remote=True, description="Employees work in the office Monday, Wednesday, and Thursday.") == "hybrid"
         assert classify_workplace(workplace_type_raw="Remote", description="This role is hybrid.") == "hybrid"
+        assert classify_workplace(is_remote=True, description="Work in the office Mon/Wed/Thu.") == "hybrid"
         assert classify_workplace(is_remote=True, description="This role is fully on-site.") == "onsite"
         assert classify_workplace(is_remote=True, description="Employees may visit the office on Monday.") == "remote"
         assert classify_workplace(is_remote=True, description="Build hybrid cloud systems and overlap office hours on Monday.") == "remote"
