@@ -258,6 +258,17 @@ def normalized_description_sql(table_alias: str) -> str:
     return f"lower(regexp_replace(regexp_replace(coalesce({table_alias}.description, ''), '<[^>]+>', ' ', 'g'), '[^[:alnum:]]+', '', 'g'))"
 
 
+def matching_locations_sql(left: str, right: str) -> str:
+    """Compare multi-location sets without treating source metadata or ordering as a different place."""
+    def places(alias: str) -> str:
+        return (f"(SELECT array_agg(lower(trim(coalesce(p->>'location', ''))) || '|' || "
+                f"lower(trim(coalesce(p->>'country', ''))) ORDER BY "
+                f"lower(trim(coalesce(p->>'location', ''))) || '|' || lower(trim(coalesce(p->>'country', '')))) "
+                f"FROM jsonb_array_elements({alias}.locations) AS p)")
+    return (f"(CASE WHEN jsonb_array_length({left}.locations) <= 1 AND jsonb_array_length({right}.locations) <= 1 "
+            f"THEN TRUE ELSE {places(left)} = {places(right)} END)")
+
+
 def get_deduplication_sql_predicate(table_alias: str = "jp") -> str:
     """Suppress matching source identities, job URLs, or equivalent descriptions for the same role and place.
 
@@ -289,12 +300,11 @@ def get_deduplication_sql_predicate(table_alias: str = "jp") -> str:
     description = normalized_description_sql(table_alias)
     same_posting = (f"jp2.company_id = {table_alias}.company_id "
                     f"AND jp2.location_id = {table_alias}.location_id "
-                    f"AND jp2.locations = {table_alias}.locations "
                     f"AND lower(trim(jp2.title)) = lower(trim({table_alias}.title)) "
                     f"AND length(coalesce({table_alias}.description, '')) >= 40 "
                     f"AND jp2.batch2_description_hash = {table_alias}.batch2_description_hash "
                     f"AND CASE WHEN jp2.batch2_description_hash = {table_alias}.batch2_description_hash "
-                    f"THEN {normalized_description_sql('jp2')} = {description} ELSE FALSE END")
+                    f"THEN {matching_locations_sql('jp2', table_alias)} AND {normalized_description_sql('jp2')} = {description} ELSE FALSE END")
     return f"({later_duplicate(same_source_id)} AND {later_duplicate(same_url)} AND {later_duplicate(same_posting)})"
 
 
@@ -1322,7 +1332,7 @@ def get_jobs(
         jp.experience_level,
         EXISTS (SELECT 1 FROM job_postings other
                 WHERE other.id <> jp.id AND other.company_id = jp.company_id
-                  AND other.location_id = jp.location_id AND other.locations = jp.locations
+                  AND other.location_id = jp.location_id AND {matching_locations_sql('other', 'jp')}
                   AND lower(trim(other.title)) = lower(trim(jp.title))
                   AND other.is_active = TRUE AND other.is_eligible_role = TRUE
                   AND other.source_name IN {official_sources_sql()}

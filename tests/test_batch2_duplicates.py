@@ -18,6 +18,8 @@ def test_duplicate_groups_and_distinct_requisitions(conn):
             if i % 2:
                 text = '<p>' + text.upper() + '</p>'
             cur.execute('UPDATE job_postings SET description=%s WHERE job_id=%s', (text, key))
+            if i % 2:
+                cur.execute("UPDATE job_postings SET locations = jsonb_set(locations, '{0,raw_location}', to_jsonb('Vancouver BC'::text), true) WHERE job_id=%s", (key,))
     with _api(conn) as client:
         response = client.get('/api/jobs', params={'company': name, 'limit': 20})
         assert response.status_code == 200
