@@ -13,6 +13,7 @@ DECLARE
     multiplier numeric;
     floor_amount numeric;
     ceiling_amount numeric;
+    structured_range_count integer;
 BEGIN
     IF jsonb_typeof(pay) <> 'object' OR pay IS NULL THEN RETURN result; END IF;
     -- Ingestion marked the published figures unusable (placeholder, impossible, contradictory period): never pay.
@@ -32,6 +33,13 @@ BEGIN
             IF jsonb_typeof(tier->'components') = 'array' THEN parts := parts || (tier->'components'); END IF;
         END LOOP;
     END IF;
+    SELECT count(DISTINCT concat_ws('|', COALESCE(value->>'minValue', value->>'min', ''),
+        COALESCE(value->>'maxValue', value->>'max', ''), COALESCE(value->>'currencyCode', value->>'currency', ''),
+        COALESCE(value->>'interval', '')))
+    INTO structured_range_count
+    FROM jsonb_array_elements(parts)
+    WHERE jsonb_typeof(value) = 'object'
+      AND (NOT (value ? 'compensationType') OR lower(value->>'compensationType') IN ('salary','basesalary','hourly','wage'));
     FOR part IN SELECT value FROM jsonb_array_elements(parts) LOOP
         IF jsonb_typeof(part) <> 'object' THEN CONTINUE; END IF;
         IF part ? 'compensationType' AND lower(part->>'compensationType') NOT IN ('salary','basesalary','hourly','wage') THEN CONTINUE; END IF;
@@ -41,8 +49,8 @@ BEGIN
         IF part ? 'qualifier' AND COALESCE(part->>'scope', '') <> 'all' THEN CONTINUE; END IF;
         IF part->>'scope' IN ('none', 'some', 'unclear') THEN CONTINUE; END IF;
         -- Several unqualified structured ranges cannot safely be assigned to a location.
-        IF jsonb_typeof(pay->'ranges') = 'array' AND jsonb_array_length(pay->'ranges') > 1
-           AND NOT (part ? 'qualifier') AND pay->>'source' IS DISTINCT FROM 'posting_text' THEN CONTINUE; END IF;
+        IF structured_range_count > 1 AND NOT (part ? 'qualifier')
+           AND pay->>'source' IS DISTINCT FROM 'posting_text' THEN CONTINUE; END IF;
         currency := upper(COALESCE(part->>'currencyCode', part->>'currency', ''));
         period := lower(COALESCE(part->>'interval', ''));
         multiplier := CASE WHEN period ~ 'year|annual' THEN 1 WHEN period ~ 'month' THEN 12

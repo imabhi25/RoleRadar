@@ -157,3 +157,13 @@ def test_sql_salary_filter_does_not_assign_unqualified_structured_ranges(conn):
     with conn.cursor() as cur:
         cur.execute('SELECT jobber_pay_ranges(%s::jsonb)', (json.dumps(pay),))
         assert cur.fetchone()[0] == []
+
+
+def test_sql_salary_filter_handles_multi_component_and_repeated_single_tier(conn):
+    usd = {'minValue': 150000, 'maxValue': 200000, 'currencyCode': 'USD', 'interval': 'year', 'compensationType': 'Salary'}
+    eur = {'minValue': 66000, 'maxValue': 91000, 'currencyCode': 'EUR', 'interval': 'year', 'compensationType': 'Salary'}
+    with conn.cursor() as cur:
+        cur.execute('SELECT jobber_pay_ranges(%s::jsonb)', (json.dumps({'summaryComponents': [usd, eur]}),))
+        assert cur.fetchone()[0] == []
+        cur.execute('SELECT jobber_pay_ranges(%s::jsonb)', (json.dumps({'summaryComponents': [usd], 'compensationTiers': [{'components': [usd]}]}),))
+        assert cur.fetchone()[0]
