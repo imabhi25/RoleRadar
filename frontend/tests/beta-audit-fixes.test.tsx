@@ -178,6 +178,12 @@ describe('deployment config', () => {
   it('permanently redirects only the former jobber-mauve host to roleradar-jobs', () => {
     expect(vercel.redirects).toEqual([
       {
+        source: '/',
+        has: [{ type: 'host', value: 'jobber-mauve.vercel.app' }],
+        destination: 'https://roleradar-jobs.vercel.app/',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [{ type: 'host', value: 'jobber-mauve.vercel.app' }],
         destination: 'https://roleradar-jobs.vercel.app/:path*',
