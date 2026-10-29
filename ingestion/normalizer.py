@@ -379,6 +379,31 @@ def is_swe_role(title: Optional[str], description: Optional[str] = None) -> bool
     return False
 
 
+def _explicit_office_schedule(description: Optional[str]) -> Optional[str]:
+    """Recognize role-specific office schedules that contradict a provider's remote flag."""
+    if not description:
+        return None
+    text = re.sub(r"<[^>]+>", " ", description.lower())
+    text = re.sub(r"\s+", " ", text)
+    if re.search(r"\b(?:this (?:role|position|job) is hybrid|hybrid (?:work model|schedule|arrangement))\b", text):
+        return "hybrid"
+    if re.search(r"\b(?:fully onsite|fully on-site|100% on[ -]site|five days (?:per|a|each) week (?:in|at) (?:the |our )?office)\b", text):
+        return "onsite"
+    if re.search(r"\b(?:[1-4]|one|two|three|four) days? (?:per|a|each) week (?:in|at) (?:the |our )?office\b", text):
+        return "hybrid"
+    for sentence in re.split(r"[.!?;]", text):
+        if not re.search(r"\b(?:in|at) (?:the |our )?office\b", sentence):
+            continue
+        if re.search(r"\b(?:optional|may|can|not required|no requirement)\b", sentence):
+            continue
+        days = set(re.findall(r"\b(?:monday|tuesday|wednesday|thursday|friday)s?\b", sentence))
+        if 1 <= len(days) <= 4:
+            return "hybrid"
+        if len(days) == 5:
+            return "onsite"
+    return None
+
+
 def classify_workplace(
     location_text: Optional[str] = None,
     workplace_type_raw: Optional[str] = None,
@@ -391,13 +416,19 @@ def classify_workplace(
     'onsite', 'remote', 'hybrid', or 'unspecified'.
 
     Order of precedence:
-    1. Provider structured workplace fields (workplace_type_raw, is_remote)
+    1. Explicit office schedules override conflicting provider remote fields; otherwise use provider fields
     2. Explicit clues in location and title
     3. Explicit workplace statements in description (e.g. 'Workplace: Remote', 'Role is 100% remote')
     4. Fallback: 'unspecified' (never guesses from city alone).
     """
-    # 1. Explicit structured ATS workplace classification first
+    # An explicit role-specific office schedule overrides a conflicting remote flag.
     raw_clean = workplace_type_raw.lower().strip() if workplace_type_raw else ""
+    if is_remote is True or any(term in raw_clean for term in ("remote", "work from home", "wfh", "telecommute", "virtual")):
+        office_schedule = _explicit_office_schedule(description)
+        if office_schedule:
+            return office_schedule
+
+    # 1. Explicit structured ATS workplace classification first
     if raw_clean:
         if "hybrid" in raw_clean:
             return "hybrid"
