@@ -16,7 +16,7 @@ describe("SlowLoadHint", () => {
     act(() => {
       vi.advanceTimersByTime(1);
     });
-    expect(screen.getByRole("status").textContent).toMatch(/waking up the server/i);
+    expect(screen.getByRole("status").textContent).toMatch(/taking a little longer than usual/i);
   });
 
   it("never appears if unmounted before the delay", () => {
