@@ -39,3 +39,14 @@ def test_duplicate_groups_and_distinct_requisitions(conn):
             cur.execute('UPDATE job_postings SET description=%s, locations=%s WHERE job_id=%s',
                         (descriptions[0], Json([{'location': 'Vancouver, BC', 'country': 'Canada'}, {'location': 'Toronto, ON', 'country': 'Canada'}]), key))
         assert client.get('/api/jobs', params={'company': name}).json()['total'] == 3
+
+
+def test_empty_markup_is_not_enough_evidence_to_merge_jobs(conn):
+    name, company_id = _company(conn)
+    with conn.cursor() as cur:
+        for i in range(2):
+            key = name + str(i)
+            _insert(cur, company_id, key, days_old=0, title='Engineer')
+            cur.execute('UPDATE job_postings SET description=%s WHERE job_id=%s', ('<div>' + ' ' * 50 + '</div>', key))
+    with _api(conn) as client:
+        assert client.get('/api/jobs', params={'company': name}).json()['total'] == 2

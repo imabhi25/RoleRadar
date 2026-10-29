@@ -302,6 +302,7 @@ def get_deduplication_sql_predicate(table_alias: str = "jp") -> str:
                     f"AND jp2.location_id = {table_alias}.location_id "
                     f"AND lower(trim(jp2.title)) = lower(trim({table_alias}.title)) "
                     f"AND length(coalesce({table_alias}.description, '')) >= 40 "
+                    f"AND {table_alias}.batch2_description_hash <> md5('') "
                     f"AND jp2.batch2_description_hash = {table_alias}.batch2_description_hash "
                     f"AND CASE WHEN jp2.batch2_description_hash = {table_alias}.batch2_description_hash "
                     f"THEN {matching_locations_sql('jp2', table_alias)} AND {normalized_description_sql('jp2')} = {description} ELSE FALSE END")
