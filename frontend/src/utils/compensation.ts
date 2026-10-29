@@ -174,7 +174,9 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
   // Ingestion marked the published figures unusable (placeholder, impossible, contradictory): the numbers stay stored, never shown.
   if (compensation.validation) return null;
 
-  const summaryComps = compensation.summaryComponents;
+  const tiers = Array.isArray(compensation.compensationTiers) ? compensation.compensationTiers : [];
+  const tierComponents = tiers.flatMap((tier: unknown) => tier && typeof tier === "object" && Array.isArray((tier as Dict).components) ? (tier as Dict).components as unknown[] : []);
+  const summaryComps = Array.isArray(compensation.summaryComponents) && compensation.summaryComponents.length ? compensation.summaryComponents : tierComponents;
   if (Array.isArray(summaryComps) && summaryComps.length > 0) {
     const components = summaryComps.filter((c): c is Record<string, unknown> => Boolean(c) && typeof c === "object");
     // Prefer identified pay over untyped benefits, and skip components without a usable range.
@@ -243,14 +245,23 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
 export function getJobCardCompensation(compensation?: Record<string, unknown> | null, country = ""): string | null {
   const card = resolveCardPay(compensation);
   if (!card) return null;
-  if (country === "Canada" && card.text.startsWith("$")) {
+  if (country === "Canada" && /^(?:From |Up to )?\d/.test(card.text)) return null;
+  if (country === "Canada" && /^(?:From |Up to )?\$/.test(card.text)) {
     const stated = card.ranges.filter(coversTheJob);
     const components = Array.isArray(compensation?.summaryComponents) ? compensation.summaryComponents as Dict[] : [];
     const ranges = Array.isArray(compensation?.ranges) ? compensation.ranges as Dict[] : [];
+    const tiers = Array.isArray(compensation?.compensationTiers) ? compensation.compensationTiers as Dict[] : [];
+    const tierComponents = tiers.flatMap((tier) => Array.isArray(tier.components) ? tier.components as Dict[] : []);
+    const candidates = (components.length ? components : tierComponents).filter((r) =>
+      /^(?:salary|basesalary|hourly|wage)$/i.test(String(r.compensationType || "Salary"))
+      && formatPay(num(r.minValue), num(r.maxValue), String(r.currencyCode || ""), String(r.interval || "")) !== null);
+    const selectedComponents = candidates.length === 1 ? candidates : candidates.filter((r) => r.qualifier && r.scope === "all");
+    const selectedRanges = ranges.length === 1 ? ranges : ranges.filter((r) => r.qualifier && r.scope === "all");
     const explicitUsd = String(compensation?.currency || "").toUpperCase() === "USD"
-      || stated.some((r) => r.currency?.toUpperCase() === "USD")
-      || [...components, ...ranges].some((r) => String(r.currencyCode || r.currency || "").toUpperCase() === "USD" && (!r.qualifier || r.scope === "all"))
-      || /\bUSD\b|US\$/i.test(String(compensation?.compensationTierSummary || ""));
+      || (stated.length === 1 && stated[0].currency?.toUpperCase() === "USD")
+      || (selectedComponents.length === 1 && String(selectedComponents[0].currencyCode || selectedComponents[0].currency || "").toUpperCase() === "USD")
+      || (selectedRanges.length === 1 && String(selectedRanges[0].currencyCode || selectedRanges[0].currency || "").toUpperCase() === "USD")
+      || (!components.length && !ranges.length && !tierComponents.length && /\bUSD\b|US\$/i.test(String(compensation?.compensationTierSummary || "")));
     return explicitUsd ? card.text.replace(/\$/g, "US$") : null;
   }
   return card.text;

@@ -209,16 +209,23 @@ def unwrap_source_compensation(stored: Optional[Dict[str, Any]]) -> Optional[Dic
         original = stored.get("source_structured")
         return unwrap_source_compensation(original) if isinstance(original, dict) else None
     base = {k: v for k, v in stored.items() if k not in ("validation", "interval_source")}
+    def original_part(part: Any) -> Any:
+        if not isinstance(part, dict) or not part.get("_scope_derived"):
+            return part
+        cleaned = {k: v for k, v in part.items() if k not in ("scope", "_scope_derived", "_qualifier_derived")}
+        if part.get("_qualifier_derived"):
+            cleaned.pop("qualifier", None)
+        return cleaned
+
     for key in ("ranges", "summaryComponents"):
         if isinstance(base.get(key), list):
-            def original(part: Any) -> Any:
-                if not isinstance(part, dict) or not part.get("_scope_derived"):
-                    return part
-                cleaned = {k: v for k, v in part.items() if k not in ("scope", "_scope_derived", "_qualifier_derived")}
-                if part.get("_qualifier_derived"):
-                    cleaned.pop("qualifier", None)
-                return cleaned
-            base[key] = [original(part) for part in base[key]]
+            base[key] = [original_part(part) for part in base[key]]
+    if isinstance(base.get("compensationTiers"), list):
+        base["compensationTiers"] = [
+            {**tier, "components": [original_part(part) for part in tier["components"]]}
+            if isinstance(tier, dict) and isinstance(tier.get("components"), list) else tier
+            for tier in base["compensationTiers"]
+        ]
     if stored.get("interval_source") == "posting_text":
         base.pop("interval", None)
     return base
@@ -255,6 +262,12 @@ def _scope_structured_ranges(base: Dict[str, Any], locations: Optional[List[Dict
     for key in ("ranges", "summaryComponents"):
         if isinstance(result.get(key), list):
             result[key] = [annotate(part) for part in result[key]]
+    if isinstance(result.get("compensationTiers"), list):
+        result["compensationTiers"] = [
+            {**tier, "components": [annotate(part) for part in tier["components"]]}
+            if isinstance(tier, dict) and isinstance(tier.get("components"), list) else tier
+            for tier in result["compensationTiers"]
+        ]
     return result
 
 

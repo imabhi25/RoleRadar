@@ -138,3 +138,22 @@ it('uses compact pay and makes currency unambiguous for Canadian jobs', () => {
   const comp = { source: 'posting_text', ranges: [{ min: 107000, max: 157000, currency: 'CAD', qualifier: 'For Ontario, Canada', scope: 'all' }] };
   expect(getCompensationDetail(comp, 'Canada')).toBe('CA$107K – CA$157K');
 });
+
+
+it('does not choose an unmatched tier-only salary', () => {
+  const tiers = { compensationTiers: [
+    { components: [{ minValue: 66000, maxValue: 91000, currencyCode: 'EUR', qualifier: 'Lisbon', scope: 'none', compensationType: 'Salary' }] },
+    { components: [{ minValue: 150000, maxValue: 200000, currencyCode: 'USD', qualifier: 'Austin', scope: 'all', compensationType: 'Salary' }] },
+  ] };
+  expect(getJobCardCompensation(tiers)).toBe('$150K – $200K');
+  expect(getJobCardCompensation({ compensationTiers: [tiers.compensationTiers[0]] })).toBeNull();
+});
+
+
+it('does not infer USD for a Canadian amount from an unrelated unusable component', () => {
+  const comp = { summaryComponents: [
+    { compensationType: 'Salary', minValue: 1, maxValue: 2, currencyCode: 'USD', interval: 'year' },
+    { compensationType: 'Salary', minValue: 100000, maxValue: 150000 },
+  ] };
+  expect(getJobCardCompensation(comp, 'Canada')).toBeNull();
+});

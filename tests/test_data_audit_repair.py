@@ -137,3 +137,23 @@ def test_braze_gets_its_curated_website_and_other_companies_keep_theirs():
     _seed_and_audit(cur)
     updates = [c for c in cur.execute.call_args_list if "website_url = %s" in c.args[0] and "website_url IS NULL" in c.args[0]]
     assert [c.args[1] for c in updates] == [("https://www.braze.com", 332)]       # fills a missing website only: the SQL never overwrites one
+
+
+def test_sql_salary_filter_rejects_unmatched_or_uncertain_location_scopes(conn):
+    for scope in ('none', 'some', 'unclear', None):
+        pay = {'source': 'posting_text', 'ranges': [{'min': 66000, 'max': 91000, 'currency': 'EUR', 'interval': 'year', 'qualifier': 'Lisbon', 'scope': scope}]}
+        with conn.cursor() as cur:
+            cur.execute('SELECT jobber_pay_ranges(%s::jsonb)', (json.dumps(pay),))
+            assert cur.fetchone()[0] == []
+    pay['ranges'][0]['scope'] = 'all'
+    with conn.cursor() as cur:
+        cur.execute('SELECT jobber_pay_ranges(%s::jsonb)', (json.dumps(pay),))
+        assert cur.fetchone()[0][0]['min_annual'] == 66000
+
+
+def test_sql_salary_filter_does_not_assign_unqualified_structured_ranges(conn):
+    pay = {'ranges': [{'min': 66000, 'max': 91000, 'currency': 'EUR', 'interval': 'year'},
+                      {'min': 150000, 'max': 200000, 'currency': 'USD', 'interval': 'year'}]}
+    with conn.cursor() as cur:
+        cur.execute('SELECT jobber_pay_ranges(%s::jsonb)', (json.dumps(pay),))
+        assert cur.fetchone()[0] == []

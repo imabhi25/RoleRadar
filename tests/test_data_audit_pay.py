@@ -225,3 +225,15 @@ def test_structured_ranges_scope_location_without_losing_source_values():
     assert result["ranges"][0]["scope"] != "all"
     assert result["ranges"][1]["scope"] == "all"
     assert result["ranges"][1]["min"] == 150000
+
+
+def test_nested_structured_tiers_are_scoped_and_idempotent():
+    source = {"compensationTiers": [{"components": [
+        {"minValue": 66000, "maxValue": 91000, "currencyCode": "EUR", "location": "Lisbon, Portugal"},
+        {"minValue": 150000, "maxValue": 200000, "currencyCode": "USD", "location": "Austin, TX"},
+    ]}]}
+    locations = [{"location": "Austin, TX", "country": "United States"}]
+    result = resolve_compensation(source, None, locations)
+    assert result["compensationTiers"][0]["components"][1]["scope"] == "all"
+    assert unwrap_source_compensation(result) == source
+    assert resolve_compensation(result, None, locations) == result
