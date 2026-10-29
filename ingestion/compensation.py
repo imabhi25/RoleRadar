@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 
 from ingestion.pay_rules import pay_range_problem
 from ingestion.pay_text import extract_pay_ranges_from_html, usable_ranges
-from ingestion.places import qualifier_scope
+from ingestion.places import place_tokens, qualifier_scope
 
 CURRENCY_PREFIX = {"USD": "$", "CAD": "CA$", "AUD": "A$", "GBP": "£", "EUR": "€", "NZD": "NZ$", "SGD": "S$", "CHF": "CHF ", "INR": "₹"}
 _INTERVALS = (("year", r"year|annual"), ("month", r"month"), ("week", r"week"), ("day", r"\bday|daily"), ("hour", r"hour|hourly"))
@@ -209,6 +209,16 @@ def unwrap_source_compensation(stored: Optional[Dict[str, Any]]) -> Optional[Dic
         original = stored.get("source_structured")
         return unwrap_source_compensation(original) if isinstance(original, dict) else None
     base = {k: v for k, v in stored.items() if k not in ("validation", "interval_source")}
+    for key in ("ranges", "summaryComponents"):
+        if isinstance(base.get(key), list):
+            def original(part: Any) -> Any:
+                if not isinstance(part, dict) or not part.get("_scope_derived"):
+                    return part
+                cleaned = {k: v for k, v in part.items() if k not in ("scope", "_scope_derived", "_qualifier_derived")}
+                if part.get("_qualifier_derived"):
+                    cleaned.pop("qualifier", None)
+                return cleaned
+            base[key] = [original(part) for part in base[key]]
     if stored.get("interval_source") == "posting_text":
         base.pop("interval", None)
     return base
@@ -227,6 +237,27 @@ def _enrich_interval(base: Dict[str, Any], ranges: List[Dict[str, Any]]) -> Dict
     return enriched
 
 
+def _scope_structured_ranges(base: Dict[str, Any], locations: Optional[List[Dict[str, str]]]) -> Dict[str, Any]:
+    """Annotate source ranges with a location qualifier without discarding source fields."""
+    def annotate(part: Any) -> Any:
+        if not isinstance(part, dict):
+            return part
+        qualifier = part.get("qualifier") or part.get("location")
+        if not qualifier and isinstance(part.get("label"), str) and place_tokens(part["label"]):
+            qualifier = part["label"]
+        if not isinstance(qualifier, str) or not qualifier.strip():
+            return part
+        scope = "unclear" if re.search(r"\b(?:exclud(?:e|es|ing)|except|other than)\b", qualifier, re.I) else qualifier_scope(qualifier, locations or [])
+        return {**part, "qualifier": qualifier, "scope": scope, "_scope_derived": True,
+                "_qualifier_derived": "qualifier" not in part}
+
+    result = dict(base)
+    for key in ("ranges", "summaryComponents"):
+        if isinstance(result.get(key), list):
+            result[key] = [annotate(part) for part in result[key]]
+    return result
+
+
 def resolve_compensation(stored: Optional[Dict[str, Any]], raw_html: Optional[str], locations: Optional[List[Dict[str, str]]] = None) -> Optional[Dict[str, Any]]:
     """The compensation to store for a posting.
 
@@ -240,7 +271,8 @@ def resolve_compensation(stored: Optional[Dict[str, Any]], raw_html: Optional[st
     text_ranges = extract_pay_ranges_from_html(raw_html) if raw_html and _MONEY_IN_TEXT.search(raw_html) else []
     problem = structured_problem(base) if base else "no_amount"
     if base and problem is None:
-        return _enrich_interval(base, text_ranges) if text_ranges else base
+        enriched = _enrich_interval(base, text_ranges) if text_ranges else base
+        return _scope_structured_ranges(enriched, locations)
     derived = compensation_from_text(text_ranges, locations)
     if derived:
         if base:

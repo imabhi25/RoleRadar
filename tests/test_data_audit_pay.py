@@ -108,7 +108,7 @@ def test_base_range_wins_over_on_target_earnings_and_currencies_are_not_blended(
 
 def test_believable_source_pay_is_left_exactly_as_published():
     for job_id in ("greenhouse:8243997", "greenhouse:8249493"):
-        assert resolve(job_id) == EXAMPLES[job_id]["compensation"]
+        assert unwrap_source_compensation(resolve(job_id)) == EXAMPLES[job_id]["compensation"]
 
 
 def test_resolution_is_idempotent_on_every_example():
@@ -208,3 +208,20 @@ def test_scope_is_stored_with_each_range_and_the_sql_filter_skips_other_places(c
     [r] = compensation["ranges"]
     assert (r["qualifier"], r["scope"], r["currency"], r["interval"]) == ("For candidates based in the United States", "none", "CAD", "year")
     assert pay_ranges == []        # written for US-based candidates, the job is in Toronto: not this job's pay, so not filterable
+
+
+def test_identical_pay_ranges_for_different_locations_keep_both_qualifiers():
+    text = "For Toronto based hires: salary $100,000 - $150,000 CAD. For Denver based hires: salary $100,000 - $150,000 CAD."
+    ranges = extract_pay_ranges(text)
+    assert [r["qualifier"] for r in ranges] == ["For Toronto based hires", "For Denver based hires"]
+
+
+def test_structured_ranges_scope_location_without_losing_source_values():
+    source = {"ranges": [
+        {"min": 66000, "max": 91000, "currency": "EUR", "location": "Lisbon, Portugal"},
+        {"min": 150000, "max": 200000, "currency": "USD", "location": "Austin, TX"},
+    ]}
+    result = resolve_compensation(source, None, [{"location": "Austin, TX, United States", "country": "United States"}])
+    assert result["ranges"][0]["scope"] != "all"
+    assert result["ranges"][1]["scope"] == "all"
+    assert result["ranges"][1]["min"] == 150000

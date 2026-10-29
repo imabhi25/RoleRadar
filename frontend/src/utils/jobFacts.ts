@@ -68,7 +68,7 @@ export function buildJobFacts(
   const extras = getCompensationExtras(comp);
   // Figures ingestion marked unusable (placeholder, impossible) are not shown through their summary text either.
   // A structured min/max that failed the pay rules does not come back through its own summary string.
-  const structuredFailed = Boolean(comp && (comp.min != null || comp.max != null) && !structuredPay);
+  const structuredFailed = Boolean(comp && (comp.min != null || comp.max != null || Array.isArray(comp.ranges) || Array.isArray(comp.summaryComponents)) && !structuredPay);
   const compText = comp && !comp.validation && !structuredFailed
     ? comp.compensationTierSummary || comp.scrapeableCompensationSalarySummary || ""
     : "";
@@ -77,7 +77,7 @@ export function buildJobFacts(
     : (isPlausibleCompensationText(compText)
         ? collapseRepeatedRange(compText.replace(/\s*[•·]\s*/g, " · ").trim()) : "") || "";
   // Pay that ingestion lifted from this very text is already shown as Compensation: do not repeat it as "Source pay details".
-  const sourcePay = opts.compensation && comp?.source !== "posting_text" && isPlausibleCompensationText(opts.compensation) ? opts.compensation : "";
+  const sourcePay = opts.compensation && !structuredFailed && comp?.source !== "posting_text" && isPlausibleCompensationText(opts.compensation) ? opts.compensation : "";
   if (hasFactValue(compValue || sourcePay)) facts.push({ key: "compensation", label: "Compensation", value: compValue || sourcePay });
   if (hasFactValue(compValue) && hasFactValue(sourcePay) && compValue.replace(/[^a-z0-9]/gi, "").toLowerCase() !== sourcePay.replace(/[^a-z0-9]/gi, "").toLowerCase()) {
     facts.push({ key: "sourceCompensation", label: "Source pay details", value: sourcePay });

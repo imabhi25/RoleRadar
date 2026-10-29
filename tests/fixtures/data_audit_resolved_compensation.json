@@ -217,24 +217,32 @@
   "compensationTierSummary": "$200.7K – $250.9K · CA$189.7K – CA$237.1K · Multiple ranges"
  },
  "greenhouse:8243997": {
+  "compensationTierSummary": "$174K – $267K · Multiple ranges",
+  "currency": "USD",
+  "interval": "year",
   "max": 267000.0,
   "min": 174000.0,
   "ranges": [
    {
+    "_qualifier_derived": true,
+    "_scope_derived": true,
+    "label": "The annual base salary range for this position for candidates located in the San Francisco Bay area is between:",
     "max": 267000.0,
     "min": 194000.0,
-    "label": "The annual base salary range for this position for candidates located in the San Francisco Bay area is between:"
+    "qualifier": "The annual base salary range for this position for candidates located in the San Francisco Bay area is between:",
+    "scope": "all"
    },
    {
+    "_qualifier_derived": true,
+    "_scope_derived": true,
+    "label": "The annual base salary range for this position for candidates located in California (excluding San Francisco Bay Area), Colorado, Illinois, New York, and Washington is between:",
     "max": 239000.0,
     "min": 174000.0,
-    "label": "The annual base salary range for this position for candidates located in California (excluding San Francisco Bay Area), Colorado, Illinois, New York, and Washington is between:"
+    "qualifier": "The annual base salary range for this position for candidates located in California (excluding San Francisco Bay Area), Colorado, Illinois, New York, and Washington is between:",
+    "scope": "unclear"
    }
   ],
-  "source": "greenhouse",
-  "currency": "USD",
-  "interval": "year",
-  "compensationTierSummary": "$174K – $267K · Multiple ranges"
+  "source": "greenhouse"
  },
  "greenhouse:8249493": {
   "max": 299300.0,

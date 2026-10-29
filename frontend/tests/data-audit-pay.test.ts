@@ -64,11 +64,11 @@ describe('what the reader sees for the audited records', () => {
     // Samsara "Remote - US": the US range is this job's pay; the Canadian one is listed with its place, not shown as this job's.
     const samsara = golden['greenhouse:8223645'];
     expect(getJobCardCompensation(samsara)).toBe('$113,645 – $191,000/yr');
-    expect(getCompensationDetail(samsara)).toBe('$113,645 – $191,000/yr for the US · $106,675 – $138,050/yr for Canada');
+    expect(getCompensationDetail(samsara)).toBe('$113,645 – $191,000/yr for the US');
     // Mercury lists US and Canada pay for a job open in both: neither covers every location, so no number on the card.
     const mercury = golden['greenhouse:6184992004'];
-    expect(getJobCardCompensation(mercury)).toBe('Pay varies by location');
-    expect(getCompensationDetail(mercury)).toBe('$200.7K – $250.9K US employees (any location) · CA$189.7K – CA$237.1K Canadian employees (any location) · period not stated');
+    expect(getJobCardCompensation(mercury)).toBeNull();
+    expect(getCompensationDetail(mercury)).toBeNull();
     const nvidia = golden['workday:Senior-Compute-Platform-Engineer--LSF-_JR2023960'];     // levels, one explicit currency: a span is honest
     expect(getJobCardCompensation(nvidia)).toBe('$184K – $356.5K');
     expect(getCompensationDetail(nvidia)).toBe('$184K – $287.5K for Level 4 · $224K – $356.5K for Level 5 · period not stated');
@@ -76,10 +76,10 @@ describe('what the reader sees for the audited records', () => {
 
   it('pay written for another place never becomes this job\'s pay on a card', () => {
     const base = { source: 'posting_text', ranges: [{ min: 220000, max: 359213, currency: 'CAD', interval: 'year', qualifier: 'For candidates based in the United States', scope: 'none' }] };
-    expect(getJobCardCompensation(base)).toBe('Pay varies by location');                                // a Toronto job, pay written for US-based candidates
-    expect(getCompensationDetail(base)).toBe('CA$220,000 – CA$359,213/yr For candidates based in the United States');
+    expect(getJobCardCompensation(base)).toBeNull();                                // a Toronto job, pay written for US-based candidates
+    expect(getCompensationDetail(base)).toBeNull();
     const dcOnly = { source: 'posting_text', ranges: [{ min: 150000, max: 206000, symbol: '$', interval: 'year', qualifier: 'For Washington D.C. based hires', scope: 'some' }] };
-    expect(getJobCardCompensation(dcOnly)).toBe('Pay varies by location');                              // Cloudflare Austin + DC: DC pay only
+    expect(getJobCardCompensation(dcOnly)).toBeNull();                              // Cloudflare Austin + DC: DC pay only
     const covers = { source: 'posting_text', ranges: [{ min: 108000, max: 135000, currency: 'CAD', qualifier: 'in the Toronto area', scope: 'all', interval: 'year' }] };
     expect(getJobCardCompensation(covers)).toBe('CA$108K – CA$135K/yr');
     // On-target earnings are labelled, never shown as plain base pay.
@@ -87,13 +87,13 @@ describe('what the reader sees for the audited records', () => {
     expect(getJobCardCompensation(ote)).toBe('$154,445 – $185,334/yr OTE');
     expect(getCompensationDetail(ote)).toBe('$154,445 – $185,334/yr In US (on-target earnings)');
     // a qualified range with no scope (older row, locations unknown) is not assumed to apply
-    expect(getJobCardCompensation({ source: 'posting_text', ranges: [{ min: 1e5, max: 2e5, currency: 'USD', qualifier: 'in the Bay Area' }] })).toBe('Pay varies by location');
+    expect(getJobCardCompensation({ source: 'posting_text', ranges: [{ min: 1e5, max: 2e5, currency: 'USD', qualifier: 'in the Bay Area' }] })).toBeNull();
   });
 
   it('keeps believable source pay exactly as it was shown before', () => {
-    expect(getJobCardCompensation(golden['greenhouse:8243997'])).toBe('$174K – $267K/yr');
-    expect(payFact('greenhouse:8243997')).toBe('$174K – $267K/yr · Multiple ranges');
-    expect(getJobCardCompensation(golden['greenhouse:8249493'])).toBe('$137.1K – $299.3K');            // DoorDash: the source gave no period
+    expect(getJobCardCompensation(golden['greenhouse:8243997'])).toBe('$194K – $267K/yr');
+    expect(payFact('greenhouse:8243997')).toBe('$194K – $267K/yr · Multiple ranges');
+    expect(getJobCardCompensation(golden['greenhouse:8249493'])).toBeNull();            // DoorDash: the source gave no period
   });
 
   it('formats both ends of a range alike', () => {
@@ -107,4 +107,23 @@ describe('what the reader sees for the audited records', () => {
     const facts = buildJobFacts(job, { primaryLocation: 'T', compensation: '$81,600 - $115,200 CAD' });
     expect(facts.filter((f) => f.key === 'compensation' || f.key === 'sourceCompensation').map((f) => f.key)).toEqual(['compensation']);
   });
+});
+
+
+it('does not show other-country ranges or fall back to their source summary', () => {
+  const comp = { source: 'posting_text', compensationTierSummary: '€66K – €91K', ranges: [
+    { min: 66000, max: 91000, currency: 'EUR', qualifier: 'For Lisbon based hires', scope: 'unclear' },
+    { min: 150000, max: 206000, currency: 'USD', qualifier: 'For Washington DC based hires', scope: 'none' },
+  ] };
+  expect(getJobCardCompensation(comp)).toBeNull();
+  const job = { job_id: 'cloudflare', title: 'Engineer', company: 'Cloudflare', location: 'Austin, TX', country: 'United States', workplace_type: 'hybrid', source_name: 'greenhouse', skills: [], compensation: comp } as JobSummary;
+  expect(buildJobFacts(job).some((fact) => fact.key === 'compensation')).toBe(false);
+});
+
+
+it('chooses only a structured salary range matching the job location', () => {
+  const ranges = [{ min: 66000, max: 91000, currency: 'EUR', qualifier: 'Lisbon', scope: 'unclear' },
+    { min: 150000, max: 200000, currency: 'USD', qualifier: 'Austin', scope: 'all' }];
+  expect(getJobCardCompensation({ ranges })).toBe('$150K – $200K');
+  expect(getJobCardCompensation({ ranges: ranges.map((range) => ({ ...range, scope: undefined })) })).toBeNull();
 });

@@ -171,7 +171,6 @@ interface CardPay { text: string; periodMissing: boolean; ranges: PayInput[] }
 
 /** A range the posting wrote for a place is this job's pay on a card only when its place covers every location of the job. */
 const coversTheJob = (r: PayInput) => !r.qualifier || r.scope === "all";
-const PAY_BY_LOCATION = "Pay varies by location";
 
 function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay | null {
   if (!compensation || typeof compensation !== "object") return null;
@@ -184,7 +183,13 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
     // Prefer identified pay over untyped benefits, and skip components without a usable range.
     const salaries = components.filter((c) => /^(?:Salary|BaseSalary|Hourly|Wage)$/i.test(String(c.compensationType)));
     const untyped = components.filter((c) => !c.compensationType);
-    for (const salaryComp of [...salaries, ...untyped]) {
+    const candidates = [...salaries, ...untyped].filter((part) => formatPay(num(part.minValue), num(part.maxValue), String(part.currencyCode || ""), String(part.interval || "")) !== null);
+    const scoped = candidates.filter((part) => part.qualifier && part.scope === "all");
+    if (candidates.length > 1 || candidates.some((part) => part.qualifier)) {
+      if (scoped.length !== 1) return null;
+      candidates.splice(0, candidates.length, ...scoped);
+    }
+    for (const salaryComp of candidates) {
       const interval = String(salaryComp.interval || "");
       const text = formatPay(num(salaryComp.minValue), num(salaryComp.maxValue), String(salaryComp.currencyCode || ""), interval);
       if (text) return { text, periodMissing: !periodOf(interval), ranges: [] };
@@ -194,7 +199,7 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
   const everyStated = textRanges(compensation);
   const stated = everyStated.filter(coversTheJob);
   // Pay written only for places that are not (all of) this job's locations: no number on the card, the pane lists it with its place.
-  if (everyStated.length && !stated.length) return { text: PAY_BY_LOCATION, periodMissing: everyStated.some((r) => !periodOf(r.interval)), ranges: everyStated };
+  if (everyStated.length && !stated.length) return null;
   if (stated.length) {
     const groups = new Set(stated.map((r) => `${r.currency || r.symbol}|${periodOf(r.interval)}`));
     const periodMissing = stated.some((r) => !periodOf(r.interval));
@@ -206,6 +211,16 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
     // On-target earnings (base plus commission or bonus target) are never presented as plain base pay.
     const ote = stated.every((r) => r.kind === "ote");
     return text ? { text: ote ? `${text} OTE` : text, periodMissing, ranges: everyStated } : null;
+  }
+
+  // Multiple structured ranges require one unambiguous location match.
+  if (compensation.source !== "posting_text" && Array.isArray(compensation.ranges) && (compensation.ranges.length > 1 || compensation.ranges.some((part: unknown) => Boolean(part) && typeof part === "object" && Boolean((part as Dict).qualifier)))) {
+    const matching = compensation.ranges.filter((part): part is Dict => Boolean(part) && typeof part === "object" && Boolean((part as Dict).qualifier) && (part as Dict).scope === "all");
+    if (matching.length !== 1) return null;
+    const part = matching[0];
+    const interval = String(part.interval || compensation.interval || "");
+    const text = formatPay(num(part.minValue ?? part.min), num(part.maxValue ?? part.max), String(part.currencyCode || part.currency || compensation.currency || ""), interval);
+    return text ? { text, periodMissing: !periodOf(interval), ranges: [] } : null;
   }
 
   // Greenhouse / Lever shape.
@@ -241,9 +256,10 @@ export function getCompensationDetail(compensation?: Record<string, unknown> | n
   if (!card) return null;
   const withoutNote = (text: string) => text.replace(` (${PERIOD_NOT_STATED})`, "");
   let body = withoutNote(card.text);
-  if (card.ranges.length > 1 || card.ranges.some((r) => r.qualifier)) {
-    // Every stated range, each with the level and place the employer wrote for it.
-    body = card.ranges
+  const applicable = card.ranges.filter(coversTheJob);
+  if (applicable.length > 1 || applicable.some((r) => r.qualifier)) {
+    // Only show ranges that cover this job's locations.
+    body = applicable
       .map((range) => {
         const text = formatPay(range.min, range.max, range.currency, range.interval, range.symbol);
         const words = [range.label, range.qualifier, range.kind === "ote" ? "(on-target earnings)" : ""].filter(Boolean).join(" ");

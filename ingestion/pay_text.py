@@ -227,8 +227,8 @@ def extract_pay_ranges(plain_text: str) -> List[Dict[str, Any]]:
     # Identical statements (one per language, or repeated) are one range.
     unique: List[Dict[str, Any]] = []
     for item in found:
-        key = (item["min"], item["max"], item["currency"], item["interval"], item["kind"])
-        if not any((u["min"], u["max"], u["currency"], u["interval"], u["kind"]) == key for u in unique):
+        key = (item["min"], item["max"], item["currency"], item["interval"], item["kind"], item["qualifier"])
+        if not any((u["min"], u["max"], u["currency"], u["interval"], u["kind"], u["qualifier"]) == key for u in unique):
             unique.append(item)
     return unique
 

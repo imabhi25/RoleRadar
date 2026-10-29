@@ -13,7 +13,7 @@ from psycopg2.extras import Json
 
 from db.repair_public_data import repair_public_data
 from ingestion.company_resolver import _seed_and_audit, known_company_website
-from ingestion.compensation import resolve_compensation
+from ingestion.compensation import unwrap_source_compensation, resolve_compensation
 from tests.test_ingestion_safety import company, conn  # noqa: F401  (pytest fixtures)
 from tests.test_public_visibility import _api
 
@@ -107,7 +107,7 @@ def test_backfill_gives_stored_rows_what_ingestion_gives_new_ones(company, conn)
         assert compensation == json.loads(json.dumps(resolve_compensation(EXAMPLES[example_id]["compensation"], html, locations))), key
     assert stored_compensation(conn, ids["a"][0])[0]["validation"]["status"] == "above_ceiling"
     assert stored_compensation(conn, ids["c"][0])[0]["validation"]["status"] == "below_floor"
-    assert stored_compensation(conn, ids["f"][0])[0] == EXAMPLES["greenhouse:8243997"]["compensation"]    # believable pay untouched
+    assert unwrap_source_compensation(stored_compensation(conn, ids["f"][0])[0]) == EXAMPLES["greenhouse:8243997"]["compensation"]    # believable pay untouched
 
     snapshot = {k: stored_compensation(conn, jid)[0] for k, (jid, _) in ids.items()}
     repair_public_data(conn)                                      # idempotent
