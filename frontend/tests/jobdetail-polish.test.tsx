@@ -263,7 +263,7 @@ describe('job card uses the same cleaned location labels', () => {
     const salary = { summaryComponents: [{ compensationType: 'Salary', currencyCode: 'CAD', minValue: 100000, maxValue: 150000, interval: 'YEAR' }, { compensationType: 'EquityPercentage', minValue: 0.1, maxValue: 0.2 }] };
     render(<JobCard onClick={() => {}} job={{ ...base, company: 'Scotiabank', location: 'Toronto, ON, CA', posted_at: new Date(Date.now() - 3600_000).toISOString(), skills: ['Python'], academic_term: 'Winter 2027', compensation: salary }} />);
     const items = [...document.querySelectorAll('.meta-detail')].map((item) => item.textContent);
-    expect(items).toEqual(['Toronto, ON, Canada', 'CA$100K – CA$150K/yr', '1 hour ago']);
+    expect(items).toEqual(['Toronto, ON, Canada', 'CA$100K – CA$150K', '1 hour ago']);
     const card = document.querySelector('.job-card')!;
     expect(card).toHaveTextContent(base.title);
     expect(card).toHaveTextContent('Scotiabank');

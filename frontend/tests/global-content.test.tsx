@@ -133,9 +133,9 @@ describe('F. compensation', () => {
       { description: 'Health benefits' },
       { compensationType: 'EquityPercentage', minValue: 1, maxValue: 2 },
       { compensationType: 'Salary', minValue: 100000, maxValue: 150000, currencyCode: 'CAD', interval: 'YEAR' },
-    ] })).toBe('CA$100K – CA$150K/yr');
+    ] })).toBe('CA$100K – CA$150K');
     expect(getJobCardCompensation({ summaryComponents: [{ compensationType: 'EquityPercentage', minValue: 1, maxValue: 2 }] })).toBeNull();
-    expect(getJobCardCompensation({ compensationTierSummary: 'CA$151,200 – CA$189,000/yr • Equity • Bonus' })).toBe('CA$151,200 – CA$189,000/yr');
+    expect(getJobCardCompensation({ compensationTierSummary: 'CA$151,200 – CA$189,000/yr • Equity • Bonus' })).toBe('CA$151.2K – CA$189K');
     expect(getJobCardCompensation({ compensationTierSummary: '$32 – $43/hr plus equity' })).toBe('$32 – $43/hr');
     expect(getJobCardCompensation({ compensationTierSummary: 'Offers equity of 2%' })).toBeNull();
     expect(getJobCardCompensation(null)).toBeNull();
@@ -162,7 +162,7 @@ describe('F. compensation', () => {
 
   it('the shared facts builder applies it', () => {
     const facts = buildJobFacts({ ...base, compensation: { compensationTierSummary: 'CA$191,100 – CA$191,100' } });
-    expect(facts.find((f) => f.key === 'compensation')?.value).toBe('CA$191,100');
+    expect(facts.find((f) => f.key === 'compensation')?.value).toBe('CA$191.1K');
   });
 });
 

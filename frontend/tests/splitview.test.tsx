@@ -209,7 +209,7 @@ describe('desktop split view', () => {
     expect(within(facts).getByText('Co-op')).toBeInTheDocument();
     expect(within(facts).getByText('Hybrid')).toBeInTheDocument();
     expect(within(facts).getByText('Winter 2027')).toBeInTheDocument();
-    expect(within(facts).getByText('$166k–$195k CAD')).toBeInTheDocument();
+    expect(within(facts).getByText('CA$166K – CA$195K')).toBeInTheDocument();
     // each fact appears once in the whole pane, and the location only in the header
     for (const text of ['Co-op', 'Hybrid', 'Winter 2027']) expect(within(full).getAllByText(text)).toHaveLength(1);
     expect(within(full).getAllByText(/Toronto/)).toHaveLength(1);

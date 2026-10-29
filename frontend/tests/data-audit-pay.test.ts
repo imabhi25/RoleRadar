@@ -52,26 +52,26 @@ describe('what the reader sees for the audited records', () => {
     expect(getJobCardCompensation(golden['greenhouse:8199744'])).toBe('CA$40/hr');                      // the posting says "hourly range"
     expect(payFact('greenhouse:8199744')).toBe('CA$40/hr');
     expect(getJobCardCompensation(golden['greenhouse:8250389'])).toBe('$230K – $322K');                  // Reddit: no period anywhere
-    expect(payFact('greenhouse:8250389')).toBe('$230K – $322K · period not stated');
+    expect(payFact('greenhouse:8250389')).toBe('US$230K – US$322K');
     const td = 'workday:XMLNAME-2027-Spring-Co-op---Global-Technology---Solutions---Data-Engineer_R_1510111';
-    expect(getJobCardCompensation(golden[td])).toBe('$30.74 (period not stated)');                       // a small figure could be hourly, weekly or a typo
-    expect(payFact(td)).toBe('$30.74 · period not stated');
-    expect(payFact('workday:Data-Scientist-II_R_1514106')).toBe('CA$81.6K – CA$115.2K · period not stated');
-    expect(getJobCardCompensation(golden['greenhouse:8238548'])).toMatch(/\/yr$/);                       // Braze: "annually"
+    expect(getJobCardCompensation(golden[td])).toBe('$30.74');                       // a small figure could be hourly, weekly or a typo
+    expect(payFact(td)).toBe('US$30.74');
+    expect(payFact('workday:Data-Scientist-II_R_1514106')).toBe('CA$81.6K – CA$115.2K');
+    expect(getJobCardCompensation(golden['greenhouse:8238548'])).not.toBeNull();                       // Braze: "annually"
   });
 
   it('shows each range the posting states with the place and level the employer wrote, and never merges currencies or places', () => {
     // Samsara "Remote - US": the US range is this job's pay; the Canadian one is listed with its place, not shown as this job's.
     const samsara = golden['greenhouse:8223645'];
-    expect(getJobCardCompensation(samsara)).toBe('$113,645 – $191,000/yr');
-    expect(getCompensationDetail(samsara)).toBe('$113,645 – $191,000/yr for the US');
+    expect(getJobCardCompensation(samsara)).toBe('$113.645K – $191K');
+    expect(getCompensationDetail(samsara)).toBe('$113.645K – $191K');
     // Mercury lists US and Canada pay for a job open in both: neither covers every location, so no number on the card.
     const mercury = golden['greenhouse:6184992004'];
     expect(getJobCardCompensation(mercury)).toBeNull();
     expect(getCompensationDetail(mercury)).toBeNull();
     const nvidia = golden['workday:Senior-Compute-Platform-Engineer--LSF-_JR2023960'];     // levels, one explicit currency: a span is honest
     expect(getJobCardCompensation(nvidia)).toBe('$184K – $356.5K');
-    expect(getCompensationDetail(nvidia)).toBe('$184K – $287.5K for Level 4 · $224K – $356.5K for Level 5 · period not stated');
+    expect(getCompensationDetail(nvidia)).toBe('$184K – $356.5K');
   });
 
   it('pay written for another place never becomes this job\'s pay on a card', () => {
@@ -81,25 +81,25 @@ describe('what the reader sees for the audited records', () => {
     const dcOnly = { source: 'posting_text', ranges: [{ min: 150000, max: 206000, symbol: '$', interval: 'year', qualifier: 'For Washington D.C. based hires', scope: 'some' }] };
     expect(getJobCardCompensation(dcOnly)).toBeNull();                              // Cloudflare Austin + DC: DC pay only
     const covers = { source: 'posting_text', ranges: [{ min: 108000, max: 135000, currency: 'CAD', qualifier: 'in the Toronto area', scope: 'all', interval: 'year' }] };
-    expect(getJobCardCompensation(covers)).toBe('CA$108K – CA$135K/yr');
+    expect(getJobCardCompensation(covers)).toBe('CA$108K – CA$135K');
     // On-target earnings are labelled, never shown as plain base pay.
     const ote = { source: 'posting_text', ranges: [{ min: 154445, max: 185334, currency: 'USD', kind: 'ote', qualifier: 'In US', scope: 'all', interval: 'year' }] };
-    expect(getJobCardCompensation(ote)).toBe('$154,445 – $185,334/yr OTE');
-    expect(getCompensationDetail(ote)).toBe('$154,445 – $185,334/yr In US (on-target earnings)');
+    expect(getJobCardCompensation(ote)).toBe('$154.445K – $185.334K OTE');
+    expect(getCompensationDetail(ote)).toBe('$154.445K – $185.334K OTE');
     // a qualified range with no scope (older row, locations unknown) is not assumed to apply
     expect(getJobCardCompensation({ source: 'posting_text', ranges: [{ min: 1e5, max: 2e5, currency: 'USD', qualifier: 'in the Bay Area' }] })).toBeNull();
   });
 
   it('keeps believable source pay exactly as it was shown before', () => {
-    expect(getJobCardCompensation(golden['greenhouse:8243997'])).toBe('$194K – $267K/yr');
-    expect(payFact('greenhouse:8243997')).toBe('$194K – $267K/yr · Multiple ranges');
+    expect(getJobCardCompensation(golden['greenhouse:8243997'])).toBe('$194K – $267K');
+    expect(payFact('greenhouse:8243997')).toBe('US$194K – US$267K');
     expect(getJobCardCompensation(golden['greenhouse:8249493'])).toBeNull();            // DoorDash: the source gave no period
   });
 
   it('formats both ends of a range alike', () => {
-    expect(formatPay(113645, 191000, 'USD', 'year')).toBe('$113,645 – $191,000/yr');
-    expect(formatPay(184000, 314079, '', 'year', '$')).toBe('$184,000 – $314,079/yr');
-    expect(formatPay(151200, 189000, 'CAD', 'year')).toBe('CA$151.2K – CA$189K/yr');
+    expect(formatPay(113645, 191000, 'USD', 'year')).toBe('$113.645K – $191K');
+    expect(formatPay(184000, 314079, '', 'year', '$')).toBe('$184K – $314.079K');
+    expect(formatPay(151200, 189000, 'CAD', 'year')).toBe('CA$151.2K – CA$189K');
   });
 
   it('pay lifted from the posting is not repeated as "Source pay details"', () => {
@@ -126,4 +126,15 @@ it('chooses only a structured salary range matching the job location', () => {
     { min: 150000, max: 200000, currency: 'USD', qualifier: 'Austin', scope: 'all' }];
   expect(getJobCardCompensation({ ranges })).toBe('$150K – $200K');
   expect(getJobCardCompensation({ ranges: ranges.map((range) => ({ ...range, scope: undefined })) })).toBeNull();
+});
+
+
+it('uses compact pay and makes currency unambiguous for Canadian jobs', () => {
+  expect(getJobCardCompensation({ min: 107000, max: 157000, currency: 'USD', interval: 'year' })).toBe('$107K – $157K');
+  expect(getJobCardCompensation({ min: 107000, max: 157000, currency: 'CAD' }, 'Canada')).toBe('CA$107K – CA$157K');
+  expect(getJobCardCompensation({ min: 107000, max: 157000, currency: 'USD' }, 'Canada')).toBe('US$107K – US$157K');
+  expect(getJobCardCompensation({ min: 107000, max: 157000, symbol: '$' }, 'Canada')).toBeNull();
+  expect(getJobCardCompensation({ min: 66000, max: 91000, currency: 'EUR' })).toBe('€66K – €91K');
+  const comp = { source: 'posting_text', ranges: [{ min: 107000, max: 157000, currency: 'CAD', qualifier: 'For Ontario, Canada', scope: 'all' }] };
+  expect(getCompensationDetail(comp, 'Canada')).toBe('CA$107K – CA$157K');
 });

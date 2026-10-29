@@ -482,10 +482,10 @@ describe('one divider between adjacent sections', () => {
     vi.spyOn(apiClient, 'getJob').mockResolvedValue({ ...detail('d', 'Role'), description: '<hr><h2>Requirements</h2><ul><li>A</li></ul><hr><hr><h2>Compensation</h2><p>CA$100k</p><hr>' });
     const { JobDetailContent } = await import('../src/components/JobDetailContent');
     render(<JobDetailContent jobId="d" variant="pane" onClose={() => {}} />);
-    await screen.findByText('CA$100k');
+    await screen.findByText('CA$100K');
     const prose = document.querySelector('.job-description-prose')!;
     expect(prose.querySelectorAll('hr')).toHaveLength(0);
-    expect(screen.getByLabelText('Job facts')).toHaveTextContent('CA$100k');
+    expect(screen.getByLabelText('Job facts')).toHaveTextContent('CA$100K');
     expect(document.querySelectorAll('.job-part')).toHaveLength(2);
   });
 });

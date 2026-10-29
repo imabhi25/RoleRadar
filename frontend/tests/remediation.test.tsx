@@ -63,7 +63,7 @@ describe('remediation behavior', () => {
       expect(link).toHaveAttribute('href',job.company_apply_url);
       expect(link).toHaveAttribute('rel','noopener noreferrer');
     }
-    expect(screen.getByText('Canada: CAD 130,000–180,000')).toBeInTheDocument();
+    expect(screen.getByText('CA$130K – CA$180K')).toBeInTheDocument();
     expect(screen.queryByText(/London/)).not.toBeInTheDocument();   // extra locations stay collapsed
     await userEvent.click(screen.getByRole('button',{name:'+1 location'}));
     expect(screen.getByText(/London/)).toBeInTheDocument();

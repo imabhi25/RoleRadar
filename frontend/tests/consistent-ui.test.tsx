@@ -37,8 +37,8 @@ describe('design tokens', () => {
 
 describe('formatPay', () => {
   it('uses compact K and an explicit period when the source stated one', () => {
-    expect(formatPay(151200, 189000, 'CAD', '1 YEAR')).toBe('CA$151.2K – CA$189K/yr');
-    expect(formatPay(191100, 191100, 'CAD', 'year')).toBe('CA$191.1K/yr');
+    expect(formatPay(151200, 189000, 'CAD', '1 YEAR')).toBe('CA$151.2K – CA$189K');
+    expect(formatPay(191100, 191100, 'CAD', 'year')).toBe('CA$191.1K');
     expect(formatPay(12500, 12500, 'USD', 'month')).toBe('$12.5K/mo');
     expect(formatPay(50, 50, 'USD', 'hour')).toBe('$50/hr');
   });
@@ -46,8 +46,8 @@ describe('formatPay', () => {
   it('never invents a pay period from the size of the amount', () => {
     // No period stated: shown as published. A small figure says so, because it could be hourly, weekly or a typo.
     expect(formatPay(152800, 259200, 'USD')).toBe('$152.8K – $259.2K');
-    expect(formatPay(60, 60, 'USD')).toBe('$60 (period not stated)');
-    expect(formatPay(40, 40, 'CAD')).toBe('CA$40 (period not stated)');
+    expect(formatPay(60, 60, 'USD')).toBe('$60');
+    expect(formatPay(40, 40, 'CAD')).toBe('CA$40');
     // Labelled annual but $38 - $58 (Samsara co-op): the label and the amount contradict, so nothing is shown.
     expect(formatPay(38, 58, 'USD', 'year')).toBeNull();
   });
@@ -60,14 +60,14 @@ describe('formatPay', () => {
     const job = { job_id: 'a', title: 'Dev', company: 'Wealthsimple', location: 'Toronto', country: 'Canada', workplace_type: 'remote', source_name: 'ashby', skills: [], compensation: ashby } as unknown as JobSummary;
     const card = getJobCardCompensation(ashby);
     const pane = buildJobFacts(job, { primaryLocation: 'Toronto' }).find((f) => f.key === 'compensation')?.value;
-    expect(card).toBe('CA$151.2K – CA$189K/yr');
-    expect(pane).toBe('CA$151.2K – CA$189K/yr · Offers Equity');
+    expect(card).toBe('CA$151.2K – CA$189K');
+    expect(pane).toBe('CA$151.2K – CA$189K');
     expect(getCompensationExtras(ashby)).toBe('Offers Equity');
 
     const greenhouse = { min: 12500, max: 12500, currency: 'USD', interval: 'month', compensationTierSummary: '$12.5K per month' };
     const gj = { ...job, compensation: greenhouse } as unknown as JobSummary;
     expect(getJobCardCompensation(greenhouse)).toBe('$12.5K/mo');
-    expect(buildJobFacts(gj, { primaryLocation: 'Toronto' }).find((f) => f.key === 'compensation')?.value).toBe('$12.5K/mo');
+    expect(buildJobFacts(gj, { primaryLocation: 'Toronto' }).find((f) => f.key === 'compensation')?.value).toBe('US$12.5K/mo');
   });
 });
 

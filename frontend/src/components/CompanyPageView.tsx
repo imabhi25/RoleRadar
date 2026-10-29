@@ -218,7 +218,7 @@ export const CompanyPageView: React.FC<CompanyPageViewProps> = ({
             {!jobsLoading && companyJobs.length > 0 && (
               <div className="company-jobs-list">
                 {companyJobs.map((job) => {
-                  const comp = getJobCardCompensation(job.compensation);
+                  const comp = getJobCardCompensation(job.compensation, job.country);
                   const exactDate = formatAbsoluteDate(job.posted_at);
                   const applyUrl = job.company_apply_url || job.source_url;
 

@@ -79,7 +79,7 @@ describe("CompanyPageView", () => {
     expect(screen.getByRole("heading", { name: /Active Roles at Amazon/i })).toBeInTheDocument();
     expect(await screen.findByText("Software Development Engineer II")).toBeInTheDocument();
     expect(screen.getByText("Vancouver, BC")).toBeInTheDocument();
-    expect(screen.getByText("CAD 140,000–185,000 /yr")).toBeInTheDocument();
+    expect(screen.getByText("CA$140K – CA$185K")).toBeInTheDocument();
 
     // Direct apply link
     const applyLink = screen.getByRole("link", { name: /Apply/i });

@@ -84,7 +84,7 @@ describe('job facts', () => {
   it('renders only facts that exist; workplace is not repeated when the location already says it', () => {
     const facts = buildJobFacts({ ...base, compensation: { compensationTierSummary: 'CA$120k–CA$150k' }, academic_term: 'Winter 2027', role_type: 'co_op' } as JobDetail);
     expect(facts.map((f) => [f.key, f.value])).toEqual([
-      ['posted', 'Sep 28, 2026'], ['role', 'Co-op'], ['term', 'Winter 2027'], ['workplace', 'Hybrid'], ['compensation', 'CA$120k–CA$150k'],
+      ['posted', 'Sep 28, 2026'], ['role', 'Co-op'], ['term', 'Winter 2027'], ['workplace', 'Hybrid'], ['compensation', 'CA$120K – CA$150K'],
     ]);
     expect(buildJobFacts({ ...base, workplace_type: 'remote' }, { primaryLocation: 'Canada · Remote' }).map((f) => f.key)).toEqual(['posted', 'role']);
     expect(buildJobFacts({ ...base, workplace_type: 'remote' }, { primaryLocation: 'Toronto, ON' }).map((f) => f.key)).toContain('workplace');

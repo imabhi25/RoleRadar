@@ -126,7 +126,7 @@ describe('job facts grid', () => {
   it('renders labelled facts and explicit title seniority without match checks', async () => {
     await renderDetail({ ...base, workplace_type: 'onsite', academic_term: 'Summer 2027', role_type: 'internship', compensation: { compensationTierSummary: 'CA$152K – CA$189K • Offers Equity' } });
     const facts = screen.getByLabelText('Job facts');
-    expect(facts.textContent!.replace(/\s+/g, ' ').trim()).toBe('Compensation CA$152K – CA$189K · Offers Equity Role Internship Posted Sep 28, 2026 Experience level Senior Term Summer 2027 Workplace On-site');
+    expect(facts.textContent!.replace(/\s+/g, ' ').trim()).toBe('Compensation CA$152K – CA$189K Role Internship Posted Sep 28, 2026 Experience level Senior Term Summer 2027 Workplace On-site');
     expect([...facts.querySelectorAll('dt')].map((d) => d.textContent)).toEqual(['Compensation', 'Role', 'Posted', 'Experience level', 'Term', 'Workplace']);
     expect(rule('.job-fact dt')).not.toMatch(/uppercase/);
   });

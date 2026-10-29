@@ -21,7 +21,7 @@ describe('one metadata normalization pipeline for existing and future postings',
     expect(result.mainHtml).not.toMatch(/Work Location:|Hours:|Line of Business:|Pay Details:/);
     expect(result.mainHtml).toContain('Build models');
     const facts = buildJobFacts(job, { primaryLocation: job.location, ...result.meta });
-    expect(facts.find((fact) => fact.key === 'compensation')?.value).toBe('$81,600 - $115,200 CAD');
+    expect(facts.find((fact) => fact.key === 'compensation')?.value).toBe('CA$81.6K – CA$115.2K');
     expect(facts.find((fact) => fact.key === 'hours')?.value).toBe('37.5');
     expect(facts.filter((fact) => fact.key === 'workLocation')).toHaveLength(0);
   });
@@ -41,7 +41,7 @@ describe('one metadata normalization pipeline for existing and future postings',
     const about = await screen.findByRole('heading', { name: 'About the job', exact: true });
     const section = about.closest('section')!;
     expect(section).not.toHaveTextContent(/Work Location:|Hours:|Line of Business:|Pay Details:/);
-    expect(screen.getByLabelText('Job facts')).toHaveTextContent('$81,600 - $115,200 CAD');
+    expect(screen.getByLabelText('Job facts')).toHaveTextContent('CA$81.6K – CA$115.2K');
     const company = screen.getByRole('heading', { name: 'About the company', exact: true }).closest('section')!;
     expect(within(company).getByText(/provides banking and financial services in Canada/)).toBeInTheDocument();
     expect(screen.queryByText('The source posting does not include company background.')).not.toBeInTheDocument();

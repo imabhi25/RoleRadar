@@ -25,13 +25,13 @@ describe('salary placeholder guard in every display', () => {
     expect(buildJobFacts({ ...base, compensation: { compensationTierSummary } }).some((f) => f.key === 'compensation')).toBe(false);
   });
   it('preserves real hourly, monthly, million-dollar and other-currency amounts and skips bad components', () => {
-    expect(getJobCardCompensation({ compensationTierSummary: '$1M – $2M/yr' })).toBe('$1M – $2M/yr');
+    expect(getJobCardCompensation({ compensationTierSummary: '$1M – $2M/yr' })).toBe('$1M – $2M');
     expect(getJobCardCompensation({ compensationTierSummary: 'CA$32 – CA$43/hr' })).toBe('CA$32 – CA$43/hr');
     expect(getJobCardCompensation({ summaryComponents: [{ minValue: 2000, maxValue: 3000, currencyCode: 'JPY', interval: 'HOUR' }] })).toBe('JPY 2K – JPY 3K/hr');
     expect(getJobCardCompensation({ summaryComponents: [{ minValue: 3000, maxValue: 5000, currencyCode: 'EUR', interval: 'MONTH' }] })).toBe('€3K – €5K/mo');
     const compensation = { summaryComponents: [{ compensationType: 'Salary', currencyCode: 'USD', minValue: 1, maxValue: 2, interval: 'YEAR' }, { compensationType: 'Salary', currencyCode: 'USD', minValue: 150000, maxValue: 200000, interval: 'YEAR' }] };
-    expect(getJobCardCompensation(compensation)).toBe('$150K – $200K/yr');
-    expect(buildJobFacts({ ...base, compensation }).find((f) => f.key === 'compensation')?.value).toBe('$150K – $200K/yr');
+    expect(getJobCardCompensation(compensation)).toBe('$150K – $200K');
+    expect(buildJobFacts({ ...base, compensation }).find((f) => f.key === 'compensation')?.value).toBe('US$150K – US$200K');
   });
 });
 

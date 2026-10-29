@@ -1,5 +1,5 @@
 import type { JobSummary } from "../api/client";
-import { collapseRepeatedRange, getCompensationDetail, getCompensationExtras, isPlausibleCompensationText } from "./compensation";
+import { getCompensationDetail, getJobCardCompensation } from "./compensation";
 import { formatRoleType, formatWorkplaceType, formatPostingDate, formatPostedDate } from "./formatters";
 
 export interface JobFact {
@@ -62,26 +62,11 @@ export function buildJobFacts(
   const workplaceInLocation = workplace !== "" && new RegExp(`\\b${workplace}\\b`, "i").test(opts.primaryLocation || "");
   if (hasFactValue(workplace) && !workplaceInLocation) facts.push({ key: "workplace", label: "Workplace", value: workplace });
 
-  const comp = job.compensation;
-  // One pay format everywhere: the structured figure (same string as the card) plus any non-pay notes from the source.
-  const structuredPay = getCompensationDetail(comp);
-  const extras = getCompensationExtras(comp);
-  // Figures ingestion marked unusable (placeholder, impossible) are not shown through their summary text either.
-  // A structured min/max that failed the pay rules does not come back through its own summary string.
-  const structuredFailed = Boolean(comp && (comp.min != null || comp.max != null || Array.isArray(comp.ranges) || Array.isArray(comp.summaryComponents)) && !structuredPay);
-  const compText = comp && !comp.validation && !structuredFailed
-    ? comp.compensationTierSummary || comp.scrapeableCompensationSalarySummary || ""
-    : "";
-  const compValue = structuredPay
-    ? [structuredPay, extras].filter(Boolean).join(" · ")
-    : (isPlausibleCompensationText(compText)
-        ? collapseRepeatedRange(compText.replace(/\s*[•·]\s*/g, " · ").trim()) : "") || "";
-  // Pay that ingestion lifted from this very text is already shown as Compensation: do not repeat it as "Source pay details".
-  const sourcePay = opts.compensation && !structuredFailed && comp?.source !== "posting_text" && isPlausibleCompensationText(opts.compensation) ? opts.compensation : "";
-  if (hasFactValue(compValue || sourcePay)) facts.push({ key: "compensation", label: "Compensation", value: compValue || sourcePay });
-  if (hasFactValue(compValue) && hasFactValue(sourcePay) && compValue.replace(/[^a-z0-9]/gi, "").toLowerCase() !== sourcePay.replace(/[^a-z0-9]/gi, "").toLowerCase()) {
-    facts.push({ key: "sourceCompensation", label: "Source pay details", value: sourcePay });
-  }
+  // The validated compensation value is shared with the card; raw source prose is not a salary display.
+  const plainPay = opts.compensation && /^[\s\d.,$€£–—\-kKmM/]+$/.test(opts.compensation.replace(/\b(?:CAD|USD|EUR|GBP)\b|(?:CA|US)(?=\$)/gi, ""))
+    ? getJobCardCompensation({ compensationTierSummary: opts.compensation }, job.country) : null;
+  const structuredPay = getCompensationDetail(job.compensation, job.country) || (!job.compensation ? plainPay : null);
+  if (hasFactValue(structuredPay)) facts.push({ key: "compensation", label: "Compensation", value: structuredPay });
   if (hasFactValue(opts.hours)) facts.push({ key: "hours", label: "Working hours", value: opts.hours });
   if (hasFactValue(opts.businessLine)) facts.push({ key: "businessLine", label: "Business area", value: opts.businessLine });
   const sameLocation = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
