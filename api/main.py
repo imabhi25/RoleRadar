@@ -931,7 +931,7 @@ def get_jobs(
     skill: Optional[str] = Query(default=None, description="Exact case-insensitive skill match"),
     workplace_type: Optional[List[str]] = Query(default=None, description="Workplace type (single, comma-separated, or repeated)"),
     role_type: Optional[List[str]] = Query(default=None, description="Role type (single, comma-separated, or repeated)"),
-    experience_level: Optional[List[str]] = Query(default=None, description="Experience level: internship, entry, mid, senior (single, comma-separated, or repeated)"),
+    experience_level: Optional[List[str]] = Query(default=None, description="Experience level: internship, entry, mid, senior, unknown (single, comma-separated, or repeated)"),
     min_compensation: Optional[int] = Query(default=None, ge=0, description="Minimum annualized compensation"),
     compensation_currency: Optional[str] = Query(default=None, description="Currency filter for compensation: CAD, USD, etc."),
     sponsorship: Optional[str] = Query(default="all", description="Sponsorship requirement: all, available, not_required"),
@@ -1213,8 +1213,8 @@ def get_jobs(
     if parsed_exp:
         aliases = {"intern": "internship", "co_op": "internship", "coop": "internship", "entry_level": "entry", "new_grad": "entry", "newgrad": "entry", "junior": "entry", "associate": "entry", "sr": "senior", "lead": "senior", "staff": "senior", "principal": "senior", "mid_level": "mid", "intermediate": "mid"}
         levels = [aliases.get(value.lower().strip(), value.lower().strip()) for value in parsed_exp]
-        if any(value not in ("internship", "entry", "mid", "senior") for value in levels):
-            raise HTTPException(status_code=400, detail="Invalid experience_level. Must be internship, entry, mid or senior.")
+        if any(value not in ("internship", "entry", "mid", "senior", "unknown") for value in levels):
+            raise HTTPException(status_code=400, detail="Invalid experience_level. Must be internship, entry, mid, senior or unknown.")
         where_clauses.append("jp.experience_level = ANY(%s)")
         params.append(levels)
 
@@ -1484,7 +1484,7 @@ def get_job_filter_options():
                 "role_types": role_types,
                 "locations": locations,
                 "experience_levels": [
-                    "internship", "entry", "mid", "senior"
+                    "internship", "entry", "mid", "senior", "unknown"
                 ],
             }
     except psycopg2.Error as err:

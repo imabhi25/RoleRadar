@@ -23,10 +23,10 @@ def test_canadian_metro_definitions():
 
 
 def test_filter_options_include_experience_levels():
-    """/api/jobs/filters always describes the four experience levels."""
+    """/api/jobs/filters includes the not specified experience level."""
     response = client.get("/api/jobs/filters")
     assert response.status_code == 200
-    assert set(response.json()["experience_levels"]) == {"internship", "entry", "mid", "senior"}
+    assert set(response.json()["experience_levels"]) == {"internship", "entry", "mid", "senior", "unknown"}
 
 
 def test_location_options_follow_the_public_results_population(conn):

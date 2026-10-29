@@ -1094,6 +1094,20 @@ class TestApiEndpoints(unittest.TestCase):
         self.assertIn("target_postings", location_call[0][0])   # the same population as /api/jobs
         self.assertEqual(len(location_call[0][1]), 2 * len(LOCATION_OPTIONS))
 
+    @patch("api.main.get_db_cursor")
+    def test_not_specified_workplace_and_experience_filters(self, mock_get_db):
+        mock_cur = MagicMock()
+        mock_cur.fetchone.return_value = (0,)
+        mock_cur.fetchall.return_value = []
+        mock_get_db.return_value = self._mock_db(mock_cur)
+        response = self.client.get("/api/jobs?workplace_type=unspecified&experience_level=unknown")
+        self.assertEqual(response.status_code, 200)
+        query, params = mock_cur.execute.call_args_list[0].args
+        self.assertIn("jp.workplace_type = %s", query)
+        self.assertIn("jp.experience_level = ANY(%s)", query)
+        self.assertIn("unspecified", params)
+        self.assertIn(["unknown"], params)
+
     # --- 4. Single Job Detail (/api/jobs/{job_id}) ---
 
     @patch("api.main.get_db_cursor")

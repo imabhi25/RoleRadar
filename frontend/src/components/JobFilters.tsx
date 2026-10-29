@@ -37,12 +37,12 @@ const ROLE_OPTIONS = [
   { label: "Co-op", value: "co_op" },
 ];
 const TERM_OPTIONS = [{ label: "Winter", value: "winter" }, { label: "Summer", value: "summer" }, { label: "Fall", value: "fall" }];
-const WORKPLACE_OPTIONS = [{ label: "Remote", value: "remote" }, { label: "Hybrid", value: "hybrid" }, { label: "On-site", value: "on_site" }];
+const WORKPLACE_OPTIONS = [{ label: "Remote", value: "remote" }, { label: "Hybrid", value: "hybrid" }, { label: "On-site", value: "on_site" }, { label: "Not specified", value: "unspecified" }];
 const DATE_OPTIONS: { label: string; value: SelectedFilters["freshness"] }[] = [
   { label: "Last 30 days", value: "recent" }, { label: "Today (UTC)", value: "today" },
   { label: "Last 7 days", value: "week" }, { label: "Last 14 days", value: "14d" },
 ];
-const EXPERIENCE_OPTIONS = [{ label: "Entry Level / New Grad", value: "entry" }, { label: "Mid Level", value: "mid" }, { label: "Senior / Staff / Lead", value: "senior" }];
+const EXPERIENCE_OPTIONS = [{ label: "Entry Level / New Grad", value: "entry" }, { label: "Mid Level", value: "mid" }, { label: "Senior / Staff / Lead", value: "senior" }, { label: "Not specified", value: "unknown" }];
 
 /** Real selects let each browser/OS provide its own menu, keyboard behavior, and system colors. */
 // With a mouse on a wide screen, a native <select> opens its list over the control (macOS puts the selected row

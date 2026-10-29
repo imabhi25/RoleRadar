@@ -85,3 +85,19 @@ describe("Location Multi-Select", () => {
     expect(reloaded.filters.location[1]).toBe("New York, NY");
   });
 });
+
+
+describe("not specified filters", () => {
+  it("offers both filters and preserves them in URLs", async () => {
+    const onFilterChange = vi.fn();
+    render(<JobFilters filterOptions={filterOptions} selectedFilters={defaultFilters} onFilterChange={onFilterChange} onReset={() => {}} />);
+    const workplace = screen.getByRole("combobox", { name: "Workplace" });
+    const experience = screen.getByRole("combobox", { name: "Experience" });
+    await userEvent.selectOptions(workplace, "unspecified");
+    expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ workplace_type: ["unspecified"] }), true);
+    await userEvent.selectOptions(experience, "unknown");
+    expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ experience_level: ["unknown"] }), true);
+    const url = serializeUrlSearch({ ...defaultFilters, workplace_type: ["unspecified"], experience_level: ["unknown"] }, 1);
+    expect(parseUrlSearch(url).filters).toMatchObject({ workplace_type: ["unspecified"], experience_level: ["unknown"] });
+  });
+});

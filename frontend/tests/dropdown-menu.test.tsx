@@ -26,7 +26,7 @@ describe('filter dropdowns on a wide screen with a mouse', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Experience' }));
     const list = screen.getByRole('listbox', { name: 'Experience' });
     expect(within(list).getAllByRole('option').map((option) => option.textContent)).toEqual([
-      '✓Experience', 'Entry Level / New Grad', 'Mid Level', 'Senior / Staff / Lead',
+      '✓Experience', 'Entry Level / New Grad', 'Mid Level', 'Senior / Staff / Lead', 'Not specified',
     ]);
     await userEvent.click(within(list).getByRole('option', { name: 'Mid Level' }));
     expect(onFilterChange).toHaveBeenLastCalledWith({ ...base, experience_level: ['mid'] }, true);

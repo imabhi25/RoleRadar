@@ -41,6 +41,7 @@ const CANONICAL_TERMS: Record<string, string> = {
 };
 
 const CANONICAL_WORKPLACES: Record<string, string> = {
+  "unspecified": "unspecified",
   "remote": "remote",
   "hybrid": "hybrid",
   "on_site": "on_site",
@@ -188,7 +189,7 @@ export function parseUrlSearch(search: string): ParsedUrlState {
   const expList: string[] = [];
   rawExp.split(",").forEach((item) => {
     const clean = item.trim().toLowerCase();
-    if (["internship", "entry", "mid", "senior"].includes(clean) && !expList.includes(clean)) {
+    if (["internship", "entry", "mid", "senior", "unknown"].includes(clean) && !expList.includes(clean)) {
       expList.push(clean);
     }
   });
