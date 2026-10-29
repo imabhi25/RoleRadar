@@ -7,6 +7,7 @@ import { useCompanyBackground } from "../hooks/useCompanyBackground";
 import { getCompanyProfile } from "../utils/companyProfiles";
 import { getJobCardCompensation } from "../utils/compensation";
 import { formatAbsoluteDate } from "../utils/jobFacts";
+import { summarizeLocations } from "../utils/locations";
 
 interface CompanyPageViewProps {
   initialCompany?: string | null;
@@ -221,6 +222,7 @@ export const CompanyPageView: React.FC<CompanyPageViewProps> = ({
                   const comp = getJobCardCompensation(job.compensation, job.country);
                   const exactDate = formatAbsoluteDate(job.posted_at);
                   const applyUrl = job.company_apply_url || job.source_url;
+                  const location = summarizeLocations(job).primary;
 
                   return (
                     <article key={job.job_id} className="company-job-card">
@@ -236,11 +238,8 @@ export const CompanyPageView: React.FC<CompanyPageViewProps> = ({
                         </h3>
 
                         <div className="company-job-meta">
-                          {job.location && (
-                            <span className="company-job-meta-item meta-location">
-                              {job.location}
-                            </span>
-                          )}
+                          {location && <span className="company-job-meta-item meta-location">{location}</span>}
+                          {job.variant_identifier && <span className="company-job-meta-item">Requisition: {job.variant_identifier}</span>}
                           {job.workplace_type && (
                             <span className="company-job-meta-item meta-workplace">
                               {job.workplace_type}

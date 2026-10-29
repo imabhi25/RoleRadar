@@ -166,6 +166,7 @@ class JobSummary(BaseModel):
     job_id: str
     title: str
     company: str
+    variant_identifier: Optional[str] = None
     company_logo_url: Optional[str] = None
     company_logo_status: Optional[str] = None
     location: str
@@ -252,8 +253,13 @@ class JobDetail(BaseModel):
     compensation: Optional[dict] = None
 
 
+def normalized_description_sql(table_alias: str) -> str:
+    """Compare posting text without markup, case, punctuation or whitespace differences."""
+    return f"lower(regexp_replace(regexp_replace(coalesce({table_alias}.description, ''), '<[^>]+>', ' ', 'g'), '[^[:alnum:]]+', '', 'g'))"
+
+
 def get_deduplication_sql_predicate(table_alias: str = "jp") -> str:
-    """Suppress only matching source identities or exact job URLs, never text similarity.
+    """Suppress matching source identities, job URLs, or equivalent descriptions for the same role and place.
 
     "No later duplicate by source id OR by URL" is written as two separate NOT EXISTS terms. A single NOT EXISTS with
     an OR between the two keys cannot be hash-joined, so PostgreSQL compared every row with every other row (about
@@ -280,7 +286,16 @@ def get_deduplication_sql_predicate(table_alias: str = "jp") -> str:
         "NULLIF(split_part(jp2.source_url, '#', 1), '') = "
         f"NULLIF(split_part({table_alias}.source_url, '#', 1), '')"
     )
-    return f"({later_duplicate(same_source_id)} AND {later_duplicate(same_url)})"
+    description = normalized_description_sql(table_alias)
+    same_posting = (f"jp2.company_id = {table_alias}.company_id "
+                    f"AND jp2.location_id = {table_alias}.location_id "
+                    f"AND jp2.locations = {table_alias}.locations "
+                    f"AND lower(trim(jp2.title)) = lower(trim({table_alias}.title)) "
+                    f"AND length(coalesce({table_alias}.description, '')) >= 40 "
+                    f"AND jp2.batch2_description_hash = {table_alias}.batch2_description_hash "
+                    f"AND CASE WHEN jp2.batch2_description_hash = {table_alias}.batch2_description_hash "
+                    f"THEN {normalized_description_sql('jp2')} = {description} ELSE FALSE END")
+    return f"({later_duplicate(same_source_id)} AND {later_duplicate(same_url)} AND {later_duplicate(same_posting)})"
 
 
 DATE_ONLY_SOURCES = ("workday", "amazon", "shopify", "phenom", "successfactors")
@@ -1304,7 +1319,14 @@ def get_jobs(
         jp.compensation,
         jp.term_season,
         jp.term_year,
-        jp.experience_level
+        jp.experience_level,
+        EXISTS (SELECT 1 FROM job_postings other
+                WHERE other.id <> jp.id AND other.company_id = jp.company_id
+                  AND other.location_id = jp.location_id AND other.locations = jp.locations
+                  AND lower(trim(other.title)) = lower(trim(jp.title))
+                  AND other.is_active = TRUE AND other.is_eligible_role = TRUE
+                  AND other.source_name IN {official_sources_sql()}
+                  AND other.batch2_description_hash <> jp.batch2_description_hash) AS has_variants
     FROM job_postings jp
     JOIN companies c ON jp.company_id = c.id
     LEFT JOIN locations l ON jp.location_id = l.id
@@ -1333,6 +1355,7 @@ def get_jobs(
                     "term_year": row[20] if len(row) > 20 else None,
                     "academic_term": format_academic_term(row[19], row[20]) if len(row) > 20 else None,
                     "experience_level": row[21] if len(row) > 21 else None,
+                    "variant_identifier": row[0] if len(row) > 22 and row[22] else None,
                     "job_id": row[0],
                     "title": row[1],
                     "company": row[2],

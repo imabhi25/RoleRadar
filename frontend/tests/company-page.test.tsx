@@ -26,6 +26,7 @@ const mockCompanies: CompanyInfo[] = [
 const mockJobs: JobSummary[] = [
   {
     job_id: "amazon:101",
+    variant_identifier: "amazon:101",
     title: "Software Development Engineer II",
     company: "Amazon",
     location: "Vancouver, BC",
@@ -78,7 +79,8 @@ describe("CompanyPageView", () => {
     // Active Jobs Section
     expect(screen.getByRole("heading", { name: /Active Roles at Amazon/i })).toBeInTheDocument();
     expect(await screen.findByText("Software Development Engineer II")).toBeInTheDocument();
-    expect(screen.getByText("Vancouver, BC")).toBeInTheDocument();
+    expect(screen.getByText("Vancouver, BC, Canada")).toBeInTheDocument();
+    expect(screen.getByText("Requisition: amazon:101")).toBeInTheDocument();
     expect(screen.getByText("CA$140K – CA$185K")).toBeInTheDocument();
 
     // Direct apply link

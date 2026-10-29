@@ -22,6 +22,7 @@ export interface SkillStats {
 
 export interface JobSummary {
   job_id: string;
+  variant_identifier?: string | null;
   title: string;
   company: string;
   company_logo_url?: string | null;

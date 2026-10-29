@@ -1656,8 +1656,8 @@ class TestApiDeduplication(unittest.TestCase):
         for q in [count_query, data_query]:
             self.assertIn("NOT EXISTS", q)
             self.assertIn("FROM job_postings jp2", q)
-            self.assertNotIn("jp2.company_id = jp.company_id", q)
-            self.assertNotIn("jp2.location_id = jp.location_id", q)
+            self.assertIn("jp2.company_id = jp.company_id", q)
+            self.assertIn("jp2.location_id = jp.location_id", q)
             self.assertNotIn("jp2.role_type = jp.role_type", q)
 
     @patch("api.main.get_db_cursor")
@@ -1892,7 +1892,7 @@ class TestApiDeduplicationDatabaseIntegration(unittest.TestCase):
         """, (cid,))
 
         visible_jobs = self.cur.fetchall()
-        self.assertEqual({r[0] for r in visible_jobs}, {"exact:sql_1", "exact:sql_2"})
+        self.assertEqual({r[0] for r in visible_jobs}, {"exact:sql_2"})
 
     def test_sql_true_duplicate_high_similarity_and_length_ratio(self):
         """

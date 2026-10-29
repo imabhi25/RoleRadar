@@ -288,6 +288,6 @@ def test_duplicate_suppression_uses_hashable_keys_not_one_or_condition():
     from api.main import get_deduplication_sql_predicate
 
     sql = get_deduplication_sql_predicate("jp")
-    assert sql.count("NOT EXISTS") == 2          # one per identity key, so each can be a hash anti join
+    assert sql.count("NOT EXISTS") == 3          # separate anti joins for the two identity keys and matching descriptions
     assert "split_part(jp2.source_url" in sql and "jp2.source_job_id" in sql
     assert "jp2.source_name = jp.source_name AND NULLIF(jp2.source_job_id" in sql

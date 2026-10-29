@@ -100,6 +100,8 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onClick, selected = false
           {/* Company Name */}
           <div className="job-card-company">{job.company}</div>
 
+          {job.variant_identifier && <div className="job-card-variant">Requisition: {job.variant_identifier}</div>}
+
           {/* Location • Salary, when supplied • Posted age */}
           {metaItems.length > 0 && (
             <div className="job-card-meta-row">

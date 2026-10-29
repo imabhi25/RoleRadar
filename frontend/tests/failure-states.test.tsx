@@ -152,3 +152,10 @@ describe('job card location and workplace', () => {
     expect(chips).toEqual(['Canada', '1 hour ago']);
   });
 });
+
+
+it('distinguishes same-title job variants on cards', async () => {
+  const { JobCard } = await import('../src/components/JobCard');
+  render(<JobCard job={{ ...job('a'), variant_identifier: 'greenhouse:123' }} onClick={() => {}} />);
+  expect(screen.getByText('Requisition: greenhouse:123')).toBeInTheDocument();
+});
