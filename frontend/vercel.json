@@ -33,7 +33,15 @@
       "destination": "https://roleradar-api.vercel.app/api/:path*"
     },
     {
-      "source": "/((?!sitemap\\.xml$|robots\\.txt$|assets/|logos/|favicon\\.svg$).*)",
+      "source": "/jobs/:jobId+",
+      "destination": "/api/job-page?jobId=:jobId+"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/((?!google907a2d17d4884ed2\\.html$|sitemap\\.xml$|robots\\.txt$|assets/|logos/|favicon\\.svg$).*)",
       "destination": "/index.html"
     }
   ],
@@ -71,6 +79,13 @@
   "functions": {
     "api/company-background.mjs": {
       "maxDuration": 10
+    },
+    "api/job-page.mjs": {
+      "maxDuration": 10,
+      "includeFiles": "dist/**"
+    },
+    "api/sitemap.mjs": {
+      "maxDuration": 15
     }
   }
 }

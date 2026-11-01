@@ -226,13 +226,24 @@ export const CompanyPageView: React.FC<CompanyPageViewProps> = ({
                     <article key={job.job_id} className="company-job-card">
                       <div className="company-job-main">
                         <h3 className="company-job-title">
-                          <button
-                            type="button"
+                          <a
+                            href={`/jobs/${encodeURIComponent(job.job_id)}`}
                             className="company-job-title-btn"
-                            onClick={() => onSelectJob(job.job_id)}
+                            onClick={(e) => {
+                              if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0) {
+                                e.preventDefault();
+                                onSelectJob(job.job_id);
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === " " || e.key === "Spacebar") {
+                                e.preventDefault();
+                                onSelectJob(job.job_id);
+                              }
+                            }}
                           >
                             {job.title}
-                          </button>
+                          </a>
                         </h3>
 
                         <div className="company-job-meta">

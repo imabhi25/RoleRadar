@@ -87,7 +87,7 @@ export function App() {
 
   // Synchronized URL state (canonical filters and page number)
   const [urlState, setUrlState] = useState<ParsedUrlState>(() =>
-    parseUrlSearch(window.location.search)
+    parseUrlSearch(window.location.search, window.location.pathname)
   );
 
   const savedJobsQueryRef = useRef<string>(window.location.search || "");
@@ -117,7 +117,7 @@ export function App() {
         if (route.view === "company" || route.view === "404") {
           setSelectedCompany(route.company);
         } else if (route.view === "jobs") {
-          const parsed = parseUrlSearch(window.location.search);
+          const parsed = parseUrlSearch(window.location.search, window.location.pathname);
           setUrlState(parsed);
           savedJobsQueryRef.current = window.location.search;
           isSearchSessionActiveRef.current = false;

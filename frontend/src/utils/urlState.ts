@@ -95,7 +95,7 @@ export const CANONICAL_SKILLS: Record<string, string> = {
 /** The API refuses offsets past 100,000; with 20 jobs a page that is page 5,001. Larger values in a URL are clamped. */
 export const MAX_PAGE = 5000;
 
-export function parseUrlSearch(search: string): ParsedUrlState {
+export function parseUrlSearch(search: string, pathname = ""): ParsedUrlState {
   const params = new URLSearchParams(search);
 
   // Country: absent/invalid/"all"/both countries = no country filter (all countries); otherwise the single selected country.
@@ -225,7 +225,18 @@ export function parseUrlSearch(search: string): ParsedUrlState {
     freshness,
   };
 
-  return { filters, page, jobId: params.get("job")?.trim() || null };
+  const queryJobId = params.get("job")?.trim() || null;
+  let pathJobId: string | null = null;
+  if (!queryJobId && pathname && (pathname.startsWith("/jobs/") || pathname.startsWith("/job/"))) {
+    try {
+      const seg = pathname.startsWith("/jobs/") ? pathname.slice("/jobs/".length) : pathname.slice("/job/".length);
+      pathJobId = decodeURIComponent(seg).trim() || null;
+    } catch {
+      pathJobId = null;
+    }
+  }
+
+  return { filters, page, jobId: queryJobId || pathJobId };
 }
 
 /**

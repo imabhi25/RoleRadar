@@ -20,6 +20,6 @@ export function parseAppRoute(path: string, search: string, dev = false): AppRou
   }
   if (path === "/stats") return { view: "stats", company: null };
   if (dev && (path === "/logos" || path === "/companies")) return { view: "logos", company: null };
-  if (path === "/jobs" || path === "/") return { view: "jobs", company: null };
+  if (path === "/jobs" || path === "/" || path.startsWith("/jobs/") || path.startsWith("/job/")) return { view: "jobs", company: null };
   return { view: "404", company: null };
 }

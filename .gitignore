@@ -77,3 +77,5 @@ qa-audit-evidence/
 # Editor and agent configurations
 .claude/
 
+.vercel
+.env*
