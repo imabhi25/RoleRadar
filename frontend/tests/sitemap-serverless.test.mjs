@@ -136,15 +136,13 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
     });
 
     it('treats a failure on a later page (e.g. offset 100) as an error rather than returning an incomplete sitemap', async () => {
-      const page1Jobs = [
-        {
-          job_id: 'job-1',
-          title: 'Dev 1',
-          company: 'Co',
-          posted_at: '2026-11-01',
-          location: 'Toronto, ON, Canada'
-        }
-      ];
+      const page1Jobs = Array.from({ length: 100 }, (_, i) => ({
+        job_id: `job-p1-${i}`,
+        title: `Dev ${i}`,
+        company: 'Co',
+        posted_at: '2026-11-01',
+        location: 'Toronto, ON, Canada'
+      }));
 
       const mockFetch = vi.fn(async (url) => {
         if (url.includes('offset=0')) {
@@ -162,22 +160,20 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
         };
       });
 
-      // Must throw an error instead of silently returning 1 job
+      // Must throw an error instead of silently returning 100 jobs
       await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
         /Sitemap pagination failed at offset 100: HTTP 500/
       );
     });
 
     it('treats a malformed response on a later page (missing jobs array) as an error', async () => {
-      const page1Jobs = [
-        {
-          job_id: 'job-1',
-          title: 'Dev 1',
-          company: 'Co',
-          posted_at: '2026-11-01',
-          location: 'Toronto, ON, Canada'
-        }
-      ];
+      const page1Jobs = Array.from({ length: 100 }, (_, i) => ({
+        job_id: `job-p1-${i}`,
+        title: `Dev ${i}`,
+        company: 'Co',
+        posted_at: '2026-11-01',
+        location: 'Toronto, ON, Canada'
+      }));
 
       const mockFetch = vi.fn(async (url) => {
         if (url.includes('offset=0')) {
@@ -291,6 +287,300 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
       }));
       await expect(fetchEligibleJobs('https://test-api.example.com', fetchEmptyJobs)).rejects.toThrow(
         /Inconsistent total in initial page response: total=100 but jobs.length=0/
+      );
+    });
+
+    it('rejects short initial page when total > PAGE_LIMIT (e.g. total=200, returns 1 job)', async () => {
+      const singleJob = [
+        {
+          job_id: 'job-1',
+          title: 'Dev',
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }
+      ];
+
+      const mockFetch = vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ total: 200, limit: 100, offset: 0, jobs: singleJob })
+      }));
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Incomplete initial page response: expected 100 jobs for total=200, but received 1/
+      );
+    });
+
+    it('rejects incomplete initial page when total <= PAGE_LIMIT (e.g. total=50, returns 20 jobs)', async () => {
+      const twentyJobs = Array.from({ length: 20 }, (_, i) => ({
+        job_id: `job-${i}`,
+        title: `Dev ${i}`,
+        company: 'Co',
+        posted_at: '2026-11-01',
+        location: 'Toronto, ON, Canada'
+      }));
+
+      const mockFetch = vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ total: 50, limit: 100, offset: 0, jobs: twentyJobs })
+      }));
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Inconsistent total in initial page response: total=50 but jobs.length=20/
+      );
+    });
+
+    it('rejects empty second page when total=200 and page 1 returns 100 jobs', async () => {
+      const page1Jobs = Array.from({ length: 100 }, (_, i) => ({
+        job_id: `job-p1-${i}`,
+        title: `Dev ${i}`,
+        company: 'Co',
+        posted_at: '2026-11-01',
+        location: 'Toronto, ON, Canada'
+      }));
+
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 200, limit: 100, offset: 0, jobs: page1Jobs })
+          };
+        }
+        // Offset 100 returns empty array despite total=200
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 200, limit: 100, offset: 100, jobs: [] })
+        };
+      });
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Sitemap pagination received empty page at offset 100 \(total=200\)/
+      );
+    });
+
+    it('rejects short intermediate page on later offset (e.g. offset 100 returns 40 jobs for total=300)', async () => {
+      const makeJobs = (count, prefix) =>
+        Array.from({ length: count }, (_, i) => ({
+          job_id: `${prefix}-${i}`,
+          title: `Dev ${i}`,
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }));
+
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 300, limit: 100, offset: 0, jobs: makeJobs(100, 'p0') })
+          };
+        }
+        if (url.includes('offset=100')) {
+          // Short intermediate page: returns 40 instead of 100
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 300, limit: 100, offset: 100, jobs: makeJobs(40, 'p1') })
+          };
+        }
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 300, limit: 100, offset: 200, jobs: makeJobs(100, 'p2') })
+        };
+      });
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Incomplete paginated response at offset 100: expected 100 jobs for total=300, but received 40/
+      );
+    });
+
+    it('rejects short final page that fails to supply remaining jobs for reported total', async () => {
+      const makeJobs = (count, prefix) =>
+        Array.from({ length: count }, (_, i) => ({
+          job_id: `${prefix}-${i}`,
+          title: `Dev ${i}`,
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }));
+
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 250, limit: 100, offset: 0, jobs: makeJobs(100, 'p0') })
+          };
+        }
+        if (url.includes('offset=100')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 250, limit: 100, offset: 100, jobs: makeJobs(100, 'p1') })
+          };
+        }
+        // Final page at offset 200: expected 50 jobs for total=250, but returns only 20
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 250, limit: 100, offset: 200, jobs: makeJobs(20, 'p2') })
+        };
+      });
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Incomplete final page response at offset 200: expected 50 jobs for total=250, but received 20/
+      );
+    });
+
+    it('rejects empty page on later page beyond offset 100 (e.g. 3rd page empty when total=300)', async () => {
+      const makeJobs = (count, prefix) =>
+        Array.from({ length: count }, (_, i) => ({
+          job_id: `${prefix}-${i}`,
+          title: `Dev ${i}`,
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }));
+
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 300, limit: 100, offset: 0, jobs: makeJobs(100, 'p0') })
+          };
+        }
+        if (url.includes('offset=100')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 300, limit: 100, offset: 100, jobs: makeJobs(100, 'p1') })
+          };
+        }
+        // 3rd page at offset 200 is empty
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 300, limit: 100, offset: 200, jobs: [] })
+        };
+      });
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Sitemap pagination received empty page at offset 200 \(total=300\)/
+      );
+    });
+
+    it('accounts for catalog shrinking during pagination when reported in later page total', async () => {
+      const makeJobs = (count, prefix) =>
+        Array.from({ length: count }, (_, i) => ({
+          job_id: `${prefix}-${i}`,
+          title: `Dev ${i}`,
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }));
+
+      // Initial total: 200. Page 1 returns 100 jobs.
+      // While fetching page 2 (offset 100), 2 jobs were removed from database.
+      // Page 2 reports total: 198 and returns 98 jobs.
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 200, limit: 100, offset: 0, jobs: makeJobs(100, 'p0') })
+          };
+        }
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 198, limit: 100, offset: 100, jobs: makeJobs(98, 'p1') })
+        };
+      });
+
+      const eligible = await fetchEligibleJobs('https://test-api.example.com', mockFetch);
+      expect(eligible.length).toBe(198);
+    });
+
+    it('accounts for catalog growing during pagination by dynamically fetching newly added pages', async () => {
+      const makeJobs = (count, prefix) =>
+        Array.from({ length: count }, (_, i) => ({
+          job_id: `${prefix}-${i}`,
+          title: `Dev ${i}`,
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }));
+
+      // Initial total: 200. Page 1 returns 100 jobs.
+      // On page 2 (offset 100), 5 new jobs were added, so total is now 205.
+      // Offset 100 returns 100 jobs.
+      // Pagination must dynamically fetch offset 200, which returns 5 jobs.
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 200, limit: 100, offset: 0, jobs: makeJobs(100, 'p0') })
+          };
+        }
+        if (url.includes('offset=100')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 205, limit: 100, offset: 100, jobs: makeJobs(100, 'p1') })
+          };
+        }
+        if (url.includes('offset=200')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 205, limit: 100, offset: 200, jobs: makeJobs(5, 'p2') })
+          };
+        }
+        throw new Error(`Unexpected offset in fetch: ${url}`);
+      });
+
+      const eligible = await fetchEligibleJobs('https://test-api.example.com', mockFetch);
+      expect(eligible.length).toBe(205);
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+    });
+
+    it('rejects drastic catalog drop below current offset during pagination', async () => {
+      const makeJobs = (count, prefix) =>
+        Array.from({ length: count }, (_, i) => ({
+          job_id: `${prefix}-${i}`,
+          title: `Dev ${i}`,
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }));
+
+      // Initial total: 300. Page 1 returns 100 jobs.
+      // On page 2 (offset 100), total drastically crashes to 50 (below offset 100).
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 300, limit: 100, offset: 0, jobs: makeJobs(100, 'p0') })
+          };
+        }
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 50, limit: 100, offset: 100, jobs: makeJobs(10, 'p1') })
+        };
+      });
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Inconsistent catalog change during pagination: total decreased to 50 below current offset 100/
       );
     });
   });
@@ -460,6 +750,67 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
         // Crucial: Must NOT emit a partial sitemap containing the 10 inconsistent jobs
         expect(responseBody).not.toContain('<urlset');
         expect(responseBody).not.toContain('inconsistent-0');
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
+    it('returns HTTP 503 and no-cache headers when API provides an incomplete paginated response (e.g. 1 job with total=200)', async () => {
+      const originalFetch = global.fetch;
+      global.fetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              total: 200,
+              limit: 100,
+              offset: 0,
+              jobs: [
+                {
+                  job_id: 'lone-job-1',
+                  title: 'Lone Job',
+                  company: 'Lone Co',
+                  posted_at: '2026-11-01',
+                  location: 'Toronto, ON, Canada'
+                }
+              ]
+            })
+          };
+        }
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 200, limit: 100, offset: 100, jobs: [] })
+        };
+      });
+
+      try {
+        const req = {
+          headers: { host: 'roleradar-preview.vercel.app', 'x-forwarded-proto': 'https' }
+        };
+
+        const headers = {};
+        let responseBody = '';
+        const res = {
+          statusCode: 0,
+          setHeader(name, val) {
+            headers[name] = val;
+          },
+          end(chunk) {
+            responseBody = chunk;
+          }
+        };
+
+        await sitemapHandler(req, res);
+
+        expect(res.statusCode).toBe(503);
+        expect(headers['Retry-After']).toBe('60');
+        expect(headers['Cache-Control']).toBe('no-cache, no-store, must-revalidate');
+        expect(responseBody).toContain('Service Unavailable');
+        // Crucial: Must NEVER emit a partial sitemap containing the 1 job
+        expect(responseBody).not.toContain('<urlset');
+        expect(responseBody).not.toContain('lone-job-1');
       } finally {
         global.fetch = originalFetch;
       }

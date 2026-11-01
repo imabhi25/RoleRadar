@@ -109,38 +109,114 @@ export async function fetchEligibleJobs(apiBase = API_BASE, fetchImpl = fetch) {
     );
   }
 
+  // Reject short initial page when more pages are expected
+  if (total > PAGE_LIMIT && jobsCount < PAGE_LIMIT) {
+    throw new Error(
+      `Incomplete initial page response: expected ${PAGE_LIMIT} jobs for total=${total}, but received ${jobsCount}`
+    );
+  }
+
+  // Reject incomplete initial page when total should fit entirely within PAGE_LIMIT
+  if (total <= PAGE_LIMIT && jobsCount !== total) {
+    throw new Error(
+      `Inconsistent total in initial page response: total=${total} but jobs.length=${jobsCount}`
+    );
+  }
+
   const allJobs = [...firstData.jobs];
 
-  if (total > PAGE_LIMIT) {
-    const offsets = [];
-    for (let offset = PAGE_LIMIT; offset < total; offset += PAGE_LIMIT) {
-      offsets.push(offset);
+  let currentTotal = total;
+  let nextOffset = PAGE_LIMIT;
+
+  // Process page requests in batches of 6 to avoid socket exhaustion
+  const BATCH_SIZE = 6;
+  while (nextOffset < currentTotal) {
+    const batchOffsets = [];
+    for (let b = 0; b < BATCH_SIZE && nextOffset < currentTotal; b++) {
+      batchOffsets.push(nextOffset);
+      nextOffset += PAGE_LIMIT;
     }
 
-    // Process page requests in batches of 6 to avoid socket exhaustion
-    const BATCH_SIZE = 6;
-    for (let i = 0; i < offsets.length; i += BATCH_SIZE) {
-      const batchOffsets = offsets.slice(i, i + BATCH_SIZE);
-      const batchPromises = batchOffsets.map(async (offset) => {
-        const url = `${apiBase}/api/jobs?limit=${PAGE_LIMIT}&offset=${offset}`;
-        const res = await fetchImpl(url, {
-          headers: { Accept: 'application/json' },
-          signal: AbortSignal.timeout(8000)
-        });
-        if (!res.ok) {
-          throw new Error(`Sitemap pagination failed at offset ${offset}: HTTP ${res.status}`);
-        }
-        const data = await res.json();
-        if (!data || typeof data !== 'object' || !Array.isArray(data.jobs)) {
-          throw new Error(`Sitemap pagination received malformed response at offset ${offset}`);
-        }
-        return data.jobs;
+    const batchPromises = batchOffsets.map(async (offset) => {
+      const url = `${apiBase}/api/jobs?limit=${PAGE_LIMIT}&offset=${offset}`;
+      const res = await fetchImpl(url, {
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(8000)
       });
-
-      const batchResults = await Promise.all(batchPromises);
-      for (const jobs of batchResults) {
-        allJobs.push(...jobs);
+      if (!res.ok) {
+        throw new Error(`Sitemap pagination failed at offset ${offset}: HTTP ${res.status}`);
       }
+      const data = await res.json();
+      if (!data || typeof data !== 'object' || !Array.isArray(data.jobs)) {
+        throw new Error(`Sitemap pagination received malformed response at offset ${offset}`);
+      }
+      return { offset, data };
+    });
+
+    const batchResults = await Promise.all(batchPromises);
+
+    for (const { offset, data } of batchResults) {
+      const pageJobs = data.jobs;
+      const pageJobsCount = pageJobs.length;
+
+      // Validate total in later page response if present
+      if ('total' in data) {
+        const pageTotal = data.total;
+        if (
+          typeof pageTotal !== 'number' ||
+          Number.isNaN(pageTotal) ||
+          !Number.isInteger(pageTotal) ||
+          pageTotal < 0
+        ) {
+          throw new Error(
+            `Sitemap pagination received invalid total at offset ${offset}: ${pageTotal}`
+          );
+        }
+
+        // Account for catalog changing during pagination:
+        // Update currentTotal to reflect dynamic additions or removals in the catalog.
+        if (pageTotal !== currentTotal) {
+          if (pageTotal < offset) {
+            throw new Error(
+              `Inconsistent catalog change during pagination: total decreased to ${pageTotal} below current offset ${offset}`
+            );
+          }
+          currentTotal = pageTotal;
+        }
+
+        if (pageTotal < offset + pageJobsCount) {
+          throw new Error(
+            `Inconsistent response at offset ${offset}: total=${pageTotal} is less than offset ${offset} + jobs.length ${pageJobsCount}`
+          );
+        }
+      }
+
+      // Check for empty page when jobs were expected
+      if (pageJobsCount === 0 && offset < currentTotal) {
+        throw new Error(
+          `Sitemap pagination received empty page at offset ${offset} (total=${currentTotal})`
+        );
+      }
+
+      // Check for short page:
+      if (offset + PAGE_LIMIT < currentTotal) {
+        // Intermediate page must return full PAGE_LIMIT
+        if (pageJobsCount < PAGE_LIMIT) {
+          throw new Error(
+            `Incomplete paginated response at offset ${offset}: expected ${PAGE_LIMIT} jobs for total=${currentTotal}, but received ${pageJobsCount}`
+          );
+        }
+      } else {
+        // Final page must return all remaining jobs up to currentTotal
+        const expectedFinalCount = currentTotal - offset;
+        if (pageJobsCount < expectedFinalCount) {
+          throw new Error(
+            `Incomplete final page response at offset ${offset}: expected ${expectedFinalCount} jobs for total=${currentTotal}, but received ${pageJobsCount}`
+          );
+        }
+      }
+
+      allJobs.push(...pageJobs);
     }
   }
 
