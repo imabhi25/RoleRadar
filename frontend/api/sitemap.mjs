@@ -123,7 +123,21 @@ export async function fetchEligibleJobs(apiBase = API_BASE, fetchImpl = fetch) {
     );
   }
 
-  const allJobs = [...firstData.jobs];
+  const seenJobIds = new Set();
+  const allJobs = [];
+
+  for (const job of firstData.jobs) {
+    if (!job || typeof job !== 'object' || !job.job_id) {
+      throw new Error('Malformed job object in initial page response: missing job_id');
+    }
+    if (seenJobIds.has(job.job_id)) {
+      throw new Error(
+        `Sitemap pagination detected duplicate job "${job.job_id}" within initial page response`
+      );
+    }
+    seenJobIds.add(job.job_id);
+    allJobs.push(job);
+  }
 
   let currentTotal = total;
   let nextOffset = PAGE_LIMIT;
@@ -216,17 +230,35 @@ export async function fetchEligibleJobs(apiBase = API_BASE, fetchImpl = fetch) {
         }
       }
 
-      allJobs.push(...pageJobs);
+      // Check for duplicate jobs across page offsets or within page (detects catalog shift)
+      for (const job of pageJobs) {
+        if (!job || typeof job !== 'object' || !job.job_id) {
+          throw new Error(
+            `Malformed job object in page response at offset ${offset}: missing job_id`
+          );
+        }
+        if (seenJobIds.has(job.job_id)) {
+          throw new Error(
+            `Sitemap pagination detected duplicate job "${job.job_id}" across page offsets (catalog mutated during pagination)`
+          );
+        }
+        seenJobIds.add(job.job_id);
+        allJobs.push(job);
+      }
     }
   }
 
-  // Deduplicate and filter strictly for jobs with verified markup data
-  const seenJobIds = new Set();
-  const eligibleJobs = [];
+  // Verify completeness: the number of distinct jobs gathered must equal currentTotal.
+  // If distinct jobs < currentTotal, jobs were skipped due to catalog mutation during pagination.
+  if (seenJobIds.size < currentTotal) {
+    throw new Error(
+      `Incomplete sitemap: gathered ${seenJobIds.size} distinct jobs but catalog total is ${currentTotal} (catalog mutated during pagination)`
+    );
+  }
 
+  // Filter strictly for jobs with verified markup data
+  const eligibleJobs = [];
   for (const job of allJobs) {
-    if (!job || !job.job_id || seenJobIds.has(job.job_id)) continue;
-    seenJobIds.add(job.job_id);
     if (isJobEligibleForMarkup(job)) {
       eligibleJobs.push(job);
     }

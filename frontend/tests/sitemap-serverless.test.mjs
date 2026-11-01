@@ -583,6 +583,66 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
         /Inconsistent catalog change during pagination: total decreased to 50 below current offset 100/
       );
     });
+
+    it('detects duplicate jobs across page offsets when catalog shifts, even when total stays the same', async () => {
+      const page1Jobs = Array.from({ length: 100 }, (_, i) => ({
+        job_id: `job-${i}`,
+        title: `Dev ${i}`,
+        company: 'Co',
+        posted_at: '2026-11-01',
+        location: 'Toronto, ON, Canada'
+      }));
+
+      // Between page 1 and page 2, a new job is inserted at the top of the table.
+      // Job-99 shifts down to offset 100, so page 2 returns job-99 again.
+      // Simultaneously, an older job was unlisted, so total remains exactly 200.
+      const page2Jobs = [
+        page1Jobs[99], // job-99 duplicated across boundary
+        ...Array.from({ length: 99 }, (_, i) => ({
+          job_id: `job-${100 + i}`,
+          title: `Dev ${100 + i}`,
+          company: 'Co',
+          posted_at: '2026-11-01',
+          location: 'Toronto, ON, Canada'
+        }))
+      ];
+
+      const mockFetch = vi.fn(async (url) => {
+        if (url.includes('offset=0')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({ total: 200, limit: 100, offset: 0, jobs: page1Jobs })
+          };
+        }
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: 200, limit: 100, offset: 100, jobs: page2Jobs })
+        };
+      });
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Sitemap pagination detected duplicate job "job-99" across page offsets \(catalog mutated during pagination\)/
+      );
+    });
+
+    it('rejects duplicate job IDs within the initial page response', async () => {
+      const duplicateJobs = [
+        { job_id: 'job-dup', title: 'Dev 1', company: 'Co', posted_at: '2026-11-01', location: 'Toronto, ON, Canada' },
+        { job_id: 'job-dup', title: 'Dev 2', company: 'Co', posted_at: '2026-11-01', location: 'Toronto, ON, Canada' }
+      ];
+
+      const mockFetch = vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ total: 2, limit: 100, offset: 0, jobs: duplicateJobs })
+      }));
+
+      await expect(fetchEligibleJobs('https://test-api.example.com', mockFetch)).rejects.toThrow(
+        /Sitemap pagination detected duplicate job "job-dup" within initial page response/
+      );
+    });
   });
 
   describe('Sitemap XML generation (generateSitemapXml)', () => {
