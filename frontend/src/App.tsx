@@ -6,7 +6,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ExternalArrow } from "./components/ExternalArrow";
 import type { SelectedFilters } from "./components/JobFilters";
 import { parseUrlSearch, serializeUrlSearch, type ParsedUrlState } from "./utils/urlState";
-import { parseAppRoute, type AppView } from "./utils/appRoute";
+import { parseAppRoute, isIndividualJobRoute, type AppView } from "./utils/appRoute";
 
 // Analytics and the dev-only logo sheet are optional: they load on demand and can fail without touching Jobs.
 const StatsView = lazy(() => import("./components/StatsView"));
@@ -129,6 +129,20 @@ export function App() {
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  // When not on a dedicated individual-job URL (e.g. general /jobs catalog, /stats, /company),
+  // strictly prevent job-specific JobPosting schema and job-specific canonical links from being in head.
+  useEffect(() => {
+    if (!isIndividualJobRoute(window.location.pathname)) {
+      document.querySelectorAll('script[type="application/ld+json"]').forEach((s) => s.remove());
+      document.querySelectorAll('link[rel="canonical"]').forEach((l) => {
+        if (l.id === "role-radar-canonical-link" || l.getAttribute("href")?.includes("/jobs/")) {
+          l.remove();
+        }
+      });
+      document.getElementById("role-radar-job-noindex")?.remove();
+    }
+  }, [activeView, urlState]);
 
   useEffect(() => {
     if (activeView === "jobs") {

@@ -17,6 +17,7 @@ import { ExternalArrow } from "./ExternalArrow";
 import { CompanyDetails, CompanyLinks } from "./CompanyInfo";
 import { getCompanyProfile } from "../utils/companyProfiles";
 import { resolveApplyRoutes, type ResolvedApplyRoutes } from "../utils/applyUrls";
+import { updateJobStructuredData } from "../utils/injectStructuredData";
 
 export interface JobDetailContentProps {
   jobId: string;
@@ -104,6 +105,12 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
     scrollRef.current?.scrollTo?.({ top: 0 });
     return () => abortRef.current?.abort();
   }, [jobId, fetchDetail]);
+
+  // Synchronize Google JobPosting structured data and canonical links in document.head
+  // (Restricted internally to dedicated individual-job URLs)
+  useEffect(() => {
+    return updateJobStructuredData(state.status, job);
+  }, [state.status, job]);
 
   const description = useMemo(
     () => renderDescription(job?.description, job?.company ?? "", job?.title ?? "", chosenView),

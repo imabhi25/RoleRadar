@@ -1,5 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import type { JobDetail } from '../src/api/client';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { render, screen, waitFor, within, act, fireEvent } from '@testing-library/react';
+import { apiClient, type JobDetail, type JobSummary } from '../src/api/client';
+import { App } from '../src/App';
 import {
   buildJobPostingSchema,
   buildSchemaBaseSalary,
@@ -11,7 +13,7 @@ import {
 } from '../src/utils/jobPostingSchema';
 import { updateJobStructuredData } from '../src/utils/injectStructuredData';
 import { sanitizeJobHtml, validateApplyUrl } from '../src/utils/sanitizeJobHtml';
-import { parseAppRoute } from '../src/utils/appRoute';
+import { parseAppRoute, isIndividualJobRoute } from '../src/utils/appRoute';
 import { parseUrlSearch } from '../src/utils/urlState';
 
 describe('JobPosting Schema.org Structured Data Generation', () => {
@@ -471,9 +473,29 @@ describe('Sanitization and Security Utilities', () => {
   });
 });
 
+describe('isIndividualJobRoute helper', () => {
+  it('identifies dedicated individual job URLs', () => {
+    expect(isIndividualJobRoute('/jobs/ashby:123')).toBe(true);
+    expect(isIndividualJobRoute('/jobs/workday%2Fjob%2F456')).toBe(true);
+    expect(isIndividualJobRoute('/job/greenhouse:789')).toBe(true);
+  });
+
+  it('rejects general listing, catalog, and auxiliary pages', () => {
+    expect(isIndividualJobRoute('/jobs')).toBe(false);
+    expect(isIndividualJobRoute('/jobs/')).toBe(false);
+    expect(isIndividualJobRoute('/')).toBe(false);
+    expect(isIndividualJobRoute('/stats')).toBe(false);
+    expect(isIndividualJobRoute('/company')).toBe(false);
+    expect(isIndividualJobRoute('/company/138')).toBe(false);
+    expect(isIndividualJobRoute('')).toBe(false);
+    expect(isIndividualJobRoute(null as unknown as string)).toBe(false);
+  });
+});
+
 describe('updateJobStructuredData DOM injection and cleanup', () => {
   beforeEach(() => {
     document.head.innerHTML = '';
+    window.history.replaceState(null, '', '/jobs/test:123');
   });
 
   afterEach(() => {
@@ -495,7 +517,7 @@ describe('updateJobStructuredData DOM injection and cleanup', () => {
     description: '<p>Acme is looking for a software engineer with TypeScript skills.</p>'
   };
 
-  it('injects JobPosting JSON-LD script and canonical link when job is ready', () => {
+  it('injects JobPosting JSON-LD script and canonical link when job is ready on dedicated job URL', () => {
     const cleanupFn = updateJobStructuredData('ready', mockJob, 'https://roleradar-jobs.vercel.app');
     const script = document.getElementById('role-radar-job-posting-ld-json') as HTMLScriptElement;
     const canonical = document.getElementById('role-radar-canonical-link') as HTMLLinkElement;
@@ -564,5 +586,228 @@ describe('updateJobStructuredData DOM injection and cleanup', () => {
     // Canonical link is still provided for human visitors
     expect(document.getElementById('role-radar-canonical-link')).not.toBeNull();
     cleanupFn();
+  });
+
+  it('strictly omits JobPosting markup and job canonical link when on general listing /jobs or /', () => {
+    // Explicit general pathname passed or window pathname on /jobs
+    const cleanupFn = updateJobStructuredData('ready', mockJob, 'https://roleradar-jobs.vercel.app', '/jobs');
+    expect(document.getElementById('role-radar-job-posting-ld-json')).toBeNull();
+    expect(document.getElementById('role-radar-canonical-link')).toBeNull();
+    cleanupFn();
+
+    // With query parameter like /jobs?job=test:123
+    const cleanupQuery = updateJobStructuredData('ready', mockJob, 'https://roleradar-jobs.vercel.app', '/jobs');
+    expect(document.getElementById('role-radar-job-posting-ld-json')).toBeNull();
+    expect(document.getElementById('role-radar-canonical-link')).toBeNull();
+    cleanupQuery();
+  });
+
+  it('does not inject noindex on general listing when a job is unavailable', () => {
+    updateJobStructuredData('unavailable', null, 'https://roleradar-jobs.vercel.app', '/jobs');
+    expect(document.getElementById('role-radar-job-noindex')).toBeNull();
+  });
+
+  it('purges existing JobPosting script and canonical link if called on non-individual route', () => {
+    // Inject leftover elements into head
+    const oldScript = document.createElement('script');
+    oldScript.id = 'role-radar-job-posting-ld-json';
+    oldScript.type = 'application/ld+json';
+    oldScript.textContent = '{}';
+    document.head.appendChild(oldScript);
+
+    const oldCanonical = document.createElement('link');
+    oldCanonical.id = 'role-radar-canonical-link';
+    oldCanonical.rel = 'canonical';
+    oldCanonical.href = 'https://roleradar-jobs.vercel.app/jobs/old-job';
+    document.head.appendChild(oldCanonical);
+
+    updateJobStructuredData('ready', mockJob, 'https://roleradar-jobs.vercel.app', '/jobs');
+
+    expect(document.getElementById('role-radar-job-posting-ld-json')).toBeNull();
+    expect(document.getElementById('role-radar-canonical-link')).toBeNull();
+  });
+});
+
+describe('client-side routing and split view regression tests for JobPosting and canonical links', () => {
+  function setSplit(enabled: boolean) {
+    window.matchMedia = vi.fn((query: string) => ({
+      matches: enabled && query.includes('min-width: 900px') && !query.includes('pointer: fine'),
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })) as unknown as typeof window.matchMedia;
+  }
+
+  const makeSummary = (id: string, title: string): JobSummary => ({
+    job_id: id,
+    title,
+    company: 'Acme Corp',
+    location: 'Toronto, ON',
+    country: 'Canada',
+    workplace_type: 'hybrid',
+    role_type: 'full_time',
+    source_name: 'ashby',
+    skills: ['React']
+  });
+
+  const makeDetail = (id: string, title: string): JobDetail => ({
+    job_id: id,
+    title,
+    company: 'Acme Corp',
+    location: 'Toronto, ON',
+    country: 'Canada',
+    workplace_type: 'hybrid',
+    role_type: 'full_time',
+    source_name: 'ashby',
+    skills: ['React'],
+    posted_at: '2026-10-30T12:00:00Z',
+    company_apply_url: `https://jobs.example.test/${id}/apply`,
+    locations: [{ location: 'Toronto, ON', country: 'Canada' }],
+    description: `<p>Job description for ${title}</p>`
+  });
+
+  const jobsList = [makeSummary('job-1', 'Frontend Developer'), makeSummary('job-2', 'Backend Developer')];
+
+  beforeEach(() => {
+    vi.stubEnv('DEV', false);
+    document.head.innerHTML = '';
+    vi.spyOn(apiClient, 'getOverview').mockResolvedValue({ total_postings: 2, total_companies: 1, total_locations: 1, total_skills: 1 });
+    vi.spyOn(apiClient, 'getCountries').mockResolvedValue([]);
+    vi.spyOn(apiClient, 'getSkills').mockResolvedValue([]);
+    vi.spyOn(apiClient, 'getRoleStats').mockResolvedValue([]);
+    vi.spyOn(apiClient, 'getWorkplaceStats').mockResolvedValue([]);
+    vi.spyOn(apiClient, 'getCompanyStats').mockResolvedValue([]);
+    vi.spyOn(apiClient, 'getCompanies').mockResolvedValue([]);
+    vi.spyOn(apiClient, 'getJobFilters').mockResolvedValue({ countries: ['Canada'], companies: ['Acme Corp'], skills: [], workplace_types: ['hybrid'] });
+    vi.spyOn(apiClient, 'getJobs').mockResolvedValue({ total: 2, limit: 20, offset: 0, jobs: jobsList });
+    vi.spyOn(apiClient, 'getJob').mockImplementation(async (id: string) => makeDetail(id, id === 'job-1' ? 'Frontend Developer' : 'Backend Developer'));
+  });
+
+  afterEach(() => {
+    setSplit(false);
+    document.head.innerHTML = '';
+    vi.restoreAllMocks();
+  });
+
+  it('auto-selects first job in split view on /jobs WITHOUT injecting JobPosting or job canonical link', async () => {
+    setSplit(true);
+    window.history.replaceState(null, '', '/jobs');
+
+    render(<App />);
+
+    // Wait for the job detail header in complementary pane to render
+    const pane = await screen.findByRole('complementary', { name: 'Selected job details' });
+    await within(pane).findByRole('heading', { name: 'Frontend Developer' });
+
+    // Ensure NO JobPosting schema or job canonical was injected into head
+    expect(document.getElementById('role-radar-job-posting-ld-json')).toBeNull();
+    expect(document.querySelectorAll('script[type="application/ld+json"]').length).toBe(0);
+    expect(document.getElementById('role-radar-canonical-link')).toBeNull();
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(document.getElementById('role-radar-job-noindex')).toBeNull();
+  });
+
+  it('clicking a different job in general listing keeps head clean without JobPosting or job canonical link', async () => {
+    setSplit(true);
+    window.history.replaceState(null, '', '/jobs');
+
+    render(<App />);
+
+    const pane = await screen.findByRole('complementary', { name: 'Selected job details' });
+    await within(pane).findByRole('heading', { name: 'Frontend Developer' });
+
+    // Find and click the button for the second job
+    const jobButton = screen.getByRole('button', { name: /View details for Backend Developer/i });
+    fireEvent.click(jobButton);
+
+    await within(pane).findByRole('heading', { name: 'Backend Developer' });
+
+    // Ensure head remains completely clean of job schema and job canonical
+    expect(document.getElementById('role-radar-job-posting-ld-json')).toBeNull();
+    expect(document.querySelectorAll('script[type="application/ld+json"]').length).toBe(0);
+    expect(document.getElementById('role-radar-canonical-link')).toBeNull();
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(document.getElementById('role-radar-job-noindex')).toBeNull();
+  });
+
+  it('injects JobPosting schema and canonical link when opening dedicated individual job URL', async () => {
+    setSplit(true);
+    window.history.replaceState(null, '', '/jobs/job-1');
+
+    render(<App />);
+
+    const pane = await screen.findByRole('complementary', { name: 'Selected job details' });
+    await within(pane).findByRole('heading', { name: 'Frontend Developer' });
+
+    await waitFor(() => {
+      expect(document.getElementById('role-radar-job-posting-ld-json')).not.toBeNull();
+    });
+
+    const script = document.getElementById('role-radar-job-posting-ld-json') as HTMLScriptElement;
+    expect(script).not.toBeNull();
+    const parsed = JSON.parse(script.textContent || '{}');
+    expect(parsed['@type']).toBe('JobPosting');
+    expect(parsed.title).toBe('Frontend Developer');
+
+    const canonical = document.getElementById('role-radar-canonical-link') as HTMLLinkElement;
+    expect(canonical).not.toBeNull();
+    expect(canonical.href).toContain('/jobs/job-1');
+  });
+
+  it('updates JobPosting schema and canonical link when switching jobs on dedicated URL', async () => {
+    setSplit(true);
+    window.history.replaceState(null, '', '/jobs/job-1');
+
+    render(<App />);
+
+    const pane = await screen.findByRole('complementary', { name: 'Selected job details' });
+    await within(pane).findByRole('heading', { name: 'Frontend Developer' });
+
+    await waitFor(() => {
+      expect(document.getElementById('role-radar-canonical-link')?.getAttribute('href')).toContain('/jobs/job-1');
+    });
+
+    // Simulate navigation to /jobs/job-2
+    act(() => {
+      window.history.pushState(null, '', '/jobs/job-2');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
+    await within(pane).findByRole('heading', { name: 'Backend Developer' });
+
+    await waitFor(() => {
+      const script = document.getElementById('role-radar-job-posting-ld-json') as HTMLScriptElement;
+      expect(script).not.toBeNull();
+      const parsed = JSON.parse(script?.textContent || '{}');
+      expect(parsed.title).toBe('Backend Developer');
+    });
+
+    const canonical = document.getElementById('role-radar-canonical-link') as HTMLLinkElement;
+    expect(canonical.href).toContain('/jobs/job-2');
+  });
+
+  it('purges JobPosting schema and canonical link when navigating from individual job URL back to /jobs', async () => {
+    setSplit(true);
+    window.history.replaceState(null, '', '/jobs/job-1');
+
+    render(<App />);
+
+    const pane = await screen.findByRole('complementary', { name: 'Selected job details' });
+    await within(pane).findByRole('heading', { name: 'Frontend Developer' });
+
+    expect(document.getElementById('role-radar-job-posting-ld-json')).not.toBeNull();
+    expect(document.getElementById('role-radar-canonical-link')).not.toBeNull();
+
+    // Navigate back to general /jobs
+    act(() => {
+      window.history.pushState(null, '', '/jobs');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
+    await waitFor(() => {
+      expect(document.getElementById('role-radar-job-posting-ld-json')).toBeNull();
+      expect(document.getElementById('role-radar-canonical-link')).toBeNull();
+      expect(document.getElementById('role-radar-job-noindex')).toBeNull();
+    });
   });
 });
