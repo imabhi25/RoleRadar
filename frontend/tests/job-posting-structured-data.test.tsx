@@ -542,7 +542,7 @@ describe('updateJobStructuredData DOM injection and cleanup', () => {
 
     // Call updateJobStructuredData
     const cleanupFn = updateJobStructuredData('ready', mockJob, 'https://roleradar-jobs.vercel.app');
-    
+
     // Verify there is strictly ONE script tag, not two
     const scripts = document.querySelectorAll('script[type="application/ld+json"]');
     expect(scripts.length).toBe(1);
