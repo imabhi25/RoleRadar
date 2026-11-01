@@ -82,18 +82,30 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onClick, selected = false
           {/* Top Row: Title */}
           <div className="job-card-title-row">
             <h3 className="job-card-title">
-              {/* The one real control: a native button whose hit area is stretched over the whole card (CSS ::after),
-                  so keyboard, screen-reader and pointer users all get the same single, correctly-named target. */}
-              <button
-                type="button"
+              {/* Crawlable link for search engine discovery and open-in-new-tab support,
+                  while preserving standard split-view and mobile navigation on primary click. */}
+              <a
+                href={`/jobs/${encodeURIComponent(job.job_id)}`}
+                role="button"
                 className="job-title-btn"
                 id={`job-title-btn-${job.job_id}`}
                 aria-current={selected ? "true" : undefined}
                 aria-label={`View details for ${job.title} at ${job.company}`}
-                onClick={() => onClick(job.job_id)}
+                onClick={(e) => {
+                  if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0) {
+                    e.preventDefault();
+                    onClick(job.job_id);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === " " || e.key === "Spacebar" || e.key === "Enter") {
+                    e.preventDefault();
+                    onClick(job.job_id);
+                  }
+                }}
               >
                 <span className="job-card-title-text">{formatJobTitle(job.title)}</span>
-              </button>
+              </a>
             </h3>
           </div>
 

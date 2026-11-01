@@ -20,6 +20,22 @@ export function parseAppRoute(path: string, search: string, dev = false): AppRou
   }
   if (path === "/stats") return { view: "stats", company: null };
   if (dev && (path === "/logos" || path === "/companies")) return { view: "logos", company: null };
-  if (path === "/jobs" || path === "/") return { view: "jobs", company: null };
+  if (path === "/jobs" || path === "/" || path.startsWith("/jobs/") || path.startsWith("/job/")) return { view: "jobs", company: null };
   return { view: "404", company: null };
+}
+
+/**
+ * Returns true if the pathname represents a dedicated individual-job URL (e.g. /jobs/:jobId or /job/:jobId).
+ * General listing pages (/jobs, /jobs/, /) and non-job views return false.
+ */
+export function isIndividualJobRoute(pathname: string): boolean {
+  if (typeof pathname !== "string") return false;
+  const clean = pathname.trim();
+  if (clean.startsWith("/jobs/")) {
+    return clean.slice("/jobs/".length).trim().length > 0;
+  }
+  if (clean.startsWith("/job/")) {
+    return clean.slice("/job/".length).trim().length > 0;
+  }
+  return false;
 }

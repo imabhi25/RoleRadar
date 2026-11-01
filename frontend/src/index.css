@@ -886,6 +886,7 @@ textarea {
 
 /* The title is the card's single native button; its ::after covers the whole card so the card is one click target. */
 .job-title-btn {
+  text-decoration: none;
   background: none;
   border: 0;
   padding: 0;
@@ -3509,6 +3510,7 @@ textarea {
   font-weight: 700;
 }
 .company-job-title-btn {
+  text-decoration: none;
   background: none;
   border: none;
   padding: 0;
