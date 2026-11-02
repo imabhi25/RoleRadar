@@ -7,6 +7,7 @@ import { useCompanyBackground } from "../hooks/useCompanyBackground";
 import { getCompanyProfile } from "../utils/companyProfiles";
 import { getJobCardCompensation } from "../utils/compensation";
 import { formatAbsoluteDate } from "../utils/jobFacts";
+import { formatWorkplaceType } from "../utils/formatters";
 
 interface CompanyPageViewProps {
   initialCompany?: string | null;
@@ -218,7 +219,7 @@ export const CompanyPageView: React.FC<CompanyPageViewProps> = ({
             {!jobsLoading && companyJobs.length > 0 && (
               <div className="company-jobs-list">
                 {companyJobs.map((job) => {
-                  const comp = getJobCardCompensation(job.compensation);
+                  const comp = getJobCardCompensation(job.compensation, job.country);
                   const exactDate = formatAbsoluteDate(job.posted_at);
                   const applyUrl = job.company_apply_url || job.source_url;
 
@@ -252,9 +253,9 @@ export const CompanyPageView: React.FC<CompanyPageViewProps> = ({
                               {job.location}
                             </span>
                           )}
-                          {job.workplace_type && (
+                          {job.workplace_type && !/^(unspecified|unknown)$/i.test(job.workplace_type) && (
                             <span className="company-job-meta-item meta-workplace">
-                              {job.workplace_type}
+                              {formatWorkplaceType(job.workplace_type)}
                             </span>
                           )}
                           {comp && (

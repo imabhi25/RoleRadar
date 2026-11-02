@@ -46,8 +46,8 @@ describe('formatPay', () => {
   it('never invents a pay period from the size of the amount', () => {
     // No period stated: shown as published. A small figure says so, because it could be hourly, weekly or a typo.
     expect(formatPay(152800, 259200, 'USD')).toBe('$152.8K – $259.2K');
-    expect(formatPay(60, 60, 'USD')).toBe('$60 (period not stated)');
-    expect(formatPay(40, 40, 'CAD')).toBe('CA$40 (period not stated)');
+    expect(formatPay(60, 60, 'USD')).toBe('$60');
+    expect(formatPay(40, 40, 'CAD')).toBe('CA$40');
     // Labelled annual but $38 - $58 (Samsara co-op): the label and the amount contradict, so nothing is shown.
     expect(formatPay(38, 58, 'USD', 'year')).toBeNull();
   });

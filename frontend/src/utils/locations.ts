@@ -1,4 +1,4 @@
-import { cleanLocationDisplay } from "./formatters";
+import { cleanLocationDisplay, splitOutsideParentheses } from "./formatters";
 
 export interface LocationSource {
   location: string;
@@ -61,8 +61,7 @@ export function prettyLocationLabel(raw: string, country?: string): string {
   stripMode("Hybrid", /(?:^|[\s(,–—-])hybrid(?:[)\s,–—-]|$)/i);
   stripMode("On-site", /(?:^|[\s(,–—-])on[\s-]?site(?:[)\s,–—-]|$)/i);
 
-  const rawParts = text
-    .split(/\s+[-–—]\s+|\s*[,;:]\s*/)
+  const rawParts = splitOutsideParentheses(text, /\s+[-–—]\s+|\s*[,;:]\s*/)
     .map((p) => p.replace(/^[\s()–—-]+|[\s()–—-]+$/g, ""))
     .filter(Boolean);
   // A street address followed by a recognizable place ("745 THURLOW ST:VANCOUVER") shows the place only.
@@ -107,7 +106,7 @@ export function formatExtraLocations(count: number): string {
 
 /** Display-only postal formatting. Keep unit/postal codes and retain the complete address for maps. */
 export function formatPostalAddress(raw: string, primaryLocation = ""): { label: string; full: string } {
-  const parts = raw.replace(/\s+/g, " ").trim().split(/\s*[,;:]\s*/).filter(Boolean).map((part) => {
+  const parts = splitOutsideParentheses(raw.replace(/\s+/g, " ").trim(), /\s*[,;:]\s*/).filter(Boolean).map((part) => {
     if (part !== part.toUpperCase() || !/\p{L}/u.test(part)) return part;
     return part.split(/(\s+|-)/).map((word) => {
       // Direction/province codes, postal codes, unit numbers and known brand initials are meaningful.

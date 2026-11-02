@@ -105,7 +105,6 @@ export function collapseRepeatedRange(text: string): string {
 }
 
 const SUFFIX: Record<string, string> = { year: "/yr", hour: "/hr", month: "/mo", week: "/wk", day: "/day" };
-const PERIOD_NOT_STATED = "period not stated";
 
 /** Whether an amount is exactly representable in compact form (151200 -> 151.2K) without rounding away any digits. */
 function isCompactExact(value: number): boolean {
@@ -147,7 +146,7 @@ export function formatPay(min?: number | null, max?: number | null, currency = "
   // Both ends of a range use the same style: "$113,645 – $191,000", never "$113,645 – $191K".
   const compact = [lo, hi].filter((n): n is number => n !== null).every(isCompactExact);
   const fmt = (n: number) => `${prefix}${compactAmount(n, compact)}`;
-  const suffix = period ? SUFFIX[period] : top < 1000 ? ` (${PERIOD_NOT_STATED})` : "";
+  const suffix = period ? SUFFIX[period] : "";
   if (lo !== null && hi !== null) return `${lo === hi ? fmt(lo) : `${fmt(lo)} – ${fmt(hi)}`}${suffix}`;
   return `${lo !== null ? "From " : "Up to "}${fmt(top)}${suffix}`;
 }
@@ -173,10 +172,12 @@ interface CardPay { text: string; periodMissing: boolean; ranges: PayInput[] }
 const coversTheJob = (r: PayInput) => !r.qualifier || r.scope === "all";
 const PAY_BY_LOCATION = "Pay varies by location";
 
-function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay | null {
+function resolveCardPay(compensation?: Record<string, unknown> | null, country = ""): CardPay | null {
   if (!compensation || typeof compensation !== "object") return null;
   // Ingestion marked the published figures unusable (placeholder, impossible, contradictory): the numbers stay stored, never shown.
   if (compensation.validation) return null;
+
+  const isCanada = Boolean(country && country.trim().toLowerCase() === "canada");
 
   const summaryComps = compensation.summaryComponents;
   if (Array.isArray(summaryComps) && summaryComps.length > 0) {
@@ -186,7 +187,8 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
     const untyped = components.filter((c) => !c.compensationType);
     for (const salaryComp of [...salaries, ...untyped]) {
       const interval = String(salaryComp.interval || "");
-      const text = formatPay(num(salaryComp.minValue), num(salaryComp.maxValue), String(salaryComp.currencyCode || ""), interval);
+      const currency = String(salaryComp.currencyCode || (isCanada ? "CAD" : ""));
+      const text = formatPay(num(salaryComp.minValue), num(salaryComp.maxValue), currency, interval);
       if (text) return { text, periodMissing: !periodOf(interval), ranges: [] };
     }
   }
@@ -196,13 +198,14 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
   // Pay written only for places that are not (all of) this job's locations: no number on the card, the pane lists it with its place.
   if (everyStated.length && !stated.length) return { text: PAY_BY_LOCATION, periodMissing: everyStated.some((r) => !periodOf(r.interval)), ranges: everyStated };
   if (stated.length) {
-    const groups = new Set(stated.map((r) => `${r.currency || r.symbol}|${periodOf(r.interval)}`));
+    const groups = new Set(stated.map((r) => `${r.currency || (isCanada ? "CAD" : r.symbol)}|${periodOf(r.interval)}`));
     const periodMissing = stated.some((r) => !periodOf(r.interval));
     // Different currencies or periods are never blended into one span, nor are several bare "$" ranges (US vs Canada).
-    if (stated.length > 1 && (groups.size > 1 || !stated.every((r) => r.currency) || new Set(stated.map((r) => r.qualifier)).size > 1)) {
+    if (stated.length > 1 && (groups.size > 1 || (!stated.every((r) => r.currency) && !isCanada) || new Set(stated.map((r) => r.qualifier)).size > 1)) {
       return { text: "Multiple pay ranges", periodMissing, ranges: everyStated };
     }
-    const text = formatPay(Math.min(...stated.map((r) => r.min as number)), Math.max(...stated.map((r) => r.max as number)), stated[0].currency, stated[0].interval, stated[0].symbol);
+    const leadCurrency = stated[0].currency || (isCanada && (!stated[0].symbol || stated[0].symbol === "$") ? "CAD" : "");
+    const text = formatPay(Math.min(...stated.map((r) => r.min as number)), Math.max(...stated.map((r) => r.max as number)), leadCurrency, stated[0].interval, stated[0].symbol);
     // On-target earnings (base plus commission or bonus target) are never presented as plain base pay.
     const ote = stated.every((r) => r.kind === "ote");
     return text ? { text: ote ? `${text} OTE` : text, periodMissing, ranges: everyStated } : null;
@@ -211,7 +214,8 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
   // Greenhouse / Lever shape.
   if (compensation.min != null || compensation.max != null) {
     const interval = String(compensation.interval || "");
-    const text = formatPay(num(compensation.min), num(compensation.max), String(compensation.currency || ""), interval, String(compensation.symbol || ""));
+    const currency = String(compensation.currency || (isCanada && (!compensation.symbol || compensation.symbol === "$") ? "CAD" : ""));
+    const text = formatPay(num(compensation.min), num(compensation.max), currency, interval, String(compensation.symbol || ""));
     // A structured range that failed the pay rules must not resurface through its own summary text.
     return text ? { text, periodMissing: !periodOf(interval), ranges: [] } : null;
   }
@@ -219,7 +223,7 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
   for (const key of ["compensationTierSummary", "scrapeableCompensationSalarySummary"] as const) {
     const value = compensation[key];
     if (typeof value === "string" && value.trim()) {
-      const text = salarySummary(value);
+      const text = salarySummary(value, country);
       // The source's own words are shown as written, so there is nothing to annotate.
       if (text) return { text, periodMissing: false, ranges: [] };
     }
@@ -228,31 +232,32 @@ function resolveCardPay(compensation?: Record<string, unknown> | null): CardPay 
 }
 
 /** Employer pay from any ATS shape (Ashby components, Greenhouse/Lever {min,max,currency,interval}, posting-text ranges) as one string. */
-export function getJobCardCompensation(compensation?: Record<string, unknown> | null): string | null {
-  return resolveCardPay(compensation)?.text ?? null;
+export function getJobCardCompensation(compensation?: Record<string, unknown> | null, country = ""): string | null {
+  return resolveCardPay(compensation, country)?.text ?? null;
 }
 
 /**
  * The detail-pane pay value: the card string, expanded to every stated range when the posting gave several (US/Canada,
- * Level 4/5), and flagged when the source gave no period.
+ * Level 4/5).
  */
-export function getCompensationDetail(compensation?: Record<string, unknown> | null): string | null {
-  const card = resolveCardPay(compensation);
+export function getCompensationDetail(compensation?: Record<string, unknown> | null, country = ""): string | null {
+  const card = resolveCardPay(compensation, country);
   if (!card) return null;
-  const withoutNote = (text: string) => text.replace(` (${PERIOD_NOT_STATED})`, "");
-  let body = withoutNote(card.text);
+  const isCanada = Boolean(country && country.trim().toLowerCase() === "canada");
+  let body = card.text;
   if (card.ranges.length > 1 || card.ranges.some((r) => r.qualifier)) {
     // Every stated range, each with the level and place the employer wrote for it.
     body = card.ranges
       .map((range) => {
-        const text = formatPay(range.min, range.max, range.currency, range.interval, range.symbol);
+        const rangeCurrency = range.currency || (isCanada && (!range.symbol || range.symbol === "$") ? "CAD" : "");
+        const text = formatPay(range.min, range.max, rangeCurrency, range.interval, range.symbol);
         const words = [range.label, range.qualifier, range.kind === "ote" ? "(on-target earnings)" : ""].filter(Boolean).join(" ");
-        return text ? `${withoutNote(text)}${words ? ` ${words}` : ""}` : "";
+        return text ? `${text}${words ? ` ${words}` : ""}` : "";
       })
       .filter(Boolean)
       .join(" · ");
   }
-  return card.periodMissing ? `${body} · ${PERIOD_NOT_STATED}` : body;
+  return body;
 }
 
 /** Non-pay parts of a source summary ("Offers Equity", "Plus up to 20% bonus", "Multiple ranges"), without repeating the pay. */
@@ -266,8 +271,13 @@ export function getCompensationExtras(compensation?: Record<string, unknown> | n
     .join(" · ");
 }
 
-function salarySummary(value: string): string | null {
-  const salary = collapseRepeatedRange(value.trim()).split(/\s*[•·]\s*|\s+(?:\+|plus|and)\s+(?=(?:offers?\s+)?(?:equity|stock|rsus?|bonus|sign[- ]on))/i)[0].trim();
+function salarySummary(value: string, country = ""): string | null {
+  const isCanada = Boolean(country && country.trim().toLowerCase() === "canada");
+  let salary = collapseRepeatedRange(value.trim()).split(/\s*[•·]\s*|\s+(?:\+|plus|and)\s+(?=(?:offers?\s+)?(?:equity|stock|rsus?|bonus|sign[- ]on))/i)[0].trim();
+  if (isCanada && /^\$(?!\s*USD)/i.test(salary) && !/\bCAD\b/i.test(salary)) {
+    salary = salary.replace(/^\$(?!\s*USD)/i, "CA$");
+    salary = salary.replace(/\s*–\s*\$(?!\s*USD)/i, " – CA$");
+  }
   if (!/\d/.test(salary) || /^(?:offers?\s+)?(?:equity|stock|rsus?|bonus)\b/i.test(salary) || (salary.includes("%") && !/[$£€]|\b(?:USD|CAD|GBP|EUR|AUD)\b/.test(salary))) return null;
   return salary && isPlausibleCompensationText(salary) ? salary : null;
 }

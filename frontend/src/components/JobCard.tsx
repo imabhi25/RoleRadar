@@ -30,7 +30,7 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onClick, selected = false
   const displayLocation = cardLocations.length > 1 ? `${primaryLocation} ${formatExtraLocations(cardLocations.length - 1)}` : primaryLocation;
   const fullLocation = cardLocations.join("; ");
   const displayDate = formatPostedDate(job.posted_at, Date.now(), job.posted_at_precision);
-  const displayCompensation = getJobCardCompensation(job.compensation);
+  const displayCompensation = getJobCardCompensation(job.compensation, job.country);
 
   // Browsing cards show only location, available salary, and posting age.
   const metaItems: {

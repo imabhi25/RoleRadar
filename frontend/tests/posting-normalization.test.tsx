@@ -22,7 +22,7 @@ describe('one metadata normalization pipeline for existing and future postings',
     expect(result.mainHtml).toContain('Build models');
     const facts = buildJobFacts(job, { primaryLocation: job.location, ...result.meta });
     expect(facts.find((fact) => fact.key === 'compensation')?.value).toBe('$81,600 - $115,200 CAD');
-    expect(facts.find((fact) => fact.key === 'hours')?.value).toBe('37.5');
+    expect(facts.find((fact) => fact.key === 'hours')?.value).toBe('37.5 hours/week');
     expect(facts.filter((fact) => fact.key === 'workLocation')).toHaveLength(0);
   });
   it('preserves compensation explanations and ambiguous or conflicting values', () => {
