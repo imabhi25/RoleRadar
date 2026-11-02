@@ -1086,6 +1086,26 @@ def tidy_location_label(label: str) -> str:
 _NOT_A_PLACE = re.compile(r"^\(?\s*(?:remote\s*[-–]?\s*friendly\b.*|travel[- ]required\)?|offsite(?:/home)?|off-site|home|work from home)\s*\)?$", re.I)
 
 
+def split_outside_parentheses(text: str, pattern: str) -> list[str]:
+    """Splits a string by a regex pattern only when the delimiter is not inside parentheses."""
+    parts = []
+    depth = 0
+    last_idx = 0
+    token_re = re.compile(rf"[()]|(?:{pattern})")
+    for m in token_re.finditer(text):
+        tok = m.group(0)
+        if tok == "(":
+            depth += 1
+        elif tok == ")":
+            if depth > 0:
+                depth -= 1
+        elif depth == 0:
+            parts.append(text[last_idx:m.start()])
+            last_idx = m.end()
+    parts.append(text[last_idx:])
+    return parts
+
+
 def normalize_job_locations(raw_location: str, structured: Optional[list] = None) -> list[dict]:
     """Keep alternative locations on one requisition; never pick the last country.
 
@@ -1097,7 +1117,8 @@ def normalize_job_locations(raw_location: str, structured: Optional[list] = None
     expanded = []
     for entry in entries:
         label = str(entry.get("location") or entry.get("name") or "").strip()
-        labels = re.split(r";|\s*[|]\s*|\s*/\s*|\s+or\s+", label)
+        semi_parts = split_outside_parentheses(label, r";")
+        labels = [part for sp in semi_parts for part in re.split(r"\s*[|]\s*|\s*/\s*|\s+or\s+", sp)]
         # Split explicit country alternatives; '&' in a street/company name is not a delimiter.
         remote_countries = re.fullmatch(r"remote\s*[-(: ]*\s*(us|usa|united states|canada)\s*(?:&|and)\s*(us|usa|united states|canada)\s*[)]*", label, re.I)
         if remote_countries:

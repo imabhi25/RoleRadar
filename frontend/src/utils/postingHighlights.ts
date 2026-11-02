@@ -4,9 +4,21 @@ import type { JobFact } from "./jobFacts";
 export function postingHighlights(title: string, sanitizedHtml: string, experienceLevel?: string | null): JobFact[] {
   const facts: JobFact[] = [];
   const levels: Record<string, string> = { internship: "Internship", entry: "Entry level", mid: "Mid level", senior: "Senior" };
-  const level = experienceLevel !== undefined ? levels[experienceLevel || ""] : title.match(/\b(principal|staff|senior|junior|entry[ -]level|intern|internship|mid[ -]level)\b/i)?.[0];
-  if (level) {
-    facts.push({ key: "experience", label: "Experience level", value: level[0].toUpperCase() + level.slice(1).toLowerCase() });
+  const rawLevel = experienceLevel !== undefined ? levels[experienceLevel || ""] : title.match(/\b(principal|staff|senior|junior|entry[ -]level|intern|internship|mid[ -]level)\b/i)?.[0];
+
+  const plainText = sanitizedHtml ? sanitizedHtml.replace(/<[^>]+>/g, " ") : "";
+  const contradictsEntry =
+    /\b(?:consultant|specialist|advisor|lead|staff|principal|senior)\b/i.test(title) ||
+    /\b(?:coach|mentor|guide|supervise)\b[^.]{0,80}\b(?:junior|entry|interns?)\b/i.test(plainText) ||
+    /\b(?:[3-9]|\d{2})\+?\s*(?:plus\s+)?years?\b/i.test(plainText);
+
+  let effectiveLevel = rawLevel;
+  if (rawLevel?.toLowerCase() === "entry level" && contradictsEntry) {
+    effectiveLevel = /\b(?:[3-7])\+?\s*(?:plus\s+)?years?\b/i.test(plainText) ? "Mid level" : undefined;
+  }
+
+  if (effectiveLevel) {
+    facts.push({ key: "experience", label: "Experience level", value: effectiveLevel[0].toUpperCase() + effectiveLevel.slice(1).toLowerCase() });
   }
   const doc = new DOMParser().parseFromString(sanitizedHtml, "text/html");
   let required = false;

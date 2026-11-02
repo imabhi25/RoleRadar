@@ -112,6 +112,7 @@ interface Candidate {
   field: Field;
   nodes: Node[];
   value: string;
+  label?: string;
 }
 
 const isBlock = (n: Node): n is Element => n.nodeType === 1;
@@ -161,7 +162,7 @@ export function extractMetadata(html: string): { html: string; meta: Description
       const next = nodes[i + 1];
       const value = textOf(next);
       if (value && value.length <= 160 && !labelOnly(next) && !(isBlock(next) && /^H[1-6]$/.test(next.tagName))) {
-        candidates.push({ field, nodes: [node, next], value });
+        candidates.push({ field, nodes: [node, next], value, label: textOf(node) });
         i += 1;
         continue;
       }
@@ -174,7 +175,7 @@ export function extractMetadata(html: string): { html: string; meta: Description
       const index = label ? children.indexOf(label) : -1;
       if (f && index >= 0 && children.slice(0, index).every((child) => !textOf(child))) {
         const value = children.slice(index + 1).map(textOf).join(" ").trim();
-        if (value && value.length <= 160) { candidates.push({ field: f, nodes: [node], value }); continue; }
+        if (value && value.length <= 160) { candidates.push({ field: f, nodes: [node], value, label: textOf(label!) }); continue; }
       }
     }
     // Form C: one block, "Application Deadline: 10/30/2026" (the colon is required here).
@@ -183,7 +184,7 @@ export function extractMetadata(html: string): { html: string; meta: Description
       const m = t.match(/^([^:：]{3,45})\s*[:：]\s*(.{2,160})$/);
       if (m) {
         const f = fieldForLabel(m[1]);
-        if (f) candidates.push({ field: f, nodes: [node], value: m[2] });
+        if (f) candidates.push({ field: f, nodes: [node], value: m[2], label: m[1] });
       }
     }
   }

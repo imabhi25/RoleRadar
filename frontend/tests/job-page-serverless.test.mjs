@@ -459,6 +459,16 @@ describe('Vercel Serverless Function job-page.mjs', () => {
     expect(body).toContain('TD');
     expect(body).toContain('Software-Engineer-II_R_1516370');
     expect(body).toContain('application/ld+json');
+
+    // Gemini claim verification: exactly one title, description, and Open Graph tags (no duplicates)
+    const titleMatches = body.match(/<title>.*?<\/title>/gis) || [];
+    expect(titleMatches).toHaveLength(1);
+    const descMatches = body.match(/<meta\s+name=["']description["'][^>]*>/gis) || [];
+    expect(descMatches).toHaveLength(1);
+    const ogTitleMatches = body.match(/<meta\s+property=["']og:title["'][^>]*>/gis) || [];
+    expect(ogTitleMatches).toHaveLength(1);
+    const ogDescMatches = body.match(/<meta\s+property=["']og:description["'][^>]*>/gis) || [];
+    expect(ogDescMatches).toHaveLength(1);
   });
 
   it('handler returns 404 with noindex header for nonexistent jobs', async () => {

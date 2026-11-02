@@ -521,7 +521,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
               </span>
             </div>
 
-            <div className="results-sort-group" title="Recommended lists Canadian roles first, then newest">
+            <div className="results-sort-group" title="Recommended prioritizes Canadian roles by freshness, then remote and US roles">
               <NativeSelect
                 label="Sort jobs"
                 align="right"
@@ -624,7 +624,7 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
                         }
                       }}
                       selected={showPane && job.job_id === selectedJobId}
-                      preferredCountries={filters.country}
+                      preferredCountries={filters.country && filters.country.length > 0 ? filters.country : (!filters.sort || filters.sort === "recommended" ? ["Canada"] : undefined)}
                     />
                   ))}
                 </div>

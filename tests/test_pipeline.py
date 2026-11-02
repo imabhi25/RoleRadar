@@ -708,6 +708,100 @@ class TestPipelineUpsertDatabaseIntegration(unittest.TestCase):
         self.assertEqual(updated_row[4], created_at_initial, "created_at MUST remain unchanged on update")
         self.assertGreaterEqual(updated_row[5], updated_at_initial)
 
+    def test_real_db_posted_at_stability_and_genuine_correction(self):
+        """
+        Verify posted_at stability on crawler refresh, while allowing genuine source corrections:
+        1. Subsequent crawl passing a later date (e.g. daily refresh restamping) is ignored; original posted_at preserved.
+        2. Genuine source correction passing an earlier date updates posted_at to the earlier date.
+        3. Re-activated job (is_active was FALSE) accepts new posted_at.
+        """
+        self.cur.execute("INSERT INTO companies (name) VALUES ('PostedAt Stability Co') RETURNING id;")
+        cid = self.cur.fetchone()[0]
+        self.cur.execute(
+            "INSERT INTO locations (location, country) VALUES ('Stability City, ON', 'Canada') "
+            "ON CONFLICT (location, country) DO UPDATE SET country = EXCLUDED.country RETURNING id;"
+        )
+        lid = self.cur.fetchone()[0]
+
+        initial_date = datetime(2026, 10, 25, 12, 0, 0, tzinfo=timezone.utc)
+        later_refresh_date = datetime(2026, 11, 1, 12, 0, 0, tzinfo=timezone.utc)
+        earlier_corrected_date = datetime(2026, 10, 20, 12, 0, 0, tzinfo=timezone.utc)
+        reopened_date = datetime(2026, 11, 15, 12, 0, 0, tzinfo=timezone.utc)
+
+        # 1. Initial insert
+        posting_id, is_new = upsert_job_posting(
+            cur=self.cur,
+            job_id="test:posted_stability_1",
+            company_id=cid,
+            title="Backend Engineer",
+            location_id=lid,
+            description="Initial",
+            workplace_type="remote",
+            source_name="test_stability",
+            source_job_id="stab_1",
+            source_url="https://example.com/stab_1",
+            posted_at=initial_date,
+            role_type="full_time",
+        )
+        self.assertTrue(is_new)
+
+        # 2. Later refresh date (e.g. Scotiabank daily crawl) -> MUST preserve initial_date
+        upsert_job_posting(
+            cur=self.cur,
+            job_id="test:posted_stability_1",
+            company_id=cid,
+            title="Backend Engineer",
+            location_id=lid,
+            description="Refreshed",
+            workplace_type="remote",
+            source_name="test_stability",
+            source_job_id="stab_1",
+            source_url="https://example.com/stab_1",
+            posted_at=later_refresh_date,
+            role_type="full_time",
+        )
+        self.cur.execute("SELECT posted_at FROM job_postings WHERE id = %s;", (posting_id,))
+        self.assertEqual(self.cur.fetchone()[0], initial_date, "Refresh restamp must NOT advance posted_at")
+
+        # 3. Genuine source correction with earlier date -> MUST update to earlier_corrected_date
+        upsert_job_posting(
+            cur=self.cur,
+            job_id="test:posted_stability_1",
+            company_id=cid,
+            title="Backend Engineer",
+            location_id=lid,
+            description="Corrected",
+            workplace_type="remote",
+            source_name="test_stability",
+            source_job_id="stab_1",
+            source_url="https://example.com/stab_1",
+            posted_at=earlier_corrected_date,
+            role_type="full_time",
+        )
+        self.cur.execute("SELECT posted_at FROM job_postings WHERE id = %s;", (posting_id,))
+        self.assertEqual(self.cur.fetchone()[0], earlier_corrected_date, "Genuine earlier date correction must be accepted")
+
+        # 4. Job de-activated, then re-activated later -> MUST accept new posting date
+        self.cur.execute("UPDATE job_postings SET is_active = FALSE WHERE id = %s;", (posting_id,))
+        upsert_job_posting(
+            cur=self.cur,
+            job_id="test:posted_stability_1",
+            company_id=cid,
+            title="Backend Engineer",
+            location_id=lid,
+            description="Reopened",
+            workplace_type="remote",
+            source_name="test_stability",
+            source_job_id="stab_1",
+            source_url="https://example.com/stab_1",
+            posted_at=reopened_date,
+            role_type="full_time",
+        )
+        self.cur.execute("SELECT posted_at, is_active FROM job_postings WHERE id = %s;", (posting_id,))
+        row = self.cur.fetchone()
+        self.assertEqual(row[0], reopened_date, "Reopened job must accept new posted_at")
+        self.assertTrue(row[1])
+
     def test_real_db_location_length_exceeds_255_chars(self):
         """
         Regression test: verifies that a location string longer than 255 characters

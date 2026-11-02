@@ -64,7 +64,7 @@ export function buildJobFacts(
 
   const comp = job.compensation;
   // One pay format everywhere: the structured figure (same string as the card) plus any non-pay notes from the source.
-  const structuredPay = getCompensationDetail(comp);
+  const structuredPay = getCompensationDetail(comp, job.country);
   const extras = getCompensationExtras(comp);
   // Figures ingestion marked unusable (placeholder, impossible) are not shown through their summary text either.
   // A structured min/max that failed the pay rules does not come back through its own summary string.

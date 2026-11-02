@@ -48,15 +48,15 @@ describe('what the reader sees for the audited records', () => {
     expect(isPlausibleCompensationText('$1 – $2')).toBe(false);
   });
 
-  it('never invents a period: it shows the one the source stated and says so when there is none', () => {
+  it('never invents a period: it shows the one the source stated and does not leak unstated periods into the UI', () => {
     expect(getJobCardCompensation(golden['greenhouse:8199744'])).toBe('CA$40/hr');                      // the posting says "hourly range"
     expect(payFact('greenhouse:8199744')).toBe('CA$40/hr');
     expect(getJobCardCompensation(golden['greenhouse:8250389'])).toBe('$230K – $322K');                  // Reddit: no period anywhere
-    expect(payFact('greenhouse:8250389')).toBe('$230K – $322K · period not stated');
+    expect(payFact('greenhouse:8250389')).toBe('$230K – $322K');
     const td = 'workday:XMLNAME-2027-Spring-Co-op---Global-Technology---Solutions---Data-Engineer_R_1510111';
-    expect(getJobCardCompensation(golden[td])).toBe('$30.74 (period not stated)');                       // a small figure could be hourly, weekly or a typo
-    expect(payFact(td)).toBe('$30.74 · period not stated');
-    expect(payFact('workday:Data-Scientist-II_R_1514106')).toBe('CA$81.6K – CA$115.2K · period not stated');
+    expect(getJobCardCompensation(golden[td])).toBe('$30.74');                       // a small figure without raw debug notes
+    expect(payFact(td)).toBe('$30.74');
+    expect(payFact('workday:Data-Scientist-II_R_1514106')).toBe('CA$81.6K – CA$115.2K');
     expect(getJobCardCompensation(golden['greenhouse:8238548'])).toMatch(/\/yr$/);                       // Braze: "annually"
   });
 
@@ -68,10 +68,10 @@ describe('what the reader sees for the audited records', () => {
     // Mercury lists US and Canada pay for a job open in both: neither covers every location, so no number on the card.
     const mercury = golden['greenhouse:6184992004'];
     expect(getJobCardCompensation(mercury)).toBe('Pay varies by location');
-    expect(getCompensationDetail(mercury)).toBe('$200.7K – $250.9K US employees (any location) · CA$189.7K – CA$237.1K Canadian employees (any location) · period not stated');
+    expect(getCompensationDetail(mercury)).toBe('$200.7K – $250.9K US employees (any location) · CA$189.7K – CA$237.1K Canadian employees (any location)');
     const nvidia = golden['workday:Senior-Compute-Platform-Engineer--LSF-_JR2023960'];     // levels, one explicit currency: a span is honest
     expect(getJobCardCompensation(nvidia)).toBe('$184K – $356.5K');
-    expect(getCompensationDetail(nvidia)).toBe('$184K – $287.5K for Level 4 · $224K – $356.5K for Level 5 · period not stated');
+    expect(getCompensationDetail(nvidia)).toBe('$184K – $287.5K for Level 4 · $224K – $356.5K for Level 5');
   });
 
   it('pay written for another place never becomes this job\'s pay on a card', () => {

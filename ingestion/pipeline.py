@@ -301,7 +301,11 @@ def upsert_job_posting(
                 simplify_url = COALESCE(%s, simplify_url),
                 term_season = %s,
                 term_year = %s,
-                posted_at = COALESCE(%s, posted_at),
+                posted_at = CASE
+                    WHEN is_active = FALSE THEN COALESCE(%s, posted_at)
+                    WHEN posted_at > NOW() + INTERVAL '1 day' THEN COALESCE(%s, posted_at)
+                    ELSE LEAST(posted_at, %s)
+                END,
                 is_active = TRUE,
                 is_eligible_role = TRUE,
                 last_seen_at = NOW(),
@@ -321,6 +325,8 @@ def upsert_job_posting(
                 c_simplify,
                 term_season,
                 term_year,
+                posted_at,
+                posted_at,
                 posted_at,
                 posting_id,
             ),

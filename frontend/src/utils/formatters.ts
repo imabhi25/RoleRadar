@@ -137,6 +137,31 @@ export function formatLocation(location: string, country: string): string {
  * Does NOT destructively alter stored data.
  * Returns both a full cleaned string and a compact card-optimized string.
  */
+/**
+ * Splits a string on delimiters only when not nested inside parentheses `(...)`.
+ */
+export function splitOutsideParentheses(input: string, delimiterPattern: RegExp): string[] {
+  const result: string[] = [];
+  let depth = 0;
+  let lastIndex = 0;
+  const tokenRegex = new RegExp(`[()]|${delimiterPattern.source}`, "g");
+  let match: RegExpExecArray | null;
+
+  while ((match = tokenRegex.exec(input)) !== null) {
+    const char = match[0];
+    if (char === "(") {
+      depth++;
+    } else if (char === ")") {
+      if (depth > 0) depth--;
+    } else if (depth === 0) {
+      result.push(input.substring(lastIndex, match.index));
+      lastIndex = tokenRegex.lastIndex;
+    }
+  }
+  result.push(input.substring(lastIndex));
+  return result;
+}
+
 export function cleanLocationDisplay(
   rawLocation: string,
   country?: string,
@@ -146,9 +171,8 @@ export function cleanLocationDisplay(
     return { display: "", full: "" };
   }
 
-  // Split on delimiters: semicolons, pipes, or newlines
-  const rawSegments = (rawLocation || "")
-    .split(/[;|]+|\r?\n/)
+  // Split on delimiters: semicolons, pipes, or newlines, ignoring those within parentheses
+  const rawSegments = splitOutsideParentheses(rawLocation || "", /[;|]+|\r?\n/)
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
 
