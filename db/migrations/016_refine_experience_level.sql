@@ -26,7 +26,7 @@ BEGIN
         IF preferred OR line ~* '\y(preferred|preferably|bonus|nice.to.have|not required)\y' THEN CONTINUE; END IF;
         line_years := NULL;
         FOR matches IN SELECT regexp_matches(line,
-            '([0-9]{1,2})[ ]*(?:[+]|\bplus\b|[-–][ ]*[0-9]{1,2})?[ ]*years?(?:[ ]+(?:of|in)[ ]+|(?:[ ]+(?:relevant|professional|industry|hands.on|software|engineering|work)[ ]+)*(?:experience|develop|build|working|design|programming))', 'gi') LOOP
+            '([0-9]{1,2})[ ]*(?:[+]|\yplus\y|[-–][ ]*[0-9]{1,2})?[ ]*years?[ ]+(?:(?:(?:of|in)[ ]+)?(?:(?:relevant|professional|industry|hands.on|software|engineering|work)[ ]+)*(?:experience|develop|build|working|design|programming)|(?:of|in)[ ]+[a-z0-9#+]+)', 'gi') LOOP
             IF line ~* '\yor\y' THEN line_years := LEAST(COALESCE(line_years,matches[1]::int),matches[1]::int);
             ELSE line_years := GREATEST(COALESCE(line_years,0),matches[1]::int); END IF;
         END LOOP;
@@ -44,3 +44,5 @@ BEGIN
     IF job_title ~* '\y(mid[ -]?level|intermediate)\y' THEN RETURN 'mid'; END IF;
     RETURN 'unknown';
 END $$;
+
+UPDATE job_postings SET title = title;

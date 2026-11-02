@@ -79,18 +79,12 @@ BEGIN
         IF preferred OR line ~* '\y(preferred|preferably|bonus|nice.to.have|not required)\y' THEN CONTINUE; END IF;
         line_years := NULL;
         FOR matches IN SELECT regexp_matches(line,
-            '([0-9]{1,2})[ ]*(?:[+]|\bplus\b|[-–][ ]*[0-9]{1,2})?[ ]*years?(?:[ ]+(?:of|in)[ ]+|(?:[ ]+(?:relevant|professional|industry|hands.on|software|engineering|work)[ ]+)*(?:experience|develop|build|working|design|programming))', 'gi') LOOP
+            '([0-9]{1,2})[ ]*(?:[+]|[-–][ ]*[0-9]{1,2})?[ ]*years?[ ]+(?:of[ ]+)?(?:relevant[ ]+|professional[ ]+|industry[ ]+|hands.on[ ]+|software[ ]+|engineering[ ]+|work[ ]+)*(?:experience|develop|build|working|design|programming)', 'gi') LOOP
             IF line ~* '\yor\y' THEN line_years := LEAST(COALESCE(line_years,matches[1]::int),matches[1]::int);
             ELSE line_years := GREATEST(COALESCE(line_years,0),matches[1]::int); END IF;
         END LOOP;
         IF line_years IS NOT NULL THEN required_years := GREATEST(COALESCE(required_years,0),line_years); END IF;
     END LOOP;
-    IF content ~* '\y(coach|mentor|guide|supervise|direct)\y[^.\n]{0,80}\y(junior|entry|interns?)\y' THEN
-        IF required_years IS NULL OR required_years < 3 THEN required_years := 3; END IF;
-    END IF;
-    IF job_title ~* '\y(consultant|specialist|advisor)\y' THEN
-        IF required_years IS NULL OR required_years < 3 THEN required_years := 3; END IF;
-    END IF;
     IF required_years >= 8 THEN RETURN 'senior'; END IF;
     IF required_years >= 3 THEN RETURN 'mid'; END IF;
     IF required_years IS NOT NULL OR role IN ('new_grad','entry_level') THEN RETURN 'entry'; END IF;

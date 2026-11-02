@@ -82,13 +82,7 @@ export function buildJobFacts(
   if (hasFactValue(compValue) && hasFactValue(sourcePay) && compValue.replace(/[^a-z0-9]/gi, "").toLowerCase() !== sourcePay.replace(/[^a-z0-9]/gi, "").toLowerCase()) {
     facts.push({ key: "sourceCompensation", label: "Source pay details", value: sourcePay });
   }
-  if (hasFactValue(opts.hours)) {
-    const rawHours = opts.hours.trim();
-    const formattedHours = /^\d+(?:[.,]\d+)?$/.test(rawHours)
-      ? `${rawHours} hours/week`
-      : rawHours;
-    facts.push({ key: "hours", label: "Working hours", value: formattedHours });
-  }
+  if (hasFactValue(opts.hours)) facts.push({ key: "hours", label: "Working hours", value: opts.hours });
   if (hasFactValue(opts.businessLine)) facts.push({ key: "businessLine", label: "Business area", value: opts.businessLine });
   const sameLocation = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (hasFactValue(opts.workLocation) && sameLocation(opts.workLocation) !== sameLocation(opts.primaryLocation || job.location || "")) {

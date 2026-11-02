@@ -61,20 +61,27 @@ describe("Quality remediation regressions (Muse review findings)", () => {
       expect(formatPay(60, 60, "USD")).not.toContain("period not stated");
     });
 
-    it("normalizes Canadian salaries with bare $ to CA$", () => {
-      const compCanadaBare = {
+    it("preserves currency as stated by source and does not infer CAD unless source supports it", () => {
+      // Source explicitly states CAD -> formatted with CA$
+      const compExplicitCAD = {
         source: "posting_text",
-        ranges: [{ min: 133000, max: 183000, symbol: "$", interval: "year" }],
-        compensationTierSummary: "$133K – $183K",
+        ranges: [{ min: 133000, max: 183000, currency: "CAD", interval: "year" }],
+        compensationTierSummary: "$133K – $183K CAD",
       };
-      const cardCanada = getJobCardCompensation(compCanadaBare, "Canada");
-      expect(cardCanada).toBe("CA$133K – CA$183K/yr");
+      const cardCAD = getJobCardCompensation(compExplicitCAD, "Canada");
+      expect(cardCAD).toBe("CA$133K – CA$183K/yr");
 
-      const detailCanada = getCompensationDetail(compCanadaBare, "Canada");
-      expect(detailCanada).toBe("CA$133K – CA$183K/yr");
+      // Source only states bare $ -> stays $ without inferring CAD
+      const compBare$ = {
+        source: "posting_text",
+        ranges: [{ min: 80000, max: 175000, symbol: "$", interval: "year" }],
+        compensationTierSummary: "$80K – $175K",
+      };
+      const cardBare = getJobCardCompensation(compBare$, "Canada");
+      expect(cardBare).toBe("$80K – $175K/yr");
 
-      const summaryCanada = getJobCardCompensation({ compensationTierSummary: "$80K – $175K" }, "Canada");
-      expect(summaryCanada).toBe("CA$80K – CA$175K");
+      const summaryBare = getJobCardCompensation({ compensationTierSummary: "$80K – $175K" }, "Canada");
+      expect(summaryBare).toBe("$80K – $175K");
 
       // US jobs keep standard USD $
       const compUS = {
@@ -86,7 +93,7 @@ describe("Quality remediation regressions (Muse review findings)", () => {
       expect(cardUS).toBe("$150K – $200K/yr");
     });
 
-    it("normalizes bare numeric working hours with hours/week unit", () => {
+    it("preserves working hours as written by the source without guessing weekly hours", () => {
       const job: JobSummary = {
         job_id: "cibc:backend-dev",
         title: "Consultant, Backend Developer",
@@ -99,9 +106,13 @@ describe("Quality remediation regressions (Muse review findings)", () => {
       };
       const facts = buildJobFacts(job, { hours: "37.5" });
       const hoursFact = facts.find((f) => f.key === "hours");
-      expect(hoursFact?.value).toBe("37.5 hours/week");
+      expect(hoursFact?.value).toBe("37.5");
 
-      // Already formatted hours remain unchanged
+      // Explicit weekly hours from source are preserved
+      const factsWeekly = buildJobFacts(job, { hours: "37.5 hours/week" });
+      expect(factsWeekly.find((f) => f.key === "hours")?.value).toBe("37.5 hours/week");
+
+      // Explicit hrs/wk from source are preserved
       const factsExplicit = buildJobFacts(job, { hours: "40 hrs/wk" });
       expect(factsExplicit.find((f) => f.key === "hours")?.value).toBe("40 hrs/wk");
     });

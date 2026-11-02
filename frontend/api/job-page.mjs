@@ -674,15 +674,20 @@ export default async function handler(req, res) {
 
     const template = getHtmlShellTemplate();
 
+    // Strip static shell title, meta description, and og tags to prevent duplicate meta tags
+    const cleanTemplate = template
+      .replace(/<title>.*?<\/title>/gis, '')
+      .replace(/<meta\s+name=["']description["'][^>]*>/gis, '')
+      .replace(/<meta\s+property=["']og:[^"']+["'][^>]*>/gis, '');
+
     let renderedHtml = '';
-    if (template.includes('<!-- HEAD_INJECTIONS -->')) {
-      renderedHtml = template
+    if (cleanTemplate.includes('<!-- HEAD_INJECTIONS -->')) {
+      renderedHtml = cleanTemplate
         .replace('<!-- HEAD_INJECTIONS -->', headInjections)
         .replace('<!-- BODY_INJECTIONS -->', visibleBody);
     } else {
       // If template is production dist/index.html with pre-existing asset tags:
-      renderedHtml = template
-        .replace(/<title>.*?<\/title>/i, `<title>${pageTitle}</title>`)
+      renderedHtml = cleanTemplate
         .replace('</head>', `${headInjections}</head>`)
         .replace('<div id="root"></div>', `<div id="root">${visibleBody}</div>`);
     }

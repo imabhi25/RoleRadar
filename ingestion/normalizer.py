@@ -1117,7 +1117,8 @@ def normalize_job_locations(raw_location: str, structured: Optional[list] = None
     expanded = []
     for entry in entries:
         label = str(entry.get("location") or entry.get("name") or "").strip()
-        labels = split_outside_parentheses(label, r";|\s*[|]\s*|\s*/\s*|\s+or\s+")
+        semi_parts = split_outside_parentheses(label, r";")
+        labels = [part for sp in semi_parts for part in re.split(r"\s*[|]\s*|\s*/\s*|\s+or\s+", sp)]
         # Split explicit country alternatives; '&' in a street/company name is not a delimiter.
         remote_countries = re.fullmatch(r"remote\s*[-(: ]*\s*(us|usa|united states|canada)\s*(?:&|and)\s*(us|usa|united states|canada)\s*[)]*", label, re.I)
         if remote_countries:
@@ -1129,7 +1130,7 @@ def normalize_job_locations(raw_location: str, structured: Optional[list] = None
             labels = country_parts
         # Split comma-separated complete cities/countries, never City, State.
         split_cities = "|".join(re.escape(c) for c in CURATED_CITIES)
-        labels = [part for value in labels for part in split_outside_parentheses(value, rf",\s*(?=(?:{split_cities})(?:,|$))")]
+        labels = [part for value in labels for part in re.split(rf",\s*(?=(?:{split_cities})(?:,|$))", value, flags=re.I)]
         real = [value for value in labels if not _NOT_A_PLACE.match(value.strip())]
         dropped_notes = bool(real) and len(real) != len(labels)
         if dropped_notes:

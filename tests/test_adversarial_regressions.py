@@ -51,6 +51,8 @@ def test_pay_garbage_is_not_a_salary_or_a_query_error(conn,pay):
     ('Software Engineer','<h2>About the company</h2><p>20 years building great software.</p><h2>Requirements</h2><p>2 years experience.</p>','entry'),
     ('Software Engineer','<p>12 years experience or a degree and 2 years experience.</p>','entry'),
     ('Software Engineer','<p>Passionate about programming.</p>','unknown'),
+    ('Consultant, Backend Developer','<p>3+ years in Java and coaching junior developers.</p>','mid'),
+    ('Backend Developer','<p>3 plus years in Java</p>','mid'),
 ])
 def test_experience_uses_required_evidence_not_associate_or_company_age(conn,title,description,expected):
     with conn.cursor() as cur:
