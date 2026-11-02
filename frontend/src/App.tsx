@@ -307,28 +307,7 @@ export function App() {
               aria-label="RoleRadar homepage - Return to jobs"
             >
               <div className="brand-logo-mark" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
-                  <rect width="28" height="28" rx="8" fill="url(#brandGradient)" />
-                  <path
-                    d="M10 8.5H19V11.5H15V19.5H10.5V8.5Z"
-                    fill="#ffffff"
-                    fillRule="evenodd"
-                  />
-                  <circle cx="19" cy="18" r="2" fill="#93c5fd" />
-                  <defs>
-                    <linearGradient
-                      id="brandGradient"
-                      x1="0"
-                      y1="0"
-                      x2="28"
-                      y2="28"
-                      gradientUnits="userSpaceOnUse"
-                    >
-                      <stop stopColor="#2563eb" />
-                      <stop offset="1" stopColor="#4f46e5" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+                <img src="/favicon.svg?v=2" width="28" height="28" alt="" />
               </div>
               <span className="brand-name">RoleRadar</span>
             </button>
