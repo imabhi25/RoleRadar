@@ -220,6 +220,57 @@ def test_shopify_explicit_us_internship_does_not_become_canadian_remote_job():
     assert all(x['country'] != 'Canada' for x in locations)
 
 
+SHOPIFY_ROLE_PATH = '/careers/software-engineering-intern_' + POSTING_ID
+
+
+def shopify_role_pages(*, href=SHOPIFY_ROLE_PATH, detail_id=POSTING_ID, status='Published'):
+    listing = router_page('($locale)/careers', {'roles': [{
+        'id': POSTING_ID, 'title': 'Software Engineering Intern', 'description': 'Short preview.',
+        'location': 'Remote - Canada', 'locations': ['Remote - Canada'], 'href': href,
+    }]})
+    detail = router_page('($locale)/careers/$posting', {
+        'jobPosting': {
+            'id': detail_id, 'status': status, 'isListed': True,
+            'descriptionHtml': '<h3>Responsibilities</h3><p>Build software with Python.</p>',
+            'workplaceType': 'Remote', 'employmentType': 'Intern', 'publishedDate': '2026-09-28',
+            'applicationDeadline': '2026-10-12T04:00:00.000Z',
+            'locationIds': {'primaryLocationId': 'canada'},
+            'compensation': {
+                'compensationTierSummary': 'CAD $30 per hour',
+                'displaySettings': {'shouldShowOnJobPostings': True},
+            },
+        },
+        'locations': [{'id': 'canada', 'name': 'Canada', 'address': {'postalAddress': {'addressCountry': 'Canada'}}}],
+        'job': {'hiringTeam': 'Never stored'},
+    })
+    pages = {'https://www.shopify.com/careers': listing, 'https://www.shopify.com' + SHOPIFY_ROLE_PATH: detail}
+    return Pages(lambda url, params: pages[url])
+
+
+def test_shopify_role_list_uses_public_detail_with_the_same_posting_id():
+    result = ShopifyClient(shopify_role_pages()).fetch_jobs('Shopify', 'shopify')
+    assert result.fetch_complete and result.total_raw_records == 1
+    job, = result.jobs
+    assert job.source_job_id == POSTING_ID
+    assert job.source_url == job.company_apply_url == 'https://www.shopify.com' + SHOPIFY_ROLE_PATH
+    assert job.raw_workplace_type == 'Remote' and job.raw_job_type == 'Intern'
+    assert job.raw_locations == [{'location': 'Canada', 'country': 'Canada'}]
+    assert job.posted_at.isoformat() == '2026-09-28T00:00:00+00:00'
+    assert '<h3>Responsibilities</h3>' in job.raw_description and '2026-10-12' in job.raw_description
+    assert job.compensation == {'compensationTierSummary': 'CAD $30 per hour'}
+    assert 'Short preview.' not in job.raw_description and 'hiringTeam' not in job.raw_description
+
+
+@pytest.mark.parametrize('invalid_data', [
+    {'href': 'https://example.com' + SHOPIFY_ROLE_PATH},
+    {'detail_id': 'different-posting'},
+    {'status': 'Closed'},
+])
+def test_shopify_invalid_role_data_keeps_snapshot_incomplete(invalid_data):
+    result = ShopifyClient(shopify_role_pages(**invalid_data)).fetch_jobs('Shopify', 'shopify')
+    assert not result.fetch_complete and result.parse_error_count == 1 and result.jobs == []
+
+
 def test_shopify_changed_encoding_fails_closed():
     with pytest.raises(IngestionFetchError):
         shopify_loader('<script>throw new Error("blocked")</script>', '($locale)/careers')
