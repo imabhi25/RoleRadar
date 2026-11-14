@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
 import {
   generateJobPostingLdJson,
   getHtmlShellTemplate,
@@ -13,6 +13,14 @@ import {
 } from '../api/job-page.mjs';
 
 describe('Vercel Serverless Function job-page.mjs', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn());
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   const sampleJob = {
     job_id: 'ashby:test-123',
     title: 'Staff Security Engineer',
@@ -422,28 +430,40 @@ describe('Vercel Serverless Function job-page.mjs', () => {
     expect(template).toContain('<body>');
   });
 
-  it('fetches and preserves 404 vs 200 status codes correctly', async () => {
+  it('preserves an upstream 404 for a nonexistent job', async () => {
+    vi.mocked(fetch).mockResolvedValue({ status: 404 });
     const notFound = await fetchJob('nonexistent-test-id-12345');
     expect(notFound.status).toBe(404);
     expect(notFound.job).toBeNull();
+    expect(fetch).toHaveBeenCalledWith(
+      'https://roleradar-api.vercel.app/api/jobs/nonexistent-test-id-12345',
+      expect.objectContaining({ headers: { Accept: 'application/json' } })
+    );
   });
 
-  it('fetches workday job with slashes in ID successfully from production API', async () => {
-    const result = await fetchJob('workday:td.wd3/TD_Bank_Careers/Software-Engineer-II_R_1516370');
+  it('encodes slashes in a job ID and preserves the successful response', async () => {
+    const job = { ...sampleJob, job_id: 'workday:example/Engineering/Software-Engineer-II_R_123' };
+    vi.mocked(fetch).mockResolvedValue({ status: 200, json: async () => job });
+
+    const result = await fetchJob(job.job_id);
     expect(result.status).toBe(200);
-    expect(result.job).not.toBeNull();
-    expect(result.job.job_id).toBe('workday:td.wd3/TD_Bank_Careers/Software-Engineer-II_R_1516370');
-    expect(result.job.company).toBe('TD');
+    expect(result.job).toEqual(job);
+    expect(fetch).toHaveBeenCalledWith(
+      'https://roleradar-api.vercel.app/api/jobs/workday%3Aexample%2FEngineering%2FSoftware-Engineer-II_R_123',
+      expect.objectContaining({ headers: { Accept: 'application/json' } })
+    );
   });
 
   it('handler handles slash job IDs from rewritten jobId query parameter', async () => {
+    const job = { ...sampleJob, job_id: 'workday:example/Engineering/Software-Engineer-II_R_123' };
+    vi.mocked(fetch).mockResolvedValue({ status: 200, json: async () => job });
     const defaultExport = (await import('../api/job-page.mjs')).default;
     let statusCode = null;
     const headers = {};
     let body = '';
 
     const req = {
-      url: '/api/job-page?jobId=workday:td.wd3/TD_Bank_Careers/Software-Engineer-II_R_1516370',
+      url: `/api/job-page?jobId=${encodeURIComponent(job.job_id)}`,
       headers: { host: 'roleradar-jobs.vercel.app' }
     };
     const res = {
@@ -456,11 +476,15 @@ describe('Vercel Serverless Function job-page.mjs', () => {
     await defaultExport(req, res);
     expect(statusCode).toBe(200);
     expect(headers['content-type']).toContain('text/html');
-    expect(body).toContain('TD');
-    expect(body).toContain('Software-Engineer-II_R_1516370');
+    expect(body).toContain('Cohere');
+    expect(body).toContain('Software-Engineer-II_R_123');
     expect(body).toContain('application/ld+json');
+    expect(fetch).toHaveBeenCalledWith(
+      `https://roleradar-api.vercel.app/api/jobs/${encodeURIComponent(job.job_id)}`,
+      expect.any(Object)
+    );
 
-    // Gemini claim verification: exactly one title, description, and Open Graph tags (no duplicates)
+    // Exactly one title, description, and Open Graph tags (no duplicates)
     const titleMatches = body.match(/<title>.*?<\/title>/gis) || [];
     expect(titleMatches).toHaveLength(1);
     const descMatches = body.match(/<meta\s+name=["']description["'][^>]*>/gis) || [];
@@ -472,6 +496,7 @@ describe('Vercel Serverless Function job-page.mjs', () => {
   });
 
   it('handler returns 404 with noindex header for nonexistent jobs', async () => {
+    vi.mocked(fetch).mockResolvedValue({ status: 404 });
     const defaultExport = (await import('../api/job-page.mjs')).default;
     let statusCode = null;
     const headers = {};
@@ -492,6 +517,26 @@ describe('Vercel Serverless Function job-page.mjs', () => {
     expect(statusCode).toBe(404);
     expect(headers['x-robots-tag']).toBe('noindex, nofollow');
     expect(body).toContain('Job No Longer Available');
+  });
+
+  it('handler returns 404 with noindex for an expired upstream job', async () => {
+    vi.mocked(fetch).mockResolvedValue({ status: 410 });
+    const defaultExport = (await import('../api/job-page.mjs')).default;
+    const headers = {};
+    const res = {
+      statusCode: 0,
+      setHeader(name, value) { headers[name.toLowerCase()] = value; },
+      end: vi.fn()
+    };
+
+    await defaultExport({
+      url: '/api/job-page?jobId=expired-job',
+      headers: { host: 'roleradar-jobs.vercel.app' }
+    }, res);
+
+    expect(res.statusCode).toBe(404);
+    expect(headers['x-robots-tag']).toBe('noindex, nofollow');
+    expect(res.end).toHaveBeenCalledWith(expect.stringContaining('Job No Longer Available'));
   });
 
   it('handler returns 503 with Retry-After and without noindex on temporary upstream failure', async () => {

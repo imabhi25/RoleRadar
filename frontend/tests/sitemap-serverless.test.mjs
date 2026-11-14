@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import {
   escapeXml,
   isJobEligibleForMarkup,
@@ -697,7 +697,24 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
   });
 
   describe('HTTP Handler integration', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
     it('sets correct headers and caching on success', async () => {
+      const job = {
+        job_id: 'fixture-job',
+        title: 'Software Engineer',
+        company: 'Example Company',
+        posted_at: '2026-11-01T00:00:00Z',
+        workplace_type: 'hybrid',
+        location: 'Toronto, Ontario, Canada'
+      };
+      vi.stubGlobal('fetch', vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ total: 1, jobs: [job] })
+      })));
       const req = {
         headers: {
           host: 'roleradar-preview.vercel.app',
@@ -725,7 +742,12 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
       expect(headers['Cache-Control']).toContain('s-maxage=3600');
       expect(responseBody).toContain('<?xml version="1.0" encoding="UTF-8"?>');
       expect(responseBody).toContain('<loc>https://roleradar-preview.vercel.app/jobs</loc>');
+      expect(responseBody).toContain('<loc>https://roleradar-preview.vercel.app/jobs/fixture-job</loc>');
       expect(responseBody).not.toContain('<lastmod>');
+      expect(fetch).toHaveBeenCalledWith(
+        'https://roleradar-api.vercel.app/api/jobs?limit=100&offset=0',
+        expect.any(Object)
+      );
     });
 
     it('returns HTTP 503 with Retry-After when upstream pagination fails, never serving an incomplete sitemap', async () => {

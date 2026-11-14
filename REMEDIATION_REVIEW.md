@@ -1,4 +1,4 @@
-# Independent review of Claude's remediation
+# Independent review of prior remediation
 
 Reviewed October 1, 2026. Changes remain unpublished. This report supplements both preserved audits; it does not replace their evidence or certify every audit finding as resolved.
 
@@ -42,11 +42,11 @@ The 191 empty descriptions are excluded by geography before the freshness filter
 - Production deployment, ingestion backfill and production validation have not occurred.
 - Google/Apple/Meta/Tesla coverage investigation remains incomplete. An HTML page or a redirect is not sufficient evidence of a source blocker. No new coverage adapters were added in this review.
 - Generic Workday/Amazon logo discovery remains absent; unresolved identities must remain unresolved.
-- No independent full-inventory parser run after the changes in this review; focused fixtures validate corrected classification cases. Claude's earlier whole-inventory metrics are not proof of all section classification.
-- No fresh axe run, Firefox/Safari, real 200% zoom, reduced-motion emulation, or complete tablet/desktop/theme matrix in this review. Claude's fault-harness checks were not rerun here.
+- No independent full-inventory parser run after the changes in this review; focused fixtures validate corrected classification cases. Earlier whole-inventory metrics are not proof of all section classification.
+- No fresh axe run, Firefox/Safari, real 200% zoom, reduced-motion emulation, or complete tablet/desktop/theme matrix in this review. Earlier fault-harness checks were not rerun here.
 - No production query plans or live deployment header/robots/sitemap validation.
 - Revised compensation and Workday ingestion must go through a verified normal sync before production backfill. This review made no employer-data mutations; database test fixtures are isolated/rolled back.
 
 ## Git and evidence
 
-Existing edits and both audit evidence directories preserved. No commit, push, pull request, deployment or production mutation. This review adds targeted fixes on top of Claude's working tree. Audit captures, secrets and bulk inventory data were not staged.
+Existing edits and both audit evidence directories preserved. No commit, push, pull request, deployment or production mutation. This review adds targeted fixes on top of the existing working tree. Audit captures, secrets and bulk inventory data were not staged.
