@@ -8,8 +8,6 @@ RoleRadar brings postings from different hiring platforms into one searchable in
 
 [![CI](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml/badge.svg)](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml)
 
-> **Deployment.** The live frontend is at `roleradar-jobs.vercel.app` (the former `jobber-mauve.vercel.app` address permanently redirects there and is no longer in the CORS allow-list). The API runs on Vercel at `roleradar-api.vercel.app`. Configure additional production origins with `FRONTEND_ORIGIN`; the existing database and SQL function names remain unchanged.
-
 ## Screenshots
 
 ![RoleRadar job search: filters, a ranked job list and a split-view posting with a Summary / Full Posting toggle](docs/screenshots/jobs.png)
@@ -92,7 +90,7 @@ The [CI workflow](.github/workflows/ci.yml) checks pull requests and changes to 
 - Frontend tests cover interactions, filtering, request races, dates, compensation, locations, description safety and Summary/Full Posting behavior.
 - ESLint, TypeScript, a production build and a whitespace check run alongside the test suites.
 
-**571 frontend tests passed for the [latest feature release](https://github.com/imabhi25/RoleRadar/pull/4) on October 4, 2026.** This is a dated test-suite result; live listing counts and source availability change over time.
+Current results for every check are on the [CI page](https://github.com/imabhi25/RoleRadar/actions/workflows/ci.yml).
 
 ## Run locally
 
@@ -114,9 +112,9 @@ python -m pip install -r requirements.txt
 ### 2. Initialize a fresh local database
 
 ```bash
-createdb jobber
-export PGDATABASE=jobber
-psql -v ON_ERROR_STOP=1 -d jobber -f db/schema.sql
+createdb roleradar
+export PGDATABASE=roleradar
+psql -v ON_ERROR_STOP=1 -d roleradar -f db/schema.sql
 python -m db.migrate
 ```
 
@@ -163,9 +161,9 @@ Initialize a separate local database for backend tests:
 
 ```bash
 python -m pip install pytest httpx
-createdb jobber_test
-export PGDATABASE=jobber_test
-psql -v ON_ERROR_STOP=1 -d jobber_test -f db/schema.sql
+createdb roleradar_test
+export PGDATABASE=roleradar_test
+psql -v ON_ERROR_STOP=1 -d roleradar_test -f db/schema.sql
 python -m db.migrate
 TESTING=1 python -m pytest -q -rs
 ```
@@ -194,6 +192,7 @@ npm run build
 | [`db/`](db/) | Schema, migrations and idempotent CSV loader |
 | [`config/`](config/) | Target companies and discovery watchlist |
 | [`tests/`](tests/) | Backend, adapter, ingestion and data-quality regression tests |
+| [`docs/`](docs/) | Screenshots, design notes and past QA/coverage audits |
 | [`.github/workflows/`](.github/workflows/) | CI, scheduled ingestion and database migration workflows |
 | [`main.py`](main.py), [`data/`](data/) | Original CSV analytics CLI and fictional sample data |
 
