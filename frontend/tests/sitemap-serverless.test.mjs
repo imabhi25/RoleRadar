@@ -698,6 +698,30 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
 
   describe('HTTP Handler integration', () => {
     it('sets correct headers and caching on success', async () => {
+      // Fake one-page API response so this test never depends on live job data.
+      const fakeJobs = [
+        {
+          job_id: 'greenhouse:figma-123',
+          title: 'Software Engineer, Intern',
+          company: 'Figma',
+          posted_at: '2026-11-01T00:00:00Z',
+          workplace_type: 'hybrid',
+          location: 'Toronto, ON, Canada',
+          locations: [{ country: 'Canada', location: 'Toronto, ON, Canada' }]
+        }
+      ];
+      const originalFetch = global.fetch;
+      global.fetch = vi.fn(async (url) => {
+        const u = new URL(url);
+        const limit = parseInt(u.searchParams.get('limit') || '100', 10);
+        const offset = parseInt(u.searchParams.get('offset') || '0', 10);
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ total: fakeJobs.length, limit, offset, jobs: fakeJobs.slice(offset, offset + limit) })
+        };
+      });
+
       const req = {
         headers: {
           host: 'roleradar-preview.vercel.app',
@@ -717,7 +741,11 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
         }
       };
 
-      await sitemapHandler(req, res);
+      try {
+        await sitemapHandler(req, res);
+      } finally {
+        global.fetch = originalFetch;
+      }
 
       expect(res.statusCode).toBe(200);
       expect(headers['Content-Type']).toBe('application/xml; charset=utf-8');
@@ -725,6 +753,7 @@ describe('Vercel Serverless Function sitemap.mjs', () => {
       expect(headers['Cache-Control']).toContain('s-maxage=3600');
       expect(responseBody).toContain('<?xml version="1.0" encoding="UTF-8"?>');
       expect(responseBody).toContain('<loc>https://roleradar-preview.vercel.app/jobs</loc>');
+      expect(responseBody).toContain('greenhouse');
       expect(responseBody).not.toContain('<lastmod>');
     });
 

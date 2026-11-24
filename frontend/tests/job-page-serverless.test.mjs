@@ -12,6 +12,60 @@ import {
   resolveMatchingSalaryInterval
 } from '../api/job-page.mjs';
 
+const TD_JOB_ID = 'workday:td.wd3/TD_Bank_Careers/Software-Engineer-II_R_1516370';
+const CLOSED_JOB_ID = 'workday:td.wd3/TD_Bank_Careers/Closed-Role_R_0000001';
+
+// Saved sample of what the RoleRadar API returns, so these tests never depend on
+// a live posting staying open.
+const tdJobFixture = {
+  job_id: TD_JOB_ID,
+  title: 'Software Engineer II',
+  company: 'TD',
+  company_website_url: 'https://www.td.com',
+  location: 'Toronto, Ontario, Canada',
+  country: 'Canada',
+  workplace_type: 'hybrid',
+  role_type: 'full_time',
+  posted_at: '2026-11-01T12:00:00Z',
+  is_active: true,
+  description: '<p>Build and maintain banking platform services.</p>',
+  company_apply_url: 'https://td.wd3.myworkdayjobs.com/TD_Bank_Careers/job/Toronto-ON/Software-Engineer-II_R_1516370'
+};
+
+// Replaces global fetch with a fake RoleRadar API for the duration of fn.
+// Records requested URLs so tests can check how job IDs are encoded.
+async function withFakeJobsApi(fn) {
+  const originalFetch = global.fetch;
+  const requested = [];
+  global.fetch = async (url) => {
+    requested.push(String(url));
+    const id = decodeURIComponent(String(url).split('/api/jobs/')[1] || '');
+    if (id === TD_JOB_ID) {
+      return { status: 200, json: async () => tdJobFixture };
+    }
+    if (id === CLOSED_JOB_ID) {
+      return { status: 410, json: async () => ({ detail: 'Job is no longer active' }) };
+    }
+    return { status: 404, json: async () => ({ detail: 'Job not found' }) };
+  };
+  try {
+    return await fn(requested);
+  } finally {
+    global.fetch = originalFetch;
+  }
+}
+
+function fakeResponse() {
+  const state = { statusCode: null, headers: {}, body: '' };
+  const res = {
+    set statusCode(val) { state.statusCode = val; },
+    get statusCode() { return state.statusCode; },
+    setHeader(name, val) { state.headers[name.toLowerCase()] = val; },
+    end(chunk) { if (chunk) state.body += chunk; }
+  };
+  return { res, state };
+}
+
 describe('Vercel Serverless Function job-page.mjs', () => {
   const sampleJob = {
     job_id: 'ashby:test-123',
@@ -423,44 +477,46 @@ describe('Vercel Serverless Function job-page.mjs', () => {
   });
 
   it('fetches and preserves 404 vs 200 status codes correctly', async () => {
-    const notFound = await fetchJob('nonexistent-test-id-12345');
-    expect(notFound.status).toBe(404);
-    expect(notFound.job).toBeNull();
+    await withFakeJobsApi(async () => {
+      const notFound = await fetchJob('nonexistent-test-id-12345');
+      expect(notFound.status).toBe(404);
+      expect(notFound.job).toBeNull();
+
+      const found = await fetchJob(TD_JOB_ID);
+      expect(found.status).toBe(200);
+      expect(found.job).not.toBeNull();
+    });
   });
 
-  it('fetches workday job with slashes in ID successfully from production API', async () => {
-    const result = await fetchJob('workday:td.wd3/TD_Bank_Careers/Software-Engineer-II_R_1516370');
-    expect(result.status).toBe(200);
-    expect(result.job).not.toBeNull();
-    expect(result.job.job_id).toBe('workday:td.wd3/TD_Bank_Careers/Software-Engineer-II_R_1516370');
-    expect(result.job.company).toBe('TD');
+  it('fetches a Workday job whose ID contains slashes, encoding the ID as one path segment', async () => {
+    await withFakeJobsApi(async (requested) => {
+      const result = await fetchJob(TD_JOB_ID);
+      expect(result.status).toBe(200);
+      expect(result.job.job_id).toBe(TD_JOB_ID);
+      expect(result.job.company).toBe('TD');
+      expect(requested).toHaveLength(1);
+      expect(requested[0]).toContain(`/api/jobs/${encodeURIComponent(TD_JOB_ID)}`);
+      expect(requested[0].split('/api/jobs/')[1]).not.toContain('/');
+    });
   });
 
   it('handler handles slash job IDs from rewritten jobId query parameter', async () => {
     const defaultExport = (await import('../api/job-page.mjs')).default;
-    let statusCode = null;
-    const headers = {};
-    let body = '';
-
+    const { res, state } = fakeResponse();
     const req = {
-      url: '/api/job-page?jobId=workday:td.wd3/TD_Bank_Careers/Software-Engineer-II_R_1516370',
+      url: `/api/job-page?jobId=${TD_JOB_ID}`,
       headers: { host: 'roleradar-jobs.vercel.app' }
     };
-    const res = {
-      set statusCode(val) { statusCode = val; },
-      get statusCode() { return statusCode; },
-      setHeader(name, val) { headers[name.toLowerCase()] = val; },
-      end(chunk) { if (chunk) body += chunk; }
-    };
 
-    await defaultExport(req, res);
+    await withFakeJobsApi(() => defaultExport(req, res));
+    const { statusCode, headers, body } = state;
     expect(statusCode).toBe(200);
     expect(headers['content-type']).toContain('text/html');
     expect(body).toContain('TD');
     expect(body).toContain('Software-Engineer-II_R_1516370');
     expect(body).toContain('application/ld+json');
 
-    // Gemini claim verification: exactly one title, description, and Open Graph tags (no duplicates)
+    // Exactly one title, description, and Open Graph tags (no duplicates)
     const titleMatches = body.match(/<title>.*?<\/title>/gis) || [];
     expect(titleMatches).toHaveLength(1);
     const descMatches = body.match(/<meta\s+name=["']description["'][^>]*>/gis) || [];
@@ -473,25 +529,30 @@ describe('Vercel Serverless Function job-page.mjs', () => {
 
   it('handler returns 404 with noindex header for nonexistent jobs', async () => {
     const defaultExport = (await import('../api/job-page.mjs')).default;
-    let statusCode = null;
-    const headers = {};
-    let body = '';
-
+    const { res, state } = fakeResponse();
     const req = {
       url: '/api/job-page?jobId=nonexistent-job-xyz',
       headers: { host: 'roleradar-jobs.vercel.app' }
     };
-    const res = {
-      set statusCode(val) { statusCode = val; },
-      get statusCode() { return statusCode; },
-      setHeader(name, val) { headers[name.toLowerCase()] = val; },
-      end(chunk) { if (chunk) body += chunk; }
+
+    await withFakeJobsApi(() => defaultExport(req, res));
+    expect(state.statusCode).toBe(404);
+    expect(state.headers['x-robots-tag']).toBe('noindex, nofollow');
+    expect(state.body).toContain('Job No Longer Available');
+  });
+
+  it('handler returns 404 with noindex when the API reports a closed job (410)', async () => {
+    const defaultExport = (await import('../api/job-page.mjs')).default;
+    const { res, state } = fakeResponse();
+    const req = {
+      url: `/api/job-page?jobId=${CLOSED_JOB_ID}`,
+      headers: { host: 'roleradar-jobs.vercel.app' }
     };
 
-    await defaultExport(req, res);
-    expect(statusCode).toBe(404);
-    expect(headers['x-robots-tag']).toBe('noindex, nofollow');
-    expect(body).toContain('Job No Longer Available');
+    await withFakeJobsApi(() => defaultExport(req, res));
+    expect(state.statusCode).toBe(404);
+    expect(state.headers['x-robots-tag']).toBe('noindex, nofollow');
+    expect(state.body).toContain('Job No Longer Available');
   });
 
   it('handler returns 503 with Retry-After and without noindex on temporary upstream failure', async () => {
