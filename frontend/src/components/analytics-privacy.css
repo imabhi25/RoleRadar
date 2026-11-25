@@ -1,0 +1,81 @@
+/* First-visit question: fixed to the bottom of the screen until the visitor chooses (or picks "Not now"). */
+.analytics-privacy-prompt {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 1000;
+  margin: 0 auto;
+  max-width: 560px;
+  max-height: min(60vh, 460px);
+  overflow: auto;
+  padding: 16px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.12));
+  font-size: 15px;
+  line-height: 1.5;
+}
+.analytics-privacy-title { font-weight: 600; font-size: 16px; margin-bottom: 6px; }
+.analytics-privacy-prompt p, .analytics-privacy-panel p { margin: 0 0 10px; }
+.analytics-privacy-details { margin: 0 0 10px; }
+.analytics-privacy-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 500; }
+
+/* Settings live in an ordinary footer after the app, so they never cover job cards or Apply buttons. */
+.analytics-privacy-footer {
+  padding: 16px max(16px, env(safe-area-inset-left)) calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-app);
+  color: var(--text-main);
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+}
+.analytics-privacy-panel {
+  max-width: 640px;
+  margin: 12px auto 0;
+  padding: 16px;
+  text-align: left;
+  background: var(--bg-card);
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+}
+.analytics-privacy-panel h2 { font-size: 18px; margin: 0 0 10px; }
+.analytics-privacy-panel h2:focus { outline: none; }
+.analytics-privacy-panel h2:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.analytics-privacy-current { padding: 10px 12px; border-radius: 8px; background: var(--bg-raised); }
+
+.analytics-privacy-prompt a, .analytics-privacy-panel a { color: var(--primary); text-decoration: underline; }
+.analytics-privacy-prompt code, .analytics-privacy-panel code { font-size: 0.95em; }
+
+.analytics-privacy-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.analytics-privacy-actions button, .analytics-privacy-toggle {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 15px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--bg-raised);
+  color: var(--text-main);
+  cursor: pointer;
+}
+/* Accept and Decline share one style: neither choice is visually pushed. "Not now" and "Close" are quieter. */
+.analytics-privacy-actions .analytics-privacy-secondary { background: transparent; border-color: transparent; text-decoration: underline; }
+.analytics-privacy-toggle { background: transparent; text-decoration: underline; }
+.analytics-privacy-actions button:hover, .analytics-privacy-toggle:hover { border-color: var(--control-border-hover); }
+.analytics-privacy-prompt :focus-visible, .analytics-privacy-footer :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.analytics-privacy-error { color: var(--text-main); font-weight: 600; }
+
+@media (max-width: 480px) {
+  .analytics-privacy-actions button { flex: 1 1 100%; }
+}
+
+/* Read by screen readers, not shown. */
+.analytics-privacy-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
