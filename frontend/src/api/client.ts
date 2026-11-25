@@ -201,9 +201,9 @@ export interface SourceStatus {
 }
 
 export const apiClient = {
-  /** Per-source refresh health; optional, never required to browse jobs. */
+  /** Refresh health for the official sources used in the public jobs feed. */
   getSourceStatus: (signal?: AbortSignal): Promise<SourceStatus[]> =>
-    fetchJson<SourceStatus[]>("/api/sources/status", signal),
+    fetchJson<SourceStatus[]>("/api/sources/status?official_only=true", signal),
   /** `country` scopes every figure the same way /api/jobs does; omit it for the all-country totals. */
   getOverview: (country?: string[]): Promise<OverviewStats> => {
     const query = country && country.length > 0 ? `?country=${encodeURIComponent(country.join(","))}` : "";

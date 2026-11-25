@@ -533,6 +533,8 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
             </div>
           </div>
 
+          <SourceStatusNote />
+
           {ignoredSkill && (
             <p className="filter-notice" role="status" data-testid="ignored-skill-notice">
               “{ignoredSkill}” isn’t a skill we can filter by, so it was ignored.
@@ -791,9 +793,8 @@ export const JobExplorer: React.FC<JobExplorerProps> = ({
               </div>
             </div>
             <p className="sources-card-body">
-              Jobs are collected from company career pages and supported public job sources.
+              Jobs are collected from official company career pages.
             </p>
-            <SourceStatusNote />
           </div>
         </aside>
         </div>
