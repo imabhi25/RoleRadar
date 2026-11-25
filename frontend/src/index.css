@@ -3328,7 +3328,17 @@ textarea {
   }
 }
 
-.sources-card-degraded { margin-top: 8px; color: var(--text-muted); }
+.source-status {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.source-status p { margin: 0; }
+.source-status p + p { margin-top: 4px; }
 .job-detail-scroll:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
 
 /* ---- Switching jobs: the pane and its header stay mounted; only the content changes, with a subtle fade ---- */

@@ -270,18 +270,24 @@ def test_source_status_reports_degraded_sources_without_error_text(conn):
         for ident, status, err in [(client_name + "-a", "success", None), (client_name + "-b", "partial_success", "secret internal detail")]:
             cur.execute("""INSERT INTO sync_runs(source_name,company_identifier,status,completed_at,error_message)
                            VALUES (%s,%s,%s,NOW(),%s)""", ("statustest", ident, status, err))
+        cur.execute("""INSERT INTO sync_runs(source_name,company_identifier,status,completed_at)
+                       VALUES ('workday', %s, 'success', NOW())""", (client_name,))
     @contextmanager
     def cursor():
         with conn.cursor() as cur:
             yield cur
     with patch('api.main.get_db_cursor', cursor):
         response = TestClient(app).get('/api/sources/status')
+        official = TestClient(app).get('/api/sources/status?official_only=true')
     assert response.status_code == 200
     row = next(r for r in response.json() if r['source_name'] == 'statustest')
     assert row['status'] == 'degraded' and row['companies_tracked'] == 2
     assert row['companies_ok'] == 1 and row['companies_degraded'] == 1
     assert row['last_success_at'] is not None
     assert 'secret' not in response.text
+    assert official.status_code == 200
+    official_names = {r['source_name'] for r in official.json()}
+    assert 'workday' in official_names and 'statustest' not in official_names
 
 
 def test_duplicate_suppression_uses_hashable_keys_not_one_or_condition():

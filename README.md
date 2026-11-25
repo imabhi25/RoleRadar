@@ -42,6 +42,7 @@ Full setup, all employers and the test commands are in [Run locally](#run-locall
 - **Find relevant roles:** location, job type, experience, workplace and date filters, with Canada-first recommended ordering.
 - **Read useful summaries:** responsibilities, qualifications, benefits and key applicant conditions drawn from the source posting, with a smooth toggle to the complete posting.
 - **Explore employers:** company profiles, official branding and application links beside the company name.
+- **Check listing freshness.** The jobs page shows the latest successful source refresh, recent employer refresh failures, and sources without a successful refresh in 12 hours.
 - **Understand the market:** charts for geography and skill demand, alongside posting and employer counts.
 
 For a quick tour, search for a company, apply a job-type filter, switch between Summary and Full Posting, then open the market dashboard.

@@ -339,14 +339,15 @@ class SourceStatus(BaseModel):
 
 
 @app.get("/api/sources/status", response_model=List[SourceStatus])
-def get_source_status():
+def get_source_status(official_only: bool = False):
     """Per-source refresh health from each employer's most recent ingestion run.
 
     A source is "degraded" when any tracked employer's latest run failed or only partly succeeded (its jobs were
     kept, not closed, in that case); "healthy" when every latest run succeeded. Error text is deliberately not
-    exposed here.
+    exposed here. Pass official_only=true for the sources used in the public jobs feed.
     """
-    query = """
+    source_filter = f"WHERE l.source_name IN {official_sources_sql()}" if official_only else ""
+    query = f"""
     WITH latest AS (
         SELECT DISTINCT ON (source_name, company_identifier)
                source_name, company_identifier, status, started_at
@@ -368,6 +369,7 @@ def get_source_status():
     FROM latest l
     LEFT JOIN last_ok o ON o.source_name = l.source_name
     LEFT JOIN active a ON a.source_name = l.source_name
+    {source_filter}
     GROUP BY l.source_name
     ORDER BY l.source_name;
     """

@@ -1,30 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { apiClient, type SourceStatus } from "../api/client";
 
-/**
- * Optional freshness note for the "Official company sources" card. A single global "last refreshed" time cannot show
- * that some employers failed their latest refresh, so this reports degraded coverage per source. It renders nothing
- * while loading, on failure, or when every source is healthy: browsing never depends on it.
- */
+// The scheduled importer runs every three hours. Allow for delayed starts and long scans.
+const STALE_HOURS = 12;
+const refreshDate = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+
 export const SourceStatusNote: React.FC = () => {
-  const [sources, setSources] = useState<SourceStatus[] | null>(null);
+  const [sources, setSources] = useState<SourceStatus[] | "unavailable" | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     apiClient
       .getSourceStatus(controller.signal)
-      .then(setSources)
-      .catch(() => setSources(null));
+      .then((data) => {
+        if (!controller.signal.aborted) setSources(data);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setSources("unavailable");
+      });
     return () => controller.abort();
   }, []);
 
-  const degraded = (sources ?? []).filter((s) => s.companies_degraded > 0);
-  if (degraded.length === 0) return null;
-  const count = degraded.reduce((sum, s) => sum + s.companies_degraded, 0);
+  if (sources === null) return null;
+  if (sources === "unavailable") {
+    return <p className="source-status" role="status">Source refresh status unavailable.</p>;
+  }
+
+  const cutoff = Date.now() - STALE_HOURS * 60 * 60 * 1000;
+  const stale: string[] = [];
+  let latestSuccess: number | null = null;
+  for (const source of sources) {
+    const timestamp = Date.parse(source.last_success_at ?? "");
+    const hasSuccess = Number.isFinite(timestamp);
+    if (hasSuccess && (latestSuccess === null || timestamp > latestSuccess)) {
+      latestSuccess = timestamp;
+    }
+    if (!hasSuccess || timestamp < cutoff) stale.push(source.source_name);
+  }
+
+  const degraded = sources.filter((source) => source.companies_degraded > 0);
+  const count = degraded.reduce((sum, source) => sum + source.companies_degraded, 0);
+  const latest = latestSuccess === null ? null : new Date(latestSuccess);
   return (
-    <p className="sources-card-body sources-card-degraded" role="status" data-testid="source-degraded">
-      {count} {count === 1 ? "employer" : "employers"} could not be refreshed on the latest run
-      {" "}({degraded.map((s) => s.source_name).join(", ")}). Their existing listings are kept and may be out of date.
-    </p>
+    <div className="source-status" role="status">
+      <p>
+        {latest ? (
+          <>Latest successful source refresh on <time dateTime={latest.toISOString()}>{refreshDate.format(latest)}</time></>
+        ) : "No successful source refresh recorded yet."}
+      </p>
+      {count > 0 && (
+        <p data-testid="source-degraded">
+          {count} {count === 1 ? "employer" : "employers"} could not be fully refreshed on their latest attempt
+          {" "}({degraded.map((source) => source.source_name).join(", ")}). Existing listings may be out of date.
+        </p>
+      )}
+      {stale.length > 0 && (
+        <p>No successful refresh in the last {STALE_HOURS} hours for {stale.join(", ")}.</p>
+      )}
+    </div>
   );
 };
